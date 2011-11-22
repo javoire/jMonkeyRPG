@@ -13,18 +13,13 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
-import com.jme3.renderer.Camera;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import com.jme3.terrain.geomipmap.TerrainLodControl;
-import com.jme3.terrain.heightmap.AbstractHeightMap;
-import com.jme3.terrain.geomipmap.TerrainQuad;
-import com.jme3.terrain.heightmap.ImageBasedHeightMap;
-import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
-import java.util.ArrayList;
-import java.util.List;
-import jme3tools.converters.ImageToAwt;
+import com.jme3.scene.Spatial;
+import com.jme3.util.SkyFactory;
 
 /**
  *
@@ -34,12 +29,13 @@ public class World extends AbstractAppState {
     
     private BulletAppState bulletAppState;
     private RigidBodyControl landscape;
-    private TerrainQuad terrain;
+//    private TerrainQuad terrain;
     private AssetManager assetManager;
     private Node rootNode;
     private SimpleApplication app;
     Material mat_terrain;
-    
+    Spatial gameLevel;
+            
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
@@ -59,43 +55,57 @@ public class World extends AbstractAppState {
 
     public void initTerrain() {
         
+        // sky
+        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+        
+//        assetManager.registerLoader(AWTLoader.class, "png");
+//        assetManager.registerLocator( new File(“.”).getCanonicalPath(), FileLocator.class);
+        
         /** 1. Create terrain material and load four textures into it. */
-        mat_terrain = new Material(assetManager, 
-                "Common/MatDefs/Terrain/Terrain.j3md");
+//        mat_terrain = new Material(assetManager, "Common/MatDefs/Terrain/Terrain.j3md");
+        
+        gameLevel = assetManager.loadModel("Scenes/terrain/terrain.j3o");
+        gameLevel.setLocalTranslation(0, -5.2f, 0);
+        gameLevel.setLocalScale(1);
+        rootNode.attachChild(gameLevel);
+        
+        // You must add a light to make the model visible
+        DirectionalLight sun = new DirectionalLight();
+        AmbientLight amb = new AmbientLight();
+        sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
+        rootNode.addLight(sun);
+        rootNode.addLight(amb);
 
-        /** 1.1) Add ALPHA map (for red-blue-green coded splat textures) */
-        mat_terrain.setTexture("Alpha", assetManager.loadTexture(
-                "Textures/Terrain/splat/alphamap.png"));
 
-        /** 1.2) Add GRASS texture into the red layer (Tex1). */
-        Texture grass = assetManager.loadTexture(
-                "Textures/Terrain/splat/grass.jpg");
-        grass.setWrap(WrapMode.Repeat);
-        mat_terrain.setTexture("Tex1", grass);
-        mat_terrain.setFloat("Tex1Scale", 64f);
-
-        /** 1.3) Add DIRT texture into the green layer (Tex2) */
-        Texture dirt = assetManager.loadTexture(
-                "Textures/Terrain/splat/dirt.jpg");
-        dirt.setWrap(WrapMode.Repeat);
-        mat_terrain.setTexture("Tex2", dirt);
-        mat_terrain.setFloat("Tex2Scale", 32f);
-
-        /** 1.4) Add ROAD texture into the blue layer (Tex3) */
-        Texture rock = assetManager.loadTexture(
-                "Textures/Terrain/splat/road.jpg");
-        rock.setWrap(WrapMode.Repeat);
-        mat_terrain.setTexture("Tex3", rock);
-        mat_terrain.setFloat("Tex3Scale", 128f);
-
-        /** 2. Create the height map */
-        AbstractHeightMap heightmap = null;
-        Texture heightMapImage = assetManager.loadTexture(
-                "Textures/Terrain/splat/mountains512.png");
-        heightmap = new ImageBasedHeightMap(
-        ImageToAwt.convert(heightMapImage.getImage(), false, true, 0));
-
-        heightmap.load();
+//        Texture grass = assetManager.loadTexture("Textures/Terrain/splat/grass.jpg");
+//        Texture dirt = assetManager.loadTexture("Textures/Terrain/splat/dirt.jpg");
+//        Texture rock = assetManager.loadTexture("Textures/Terrain/splat/road.jpg");
+//        Texture heightMapImage = assetManager.loadTexture("Textures/Terrain/splat/mountains512.png");
+////        Texture heightMapImage = assetManager.loadTexture("Textures/Terrain/heightmap.png");
+//
+//        /** 1.2) Add GRASS texture into the red layer (Tex1). */
+//        /** 1.3) Add DIRT texture into the green layer (Tex2) */
+//        /** 1.4) Add ROAD texture into the blue layer (Tex3) */
+//        grass.setWrap(WrapMode.Repeat);
+//        dirt.setWrap(WrapMode.Repeat);
+//        rock.setWrap(WrapMode.Repeat);
+//
+//        /** 1.1) Add ALPHA map (for red-blue-green coded splat textures) */
+//        mat_terrain.setTexture("Alpha", assetManager.loadTexture("Textures/Terrain/splat/alphamap.png"));
+//        mat_terrain.setTexture("Tex1", grass);
+//        mat_terrain.setTexture("Tex2", dirt);
+//        mat_terrain.setTexture("Tex3", rock);
+//
+//        mat_terrain.setFloat("Tex1Scale", 64f);
+//        mat_terrain.setFloat("Tex2Scale", 32f);
+//        mat_terrain.setFloat("Tex3Scale", 128f);
+//
+//        /** 2. Create the height map */
+//        AbstractHeightMap heightmap = null;
+//        heightmap = new ImageBasedHeightMap(
+//        ImageToAwt.convert(heightMapImage.getImage(), false, true, 0));
+//
+//        heightmap.load();
 
         /** 3. We have prepared material and heightmap. 
          * Now we create the actual terrain:
@@ -105,20 +115,21 @@ public class World extends AbstractAppState {
          * 3.4) As LOD step scale we supply Vector3f(1,1,1).
          * 3.5) We supply the prepared heightmap itself.
          */
-        int patchSize = 65;
-        terrain = new TerrainQuad("my terrain", patchSize, 513, heightmap.getHeightMap());
+//        int patchSize = 65;
+//        terrain = new TerrainQuad("my terrain", patchSize, 513, heightmap.getHeightMap());
 
         /** 4. We give the terrain its material, position & scale it, and attach it. */
-        terrain.setMaterial(mat_terrain);
-        terrain.setLocalTranslation(0, -100, 0);
-        terrain.setLocalScale(2f, 1f, 2f);
-        rootNode.attachChild(terrain);
+//        terrain.setMaterial(mat_terrain);
+//        terrain.setLocalTranslation(0, -100, 0);
+//        terrain.setLocalScale(2f, 1f, 2f);
+//        rootNode.attachChild(terrain);
+
 
         /** 5. The LOD (level of detail) depends on were the camera is: */
-        List<Camera> cameras = new ArrayList<Camera>();
-        cameras.add(app.getCamera());
-        TerrainLodControl control = new TerrainLodControl(terrain, cameras);
-        terrain.addControl(control); 
+//        List<Camera> cameras = new ArrayList<Camera>();
+//        cameras.add(app.getCamera());
+//        TerrainLodControl control = new TerrainLodControl(gameLevel, cameras);
+//        gameLevel.addControl(control); 
  
     }
     
@@ -129,13 +140,13 @@ public class World extends AbstractAppState {
         /** 6. Add physics: */ 
         // We set up collision detection for the scene by creating a
         // compound collision shape and a static RigidBodyControl with mass zero.*/
-        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) terrain);
+        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) gameLevel);
         landscape = new RigidBodyControl(terrainShape, 0);
-        terrain.addControl(landscape);
+        gameLevel.addControl(landscape);
 
         // We attach the scene and the player to the rootnode and the physics space,
         // to make them appear in the game world.
-        bulletAppState.getPhysicsSpace().add(terrain);
+        bulletAppState.getPhysicsSpace().add(gameLevel);
     }
     
     @Override

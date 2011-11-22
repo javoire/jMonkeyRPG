@@ -37,10 +37,11 @@ public class PlayerControl extends AbstractControl implements ActionListener {
     private Camera cam;
     private boolean left = false, right = false, up = false, down = false;
 
-    public PlayerControl(Camera cam, CharacterControl player, InputManager inputManager) {
-        this.cam = cam;
-        this.inputManager = inputManager;
-        this.player = player;
+    public PlayerControl(CharacterControl player, Camera cam, InputManager inputManager) {
+        this.cam            = cam;
+        this.inputManager   = inputManager;
+        this.player         = player;
+        
         initKeyBindings();
     }
     
@@ -49,14 +50,18 @@ public class PlayerControl extends AbstractControl implements ActionListener {
         //TODO: add code that controls Spatial,
         //e.g. spatial.rotate(tpf,tpf,tpf);
         
-        Vector3f camDir = cam.getDirection().clone().multLocal(0.6f);
-        Vector3f camLeft = cam.getLeft().clone().multLocal(0.4f);
+        Vector3f camDir     = cam.getDirection().clone().multLocal(0.6f);
+        Vector3f camLeft    = cam.getLeft().clone().multLocal(0.4f);
+        
         walkDirection.set(0, 0, 0);
+        
         if (left)  { walkDirection.addLocal(camLeft); }
         if (right) { walkDirection.addLocal(camLeft.negate()); }
         if (up)    { walkDirection.addLocal(camDir); }
         if (down)  { walkDirection.addLocal(camDir.negate()); }
+        
         player.setWalkDirection(walkDirection);
+        
         this.cam.setLocation(player.getPhysicsLocation());
  
     }
@@ -102,7 +107,7 @@ public class PlayerControl extends AbstractControl implements ActionListener {
     
 
     public Control cloneForSpatial(Spatial spatial) {
-        PlayerControl control = new PlayerControl(this.cam, player, inputManager);
+        PlayerControl control = new PlayerControl(player, cam, inputManager);
         control.setSpatial(spatial);
         return control;
     }

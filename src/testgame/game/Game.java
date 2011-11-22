@@ -17,22 +17,30 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
+import com.jme3.scene.Spatial;
 
 /**
  *
  * @author jo_da12
  */
-public class Game extends AbstractAppState implements ActionListener {
+//public class Game extends AbstractAppState implements ActionListener {
+public class Game extends AbstractAppState {
     
-    private World world;
-    private boolean running;
-    private CharacterControl player;
-    private InputManager inputManager;
-    private BulletAppState bulletAppState;
-    private SimpleApplication app;
-    private Camera cam;
-    private Vector3f walkDirection = new Vector3f();
-    private boolean left = false, right = false, up = false, down = false;
+    private World               world;
+    private Gui                 gui;
+//    private CharacterControl    player;
+//    private InputManager        inputManager;
+//    private BulletAppState      bulletAppState;
+//    private SimpleApplication   app;
+//    private Camera              cam;
+//    private PlayerControl       playerControl;
+//    private Spatial             playerSpatial;
+    private Player              player;
+    
+//    private Vector3f            walkDirection = new Vector3f();
+    
+    private boolean             running;
+//    private boolean left = false, right = false, up = false, down = false;
     
     
     @Override
@@ -40,19 +48,23 @@ public class Game extends AbstractAppState implements ActionListener {
         super.initialize(stateManager, app);
         //TODO: initialize your AppState, e.g. attach spatials to rootNode
         //this is called on the OpenGL thread after the AppState has been attached
-        world = app.getStateManager().getState(World.class);
-        bulletAppState = app.getStateManager().getState(BulletAppState.class);
-        inputManager = app.getInputManager();
-        this.app = (SimpleApplication)app;
-        this.cam = this.app.getCamera();
+        
+        world           = app.getStateManager().getState(World.class);
+        gui             = app.getStateManager().getState(Gui.class);
+        player          = app.getStateManager().getState(Player.class);
+//        bulletAppState  = app.getStateManager().getState(BulletAppState.class);
+//        inputManager    = app.getInputManager();
+        
+//        this.app = (SimpleApplication)app;
+//        this.cam = this.app.getCamera();
         
         // Player
-        initKeyBindings();
-        initPlayer();
+//        initKeyBindings();
+//        initPlayer();
         
     }
     
-    public boolean startGame(InputManager inputManager) {
+    public boolean startGame() {
         if(running)
             return false;
         
@@ -61,68 +73,81 @@ public class Game extends AbstractAppState implements ActionListener {
         // World
         world.initTerrain();
         world.initWorldPhysics();
-                        
+        
+        //gui
+        gui.initGui();
+               
+        // player
+        player.initPlayer();
+        
         return running;
     }
     
     public void initPlayer() {
-        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
-        player = new CharacterControl(capsuleShape, 0.05f);
-        player.setJumpSpeed(30);
-        player.setFallSpeed(30);
-        player.setGravity(90);
-        player.setPhysicsLocation(new Vector3f(0, 10, 0));
+//        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
+//        player = new CharacterControl(capsuleShape, 0.05f);
+//        player.setJumpSpeed(30);
+//        player.setFallSpeed(30);
+//        player.setGravity(90);
+//        player.setPhysicsLocation(new Vector3f(20, 10, 0));
+//
+//        bulletAppState.getPhysicsSpace().add(player);
+//        
+////        playerControl = new PlayerControl(player, cam, inputManager); 
+//                
+//        // input
+//        playerInput.initInput();
 
-        bulletAppState.getPhysicsSpace().add(player);
+
     }
     
-    private void initKeyBindings() {
-        
-        inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_A));
-        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_D));
-        inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_W));
-        inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_S));
-        inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
-        inputManager.addListener(this, "Left");
-        inputManager.addListener(this, "Right");
-        inputManager.addListener(this, "Up");
-        inputManager.addListener(this, "Down");
-        inputManager.addListener(this, "Jump");
-
-    }
+//    private void initKeyBindings() {
+//        
+//        inputManager.addMapping("Left", new KeyTrigger(KeyInput.KEY_A));
+//        inputManager.addMapping("Right", new KeyTrigger(KeyInput.KEY_D));
+//        inputManager.addMapping("Up", new KeyTrigger(KeyInput.KEY_W));
+//        inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_S));
+//        inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
+//        inputManager.addListener(this, "Left");
+//        inputManager.addListener(this, "Right");
+//        inputManager.addListener(this, "Up");
+//        inputManager.addListener(this, "Down");
+//        inputManager.addListener(this, "Jump");
+//
+//    }
     
     
     @Override
     public void update(float tpf) {
         //TODO: implement behavior during runtime
-        Vector3f camDir = cam.getDirection().clone().multLocal(0.6f);
-        Vector3f camLeft = cam.getLeft().clone().multLocal(0.4f);
-        walkDirection.set(0, 0, 0);
-        if (left)  { walkDirection.addLocal(camLeft); }
-        if (right) { walkDirection.addLocal(camLeft.negate()); }
-        if (up)    { walkDirection.addLocal(camDir); }
-        if (down)  { walkDirection.addLocal(camDir.negate()); }
-        player.setWalkDirection(walkDirection);
-        this.cam.setLocation(player.getPhysicsLocation());
- 
+//        Vector3f camDir = cam.getDirection().clone().multLocal(0.4f);
+//        Vector3f camLeft = cam.getLeft().clone().multLocal(0.2f);
+//        walkDirection.set(0, 0, 0);
+//        if (left)  { walkDirection.addLocal(camLeft); }
+//        if (right) { walkDirection.addLocal(camLeft.negate()); }
+//        if (up)    { walkDirection.addLocal(camDir); }
+//        if (down)  { walkDirection.addLocal(camDir.negate()); }
+//        player.setWalkDirection(walkDirection);
+//        this.cam.setLocation(player.getPhysicsLocation());
+// 
        
     }
     
     /** These are our custom actions triggered by key presses.
     * We do not walk yet, we just keep track of the direction the user pressed. */
-    public void onAction(String binding, boolean value, float tpf) {
-        if (binding.equals("Left")) {
-            if (value) { left = true; } else { left = false; }
-        } else if (binding.equals("Right")) {
-            if (value) { right = true; } else { right = false; }
-        } else if (binding.equals("Up")) {
-            if (value) { up = true; } else { up = false; }
-        } else if (binding.equals("Down")) {
-            if (value) { down = true; } else { down = false; }
-        } else if (binding.equals("Jump")) {
-            player.jump();
-        }
-    }
+//    public void onAction(String binding, boolean value, float tpf) {
+//        if (binding.equals("Left")) {
+//            if (value) { left = true; } else { left = false; }
+//        } else if (binding.equals("Right")) {
+//            if (value) { right = true; } else { right = false; }
+//        } else if (binding.equals("Up")) {
+//            if (value) { up = true; } else { up = false; }
+//        } else if (binding.equals("Down")) {
+//            if (value) { down = true; } else { down = false; }
+//        } else if (binding.equals("Jump")) {
+//            player.jump();
+//        }
+//    }
     
     @Override
     public void cleanup() {
@@ -131,4 +156,5 @@ public class Game extends AbstractAppState implements ActionListener {
         //e.g. remove all spatials from rootNode
         //this is called on the OpenGL thread after the AppState has been detached
     }
+
 }
