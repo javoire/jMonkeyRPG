@@ -2,7 +2,6 @@ package testgame.game;
  
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
@@ -13,21 +12,25 @@ public class Main extends SimpleApplication {
     private Game            game;
     private Gui             gui;
     private Player          player;
-    private BulletAppState  bulletAppState;    
-//    private Material        mat_terrain;
+    private BulletAppState  bulletAppState;
     
     public static void main(String[] args) {
         AppSettings settings = new AppSettings(true);
         settings.setTitle("Awesome Game :D");
         
-//        java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
+        java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
         
         Main app = new Main();
+        app.setShowSettings(true); // splash screen
         app.start();
     }
 
     @Override
     public void simpleInitApp() {
+        
+//        app.setDisplayFps(true); // nullpointer exception
+//        app.setDisplayStatView(true); // stats on screen
+
 
         world           = new World(rootNode);
         game            = new Game();
@@ -45,10 +48,8 @@ public class Main extends SimpleApplication {
         viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 
         flyCam.setMoveSpeed(30);
-
     }
     
-
      
     
   @Override
@@ -56,9 +57,6 @@ public class Main extends SimpleApplication {
         game.startGame(); // cannot be called in init
 
 //        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-
-        
-        // player controller
     }
 
 }

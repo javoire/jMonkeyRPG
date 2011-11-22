@@ -5,7 +5,6 @@
 package testgame.game;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
@@ -15,11 +14,14 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
-import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.util.SkyFactory;
+import com.jme3.water.WaterFilter;
 
 /**
  *
@@ -27,14 +29,17 @@ import com.jme3.util.SkyFactory;
  */
 public class World extends AbstractAppState {
     
-    private BulletAppState bulletAppState;
-    private RigidBodyControl landscape;
-//    private TerrainQuad terrain;
-    private AssetManager assetManager;
-    private Node rootNode;
-    private SimpleApplication app;
-    Material mat_terrain;
-    Spatial gameLevel;
+    private BulletAppState      bulletAppState;
+    private RigidBodyControl    landscape;
+    private AssetManager        assetManager;
+    private Node                rootNode;
+    private FilterPostProcessor fpp;
+    private WaterFilter         water;
+    private Vector3f            lightDir = new Vector3f(-4.9f, -1.3f, 5.9f); // same as light source
+    private Spatial             gameLevel;
+    private ViewPort            viewPort;
+    
+    private float               initialWaterHeight = -9f; // choose a value for your scene    
             
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -42,10 +47,9 @@ public class World extends AbstractAppState {
         //TODO: initialize your AppState, e.g. attach spatials to rootNode
         //this is called on the OpenGL thread after the AppState has been attached
         
-//        this.stateManager = stateManager;
-        this.app = (SimpleApplication)app;
-        this.assetManager = this.app.getAssetManager();
-        this.bulletAppState = this.app.getStateManager().getState(BulletAppState.class);
+        assetManager = app.getAssetManager();
+        bulletAppState = app.getStateManager().getState(BulletAppState.class);
+        viewPort = app.getViewPort();
     }
 
     
@@ -54,37 +58,46 @@ public class World extends AbstractAppState {
     }
 
     public void loadTerrain() {
-        
-        // sky
-        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
-        
-//        assetManager.registerLoader(AWTLoader.class, "png");
-//        assetManager.registerLocator( new File(“.”).getCanonicalPath(), FileLocator.class);
-        
-        /** 1. Create terrain material and load four textures into it. */
-//        mat_terrain = new Material(assetManager, "Common/MatDefs/Terrain/Terrain.j3md");
-        
         gameLevel = assetManager.loadModel("Scenes/terrain/terrain.j3o");
         gameLevel.setLocalTranslation(0, -5.2f, 0);
-        gameLevel.setLocalScale(1);
-       
- 
+        gameLevel.setLocalScale(1); 
+        
+        fpp     = new FilterPostProcessor(assetManager);
+        water   = new WaterFilter(rootNode, lightDir);
+        water.setWaterHeight(initialWaterHeight);
+        fpp.addFilter(water);
     }
     
     public void attachLights() {
         // You must add a light to make the model visible
         DirectionalLight sun = new DirectionalLight();
         AmbientLight amb = new AmbientLight();
-        sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
-
+//        sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
+        sun.setDirection(new Vector3f(-0.24319214f, -0.60267837f, 0.94856685f));
         
         rootNode.addLight(sun);
-        rootNode.addLight(amb);        
+        rootNode.addLight(amb);
+//        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+        rootNode.attachChild(SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", false));
+    }
+    
+    public void loadPostEffects() {
+        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+        BloomFilter bloom       = new BloomFilter();
+        
+        bloom.setBloomIntensity(0.05f);
+        bloom.setBlurScale(0.4f);
+        bloom.setExposurePower(2f);
+        bloom.setDownSamplingFactor(1f);
+        
+        fpp.addFilter(bloom);
+        
+        viewPort.addProcessor(fpp);
     }
     
     public void attachTerrain() {
         rootNode.attachChild(gameLevel);
-
+        viewPort.addProcessor(fpp);
     }
     
     public void initWorldPhysics() {

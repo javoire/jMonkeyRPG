@@ -34,28 +34,6 @@ public class Game extends AbstractAppState {
     
     public boolean startGame() {
         
-//        if (load) {
-//            if (loadFuture == null) {
-//                //if we have not started loading yet, submit the Callable to the executor
-//                loadFuture = exec.submit(loadingCallable);
-//            }
-//            //check if the execution on the other thread is done
-//            if (loadFuture.isDone()) {
-//                //these calls have to be done on the update loop thread, 
-//                //especially attaching the terrain to the rootNode
-//                //after it is attached, it's managed by the update loop thread 
-//                // and may not be modified from any other thread anymore!
-//                nifty.gotoScreen("end");
-//                nifty.exit();
-//                guiViewPort.removeProcessor(niftyDisplay);
-//                flyCam.setEnabled(true);
-//                flyCam.setMoveSpeed(50);
-//                rootNode.attachChild(terrain);
-//                load = false;
-//            }
-//        }
-        
-        
         if(running)
             return false;
         
@@ -68,19 +46,9 @@ public class Game extends AbstractAppState {
         // attach to space
         world.attachLights();
         world.attachTerrain();
-
         
         return running;
     }
-    
-//    Callable<Void> loadResources = new Callable<Void>() {
-// 
-//        public Void call() {
-//            
-//            
-//        }
-//        
-//    }
     
     public void loadResources() { 
         world.loadTerrain();
@@ -89,6 +57,8 @@ public class Game extends AbstractAppState {
         gui.initGui();
                
         player.initPlayer();
+        
+        world.loadPostEffects();
     }
     
     

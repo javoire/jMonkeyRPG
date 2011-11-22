@@ -30,6 +30,7 @@ public class Player extends AbstractAppState implements ActionListener {
     private Camera              cam;
     
     private Vector3f            walkDirection = new Vector3f();
+    
     private boolean left = false, right = false, up = false, down = false;
 
 
@@ -46,10 +47,8 @@ public class Player extends AbstractAppState implements ActionListener {
         cam            = app.getCamera();
 
         // create player object
-        CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);        
-        playerControl = new CharacterControl(capsuleShape, 0.05f);
-
-        
+        CapsuleCollisionShape capsuleShape  = new CapsuleCollisionShape(1.5f, 6f, 1);        
+        playerControl                       = new CharacterControl(capsuleShape, 0.05f);        
     }
     
     @Override
@@ -68,10 +67,9 @@ public class Player extends AbstractAppState implements ActionListener {
         playerControl.setWalkDirection(walkDirection);
         
         cam.setLocation(playerControl.getPhysicsLocation());
-// 
     }
     
-       /** These are our custom actions triggered by key presses.
+    /** These are our custom actions triggered by key presses.
     * We do not walk yet, we just keep track of the direction the user pressed. */
     public void onAction(String binding, boolean value, float tpf) {
         if (binding.equals("Left")) {
@@ -93,9 +91,11 @@ public class Player extends AbstractAppState implements ActionListener {
         playerControl.setJumpSpeed(30);
         playerControl.setFallSpeed(30);
         playerControl.setGravity(90);
-        playerControl.setPhysicsLocation(new Vector3f(20, 10, 0));
+        playerControl.setPhysicsLocation(new Vector3f(100, 5, 0));
 
         bulletAppState.getPhysicsSpace().add(playerControl);
+
+//        playerControl.setViewDirection(new Vector3f(-20, 0, 3)); // sätter bara riktningen innan man landar
         
         initKeyBindings();
     }
