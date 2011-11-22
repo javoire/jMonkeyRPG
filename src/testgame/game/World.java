@@ -8,6 +8,8 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioNode;
+import com.jme3.audio.AudioRenderer;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -17,9 +19,11 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
+import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
@@ -33,11 +37,15 @@ public class World extends AbstractAppState {
     private RigidBodyControl    landscape;
     private AssetManager        assetManager;
     private Node                rootNode;
-    private FilterPostProcessor fpp;
     private WaterFilter         water;
-    private Vector3f            lightDir = new Vector3f(-4.9f, -1.3f, 5.9f); // same as light source
-    private Spatial             gameLevel;
+    private Spatial             terrain;
     private ViewPort            viewPort;
+    private AudioRenderer       audioRenderer;
+    private Camera              camera;
+    private FilterPostProcessor fpp;
+    
+    private Vector3f            lightDir = new Vector3f(-0.74319214f, -0.50267837f, 0.84856685f); // same as light source
+    
     
     private float               initialWaterHeight = -9f; // choose a value for your scene    
             
@@ -47,9 +55,14 @@ public class World extends AbstractAppState {
         //TODO: initialize your AppState, e.g. attach spatials to rootNode
         //this is called on the OpenGL thread after the AppState has been attached
         
-        assetManager = app.getAssetManager();
-        bulletAppState = app.getStateManager().getState(BulletAppState.class);
-        viewPort = app.getViewPort();
+        assetManager    = app.getAssetManager();
+        bulletAppState  = app.getStateManager().getState(BulletAppState.class);
+        viewPort        = app.getViewPort();
+        audioRenderer   = app.getAudioRenderer();
+        camera          = app.getCamera();
+        
+        fpp = new FilterPostProcessor(assetManager);;
+
     }
 
     
@@ -58,14 +71,22 @@ public class World extends AbstractAppState {
     }
 
     public void loadTerrain() {
-        gameLevel = assetManager.loadModel("Scenes/terrain/terrain.j3o");
-        gameLevel.setLocalTranslation(0, -5.2f, 0);
-        gameLevel.setLocalScale(1); 
+        terrain = assetManager.loadModel("Scenes/terrain/terrain.j3o");
+//        terrain = assetManager.loadModel("Scenes/terrain/terrain_island.j3o");
+        terrain.setLocalTranslation(0, -5.2f, 0);
+        terrain.setLocalScale(1); 
         
-        fpp     = new FilterPostProcessor(assetManager);
+//        fpp     = new FilterPostProcessor(assetManager);
         water   = new WaterFilter(rootNode, lightDir);
+        
         water.setWaterHeight(initialWaterHeight);
+        water.setReflectionMapSize(128);
         fpp.addFilter(water);
+        
+        TerrainLodControl lodControl = ((Node)terrain).getControl(TerrainLodControl.class);
+        
+        if (lodControl != null)
+            lodControl.setCamera(camera);
     }
     
     public void attachLights() {
@@ -73,7 +94,7 @@ public class World extends AbstractAppState {
         DirectionalLight sun = new DirectionalLight();
         AmbientLight amb = new AmbientLight();
 //        sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
-        sun.setDirection(new Vector3f(-0.24319214f, -0.60267837f, 0.94856685f));
+        sun.setDirection(lightDir);
         
         rootNode.addLight(sun);
         rootNode.addLight(amb);
@@ -81,22 +102,33 @@ public class World extends AbstractAppState {
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", false));
     }
     
-    public void loadPostEffects() {
-        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+    public void initPostEffects() {
+//        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
+//        fpp = new FilterPostProcessor(assetManager);
         BloomFilter bloom       = new BloomFilter();
         
         bloom.setBloomIntensity(0.05f);
         bloom.setBlurScale(0.4f);
         bloom.setExposurePower(2f);
-        bloom.setDownSamplingFactor(1f);
+        bloom.setDownSamplingFactor(5f);
         
         fpp.addFilter(bloom);
         
         viewPort.addProcessor(fpp);
     }
     
+    public void initSound() {
+//        AudioNode nature = new AudioNode(assetManager, "Sound/Environment/Nature.ogg", false);
+        AudioNode waves = new AudioNode(assetManager, "Sound/Environment/Ocean Waves.ogg", false);
+        
+        waves.setLooping(true);
+        waves.setVolume(0.6f);
+        
+        audioRenderer.playSource(waves);
+    }
+    
     public void attachTerrain() {
-        rootNode.attachChild(gameLevel);
+        rootNode.attachChild(terrain);
         viewPort.addProcessor(fpp);
     }
     
@@ -105,13 +137,13 @@ public class World extends AbstractAppState {
         /** 6. Add physics: */ 
         // We set up collision detection for the scene by creating a
         // compound collision shape and a static RigidBodyControl with mass zero.*/
-        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) gameLevel);
+        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) terrain);
         landscape = new RigidBodyControl(terrainShape, 0);
-        gameLevel.addControl(landscape);
+        terrain.addControl(landscape);
 
         // We attach the scene and the player to the rootnode and the physics space,
         // to make them appear in the game world.
-        bulletAppState.getPhysicsSpace().add(gameLevel);
+        bulletAppState.getPhysicsSpace().add(terrain);
     }
     
     @Override

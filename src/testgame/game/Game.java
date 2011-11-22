@@ -39,13 +39,7 @@ public class Game extends AbstractAppState {
         
         running = true;
         
-        // Load
-        loadResources();
-        
-        
-        // attach to space
-        world.attachLights();
-        world.attachTerrain();
+        initWorld();
         
         return running;
     }
@@ -58,9 +52,18 @@ public class Game extends AbstractAppState {
                
         player.initPlayer();
         
-        world.loadPostEffects();
+//        world.initPostEffects();
+        world.initSound();
     }
     
+    public void initWorld() {
+        // Load
+        loadResources();
+        
+        // attach to space
+        world.attachLights();
+        world.attachTerrain();
+    }
     
     @Override
     public void update(float tpf) {

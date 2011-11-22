@@ -49,7 +49,7 @@ public class Gui extends AbstractAppState {
     
     public void initCrosshair() {
           /** A centred plus sign to help the player aim. */
-        guiNode.detachAllChildren();
+//        guiNode.detachAllChildren();
         guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         BitmapText ch = new BitmapText(guiFont, false);
         ch.setSize(guiFont.getCharSet().getRenderedSize() * 4/3);

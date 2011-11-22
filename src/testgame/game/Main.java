@@ -48,6 +48,11 @@ public class Main extends SimpleApplication {
         viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 
         flyCam.setMoveSpeed(30);
+
+//        this.loadStatsView();
+//        this.loadFPSText();
+//        this.setDisplayFps(true);
+//        this.setDisplayStatView(false);
     }
     
      
