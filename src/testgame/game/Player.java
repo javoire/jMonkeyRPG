@@ -26,7 +26,6 @@ public class Player extends AbstractAppState implements ActionListener {
     
     private CharacterControl    playerControl;
     private InputManager        inputManager;
-//    private SimpleApplication   app;
     private BulletAppState      bulletAppState;
     private Camera              cam;
     
@@ -41,9 +40,7 @@ public class Player extends AbstractAppState implements ActionListener {
         super.initialize(stateManager, app);
         //TODO: initialize your AppState, e.g. attach spatials to rootNode
         //this is called on the OpenGL thread after the AppState has been attached
-        
-//        this.app            = (SimpleApplication)app;
-        
+                
         inputManager   = app.getInputManager();
         bulletAppState = app.getStateManager().getState(BulletAppState.class);
         cam            = app.getCamera();

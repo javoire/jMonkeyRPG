@@ -60,6 +60,7 @@ public class Gui extends AbstractAppState {
         guiNode.attachChild(ch);
     }
     
+    
     @Override
     public void cleanup() {
         super.cleanup();
