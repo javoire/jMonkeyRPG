@@ -3,6 +3,7 @@ package testgame.game;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.math.ColorRGBA;
+import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.system.AppSettings;
 import java.util.logging.Level;
  
@@ -44,6 +45,8 @@ public class Main extends SimpleApplication {
         stateManager.attach(game);
         stateManager.attach(gui);
         stateManager.attach(player);
+        
+        assetManager.registerLoader(BlenderLoader.class, "blend");
 
         viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 
