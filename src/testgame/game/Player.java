@@ -91,7 +91,8 @@ public class Player extends AbstractAppState implements ActionListener {
         playerControl.setJumpSpeed(30);
         playerControl.setFallSpeed(30);
         playerControl.setGravity(90);
-        playerControl.setPhysicsLocation(new Vector3f(100, 5, 0));
+//        playerControl.setPhysicsLocation(new Vector3f(100, 5, 0));
+        playerControl.setPhysicsLocation(new Vector3f(5, 100, 0));
 
         bulletAppState.getPhysicsSpace().add(playerControl);
 

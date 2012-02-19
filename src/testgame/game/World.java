@@ -8,7 +8,6 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.BlenderKey;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioRenderer;
 import com.jme3.bullet.BulletAppState;
@@ -25,8 +24,10 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.plugins.blender.BlenderLoader;
+//import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
+import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
@@ -46,7 +47,7 @@ public class World extends AbstractAppState {
     private AudioRenderer       audioRenderer;
     private Camera              camera;
     private FilterPostProcessor fpp;
-    private BlenderLoader       blenderLoader;
+//    private BlenderLoader       blenderLoader;
 
     
     private Vector3f            lightDir = new Vector3f(-0.74319214f, -0.50267837f, 0.84856685f); // same as light source
@@ -76,36 +77,32 @@ public class World extends AbstractAppState {
         this.rootNode = rootNode;
     }
 
-    public void loadTerrain() {
-        
-        
-//        Object asset = assetManager.loadAsset("Scenes/blender/terrain_blender.blend");
+    public void loadTerrain() {        
+        terrain = assetManager.loadModel("Scenes/terrain/terrain.j3o");
+        terrain.setLocalTranslation(0, -30.2f, 0);
+        terrain.setLocalScale(1.2f);
 
-
-//        terrain = blenderLoader.load
+        Material testMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
         
-        terrain = assetManager.loadModel("Scenes/blender/terrain2.j3o");
-        //        terrain = assetManager.loadModel("Scenes/terrain/terrain.j3o");
-        //        terrain = assetManager.loadModel("Scenes/blender/terrain_blender_sub.j3o");
-//        terrain = assetManager.loadModel("Scenes/terrain/terrain_island.j3o");
-        terrain.setLocalTranslation(0, -50.2f, 0);
-        terrain.setLocalScale(3);
+        Texture grass = assetManager.loadTexture("Textures/terrain/grass.jpg");
+        Texture cliffs = assetManager.loadTexture("Textures/terrain/cliffs.jpg");
+        Texture dirt = assetManager.loadTexture("Textures/terrain/dirt.jpg");
+        Texture alphaMap = assetManager.loadTexture("Textures/terrain/alphamap.png");
         
+        grass.setWrap(WrapMode.Repeat);
+        cliffs.setWrap(WrapMode.Repeat);
+        dirt.setWrap(WrapMode.Repeat);
         
-        Material terrain_mat = new Material(assetManager,  // Create new material and
-                "Common/MatDefs/Light/Lighting.j3md");
-
-//        Material terrain_mat = new Material(assetManager,  // Create new material and
-//                "Common/MatDefs/Terrain/TerrainLighting.j3md");
-        terrain_mat.setTexture("DiffuseMap", assetManager.loadTexture("Textures/Terrain/Pond/Pond.jpg"));
-        terrain_mat.setTexture("NormalMap", assetManager.loadTexture("Textures/Terrain/Pond/Pond_normal.png"));
-        terrain_mat.setFloat("Shininess", 5f); // [1,128]
-//        terrain_mat.setTexture("DiffuseMap", assetManager.loadTexture(
-//                "Textures/Terrain/Pond/Pond.jpg"));
-//        terrain_mat.setTexture("DiffuseMap", assetManager.loadTexture(
-//                "Textures/Terrain/Pond/Pond.jpg"));
-        terrain.setMaterial(terrain_mat);
+        testMaterial.setTexture("DiffuseMap", grass);
+        testMaterial.setTexture("DiffuseMap_1", cliffs);
+        testMaterial.setTexture("DiffuseMap_2", dirt);
+        testMaterial.setTexture("AlphaMap", alphaMap);
         
+        testMaterial.setFloat("DiffuseMap_0_scale", 0.1f);
+        testMaterial.setFloat("DiffuseMap_1_scale", 0.1f);
+        testMaterial.setFloat("DiffuseMap_2_scale", 0.1f);
+                
+        terrain.setMaterial(testMaterial);
         
 //        fpp     = new FilterPostProcessor(assetManager);
         water   = new WaterFilter(rootNode, lightDir);

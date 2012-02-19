@@ -7,7 +7,6 @@ package testgame.game;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import java.util.concurrent.Callable;
 
 /**
  *
@@ -53,7 +52,7 @@ public class Game extends AbstractAppState {
         player.initPlayer();
         
 //        world.initPostEffects();
-        world.initSound();
+//        world.initSound();
     }
     
     public void initWorld() {

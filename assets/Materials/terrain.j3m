@@ -1,0 +1,6 @@
+Material terrain : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+     }
+    AdditionalRenderState {
+    }
+}
