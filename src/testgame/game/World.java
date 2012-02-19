@@ -80,7 +80,6 @@ public class World extends AbstractAppState {
         terrain.setLocalScale(1.2f);
 
         Material terrainMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
-              
         terrain.setMaterial(terrainMaterial);
         
 //      fpp     = new FilterPostProcessor(assetManager);
@@ -97,10 +96,8 @@ public class World extends AbstractAppState {
     }
     
     public void attachLights() {
-        // You must add a light to make the model visible
         DirectionalLight sun = new DirectionalLight();
         AmbientLight amb = new AmbientLight();
-//        sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
         sun.setDirection(lightDir);
         
         rootNode.addLight(sun);
