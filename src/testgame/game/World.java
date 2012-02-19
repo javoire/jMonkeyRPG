@@ -43,13 +43,13 @@ public class World extends AbstractAppState {
     private AssetManager        assetManager;
     private Node                rootNode;
     private WaterFilter         water;
-    private Spatial             terrain;
+    private Spatial             world_scene;
     private ViewPort            viewPort;
     private AudioRenderer       audioRenderer;
     private Camera              camera;
     private FilterPostProcessor fpp;
     private Vector3f            lightDir = new Vector3f(-0.74319214f, -0.50267837f, 0.84856685f); // same as light source
-    private float               initialWaterHeight = -9f; // choose a value for your scene    
+    private float               initialWaterHeight = 0; // choose a value for your scene    
             
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -75,12 +75,7 @@ public class World extends AbstractAppState {
     }
 
     public void loadTerrain() {        
-        terrain = assetManager.loadModel("Scenes/terrain/terrain.j3o");
-        terrain.setLocalTranslation(0, -30.2f, 0);
-        terrain.setLocalScale(1.2f);
-
-        Material terrainMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
-        terrain.setMaterial(terrainMaterial);
+        world_scene = assetManager.loadModel("Scenes/world/world.j3o");
         
 //      fpp     = new FilterPostProcessor(assetManager);
         water   = new WaterFilter(rootNode, lightDir);
@@ -89,7 +84,7 @@ public class World extends AbstractAppState {
         water.setReflectionMapSize(128);
         fpp.addFilter(water);
         
-        TerrainLodControl lodControl = ((Node)terrain).getControl(TerrainLodControl.class);
+        TerrainLodControl lodControl = ((Node)world_scene).getControl(TerrainLodControl.class);
         
         if (lodControl != null)
             lodControl.setCamera(camera);
@@ -132,7 +127,7 @@ public class World extends AbstractAppState {
     }
     
     public void attachTerrain() {
-        rootNode.attachChild(terrain);
+        rootNode.attachChild(world_scene);
         viewPort.addProcessor(fpp);
     }
     
@@ -141,13 +136,13 @@ public class World extends AbstractAppState {
         /** 6. Add physics: */ 
         // We set up collision detection for the scene by creating a
         // compound collision shape and a static RigidBodyControl with mass zero.*/
-        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) terrain);
+        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) world_scene);
         landscape = new RigidBodyControl(terrainShape, 0);
-        terrain.addControl(landscape);
+        world_scene.addControl(landscape);
 
         // We attach the scene and the player to the rootnode and the physics space,
         // to make them appear in the game world.
-        bulletAppState.getPhysicsSpace().add(terrain);
+        bulletAppState.getPhysicsSpace().add(world_scene);
     }
     
     @Override

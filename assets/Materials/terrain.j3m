@@ -1,16 +1,16 @@
 Material terrain : Common/MatDefs/Terrain/TerrainLighting.j3md {
      MaterialParameters {
 
-		useTriPlanarMapping : 1
+		useTriPlanarMapping : true
      
      	DiffuseMap: Repeat Textures/terrain/grass.jpg
      	DiffuseMap_1: Repeat Textures/terrain/cliffs.jpg
      	DiffuseMap_2: Repeat Textures/terrain/dirt.jpg
-     	AlphaMap: Textures/terrain/alphamap.png
+     	AlphaMap: Flip Textures/terrain/alphamap.png
  
- 		DiffuseMap_0_scale: 20f
- 		DiffuseMap_1_scale: 20f
- 		DiffuseMap_2_scale: 20f
+ 		DiffuseMap_0_scale: 0.1f
+ 		DiffuseMap_1_scale: 0.1f
+ 		DiffuseMap_2_scale: 0.1f
      	
 		Shininess: 0.1f
 	
