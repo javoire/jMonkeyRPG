@@ -1,4 +1,4 @@
-dist/
-production_files/
-assets/Textures/
-build/
+dist/*
+production_files/*
+assets/Textures/*
+build/*
