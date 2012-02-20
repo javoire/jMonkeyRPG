@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--macapp-impl.xml v1.1-->
+<!--macapp-impl.xml v1.2-->
 <project name="macapp-impl" basedir="..">
     <target name="-mac-app" depends="-test-mac-app-enabled" if="is.mac.app.enabled">
         <echo>MacOSX Application Creation</echo>
-        <copy file="Info.plist" tofile="_Info.plist">
+        <copy file="resources/macapp/Info.plist" tofile="resources/macapp/_Info.plist">
             <filterchain>
                 <replacestring from="$${main.class}" to="${main.class}"/>
                 <replacestring from="$${run.jvmargs}" to="${run.jvmargs}"/>
@@ -11,13 +11,13 @@
             </filterchain>
         </copy>
         <zip destfile="${dist.dir}/${application.title}-MacOSX.zip">
-            <zipfileset file="osx-stub" filemode="755" fullpath="${application.title}.app/Contents/MacOS/JavaApplicationStub"/>
-            <zipfileset file="_Info.plist" fullpath="${application.title}.app/Contents/Info.plist"/>
-            <zipfileset file="osx-icon.icns" fullpath="${application.title}.app/Contents/Resources/GenericApp.icns"/>
+            <zipfileset file="resources/macapp/osx-stub" filemode="755" fullpath="${application.title}.app/Contents/MacOS/JavaApplicationStub"/>
+            <zipfileset file="resources/macapp/_Info.plist" fullpath="${application.title}.app/Contents/Info.plist"/>
+            <zipfileset file="resources/macapp/osx-icon.icns" fullpath="${application.title}.app/Contents/Resources/GenericApp.icns"/>
             <zipfileset file="${dist.jar}" prefix="${application.title}.app/Contents/Resources/Java"/>
             <zipfileset dir="${dist.dir}/lib" prefix="${application.title}.app/Contents/Resources/Java/lib"/>
         </zip>
-        <delete file="_Info.plist"/>
+        <delete file="resources/macapp/_Info.plist"/>
     </target>
     <target name="-test-mac-app-enabled">
         <condition property="is.mac.app.enabled">
