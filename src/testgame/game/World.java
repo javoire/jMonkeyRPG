@@ -78,7 +78,7 @@ public class World extends AbstractAppState {
     }
 
     public void loadTerrain() {        
-//        world_scene = assetManager.loadModel("Scenes/world/world.j3o");
+        world_scene = assetManager.loadModel("Scenes/world/world.j3o");
     	
 //      fpp     = new FilterPostProcessor(assetManager);
         water   = new WaterFilter(rootNode, lightDir);
