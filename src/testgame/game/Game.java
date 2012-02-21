@@ -52,7 +52,7 @@ public class Game extends AbstractAppState {
         player.initPlayer();
         
 //        world.initPostEffects();
-//        world.initSound();
+        world.initSound();
     }
     
     public void initWorld() {

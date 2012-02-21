@@ -18,6 +18,9 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
@@ -47,7 +50,6 @@ public class World extends AbstractAppState {
     private AssetManager        assetManager;
     private Node                rootNode;
     private WaterFilter         water;
-    private Spatial             world_scene;
     private TerrainQuad			terrain;
     private ViewPort            viewPort;
     private AudioRenderer       audioRenderer;
@@ -86,10 +88,10 @@ public class World extends AbstractAppState {
     	 /** 2. Create the height map */
         AbstractHeightMap heightmap = null;
         Texture heightMapImage = assetManager.loadTexture("Models/terrain/heightmap.png");
-        heightmap = new ImageBasedHeightMap(heightMapImage.getImage(), 0.5f);
-        heightmap.setHeightScale(200);
+        heightmap = new ImageBasedHeightMap(heightMapImage.getImage(), 1f);
+        heightmap.setHeightScale(128);
         heightmap.load();
-        heightmap.smooth(0.9f, 1);
+        heightmap.smooth(1f, 2);
      
         /** 3. We have prepared material and heightmap. 
          * Now we create the actual terrain:
@@ -104,29 +106,27 @@ public class World extends AbstractAppState {
      
         /** 4. We give the terrain its material, position & scale it, and attach it. */
         terrain.setMaterial(assetManager.loadMaterial("Materials/terrain.j3m"));
-        terrain.setLocalTranslation(0, -60, 0);
-        terrain.setLocalScale(2f, 1f, 2f);
+        terrain.setLocalTranslation(0, -56.5f, 0);
+        terrain.setLocalScale(1f, 0.85f, 1f);
         rootNode.attachChild(terrain);
      
         /** 5. The LOD (level of detail) depends on were the camera is: */
         TerrainLodControl control = new TerrainLodControl(terrain, camera);
         terrain.addControl(control);
 
-        //      fpp     = new FilterPostProcessor(assetManager);
-//        water   = new WaterFilter(rootNode, lightDir);
-//        
-//        water.setWaterHeight(initialWaterHeight);
-//        water.setReflectionMapSize(128);
-//        fpp.addFilter(water);
+//              fpp     = new FilterPostProcessor(assetManager);
         
-//        TerrainLodControl lodControl = ((Node)world_scene).getControl(TerrainLodControl.class);
-        
+        water   = new WaterFilter(rootNode, lightDir);
+        water.setWaterHeight(initialWaterHeight);
+        water.setReflectionMapSize(128);
+        fpp.addFilter(water);
     }
     
     public void attachLights() {
         DirectionalLight sun = new DirectionalLight();
         AmbientLight amb = new AmbientLight();
         sun.setDirection(lightDir);
+        amb.setColor(new ColorRGBA(1, 1, 0.6f, 1));
         
         rootNode.addLight(sun);
         rootNode.addLight(amb);
@@ -135,8 +135,6 @@ public class World extends AbstractAppState {
     }
     
     public void initPostEffects() {
-//        FilterPostProcessor fpp = new FilterPostProcessor(assetManager);
-//        fpp = new FilterPostProcessor(assetManager);
         BloomFilter bloom       = new BloomFilter();
         
         bloom.setBloomIntensity(0.05f);
@@ -145,7 +143,6 @@ public class World extends AbstractAppState {
         bloom.setDownSamplingFactor(5f);
         
         fpp.addFilter(bloom);
-        
         viewPort.addProcessor(fpp);
     }
     
@@ -154,7 +151,7 @@ public class World extends AbstractAppState {
         AudioNode waves = new AudioNode(assetManager, "Sound/Environment/Ocean Waves.ogg", false);
         
         waves.setLooping(true);
-        waves.setVolume(0.6f);
+        waves.setVolume(0.05f);
         
         audioRenderer.playSource(waves);
     }
