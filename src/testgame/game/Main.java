@@ -32,7 +32,6 @@ public class Main extends SimpleApplication {
 //        app.setDisplayFps(true); // nullpointer exception
 //        app.setDisplayStatView(true); // stats on screen
 
-
         world           = new World(rootNode);
         game            = new Game();
         gui             = new Gui(guiNode, guiFont, settings);

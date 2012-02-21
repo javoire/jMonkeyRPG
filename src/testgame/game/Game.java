@@ -38,30 +38,26 @@ public class Game extends AbstractAppState {
         
         running = true;
         
-        initWorld();
+        loadWorld();
         
         return running;
     }
     
-    public void loadResources() { 
+    public void loadWorld() { 
+    	/* WORLD */
         world.loadTerrain();
+        world.loadTerrainModels();
+        world.loadLights();
+        world.loadSky();
         world.initWorldPhysics();
-
-        gui.initGui();
-               
-        player.initPlayer();
-        
-//        world.initPostEffects();
+//      world.initPostEffects();
         world.initSound();
-    }
-    
-    public void initWorld() {
-        // Load
-        loadResources();
+
+        /* GUI */
+        gui.initGui();
         
-        // attach to space
-        world.attachLights();
-        world.attachTerrain();
+        /* PLAYER */
+        player.initPlayer();
     }
     
     @Override
