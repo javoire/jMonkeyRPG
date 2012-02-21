@@ -46,8 +46,6 @@ public class Main extends SimpleApplication {
         stateManager.attach(gui);
         stateManager.attach(player);
         
-//        assetManager.registerLoader(BlenderLoader.class, "blend");
-
         viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 
         flyCam.setMoveSpeed(30);
@@ -64,7 +62,7 @@ public class Main extends SimpleApplication {
     public void simpleUpdate(float tpf) {
         game.startGame(); // cannot be called in init
 
-//        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
     }
 
 }
