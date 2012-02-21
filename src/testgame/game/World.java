@@ -29,6 +29,8 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.shadow.BasicShadowRenderer;
+import com.jme3.shadow.PssmShadowRenderer;
 //import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.terrain.Terrain;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
@@ -46,20 +48,21 @@ import com.jme3.water.WaterFilter;
  */
 public class World extends AbstractAppState {
 
-	private BulletAppState bulletAppState;
-	private RigidBodyControl landscape;
-	private AssetManager assetManager;
-	private Node rootNode;
-	private WaterFilter water;
-	private TerrainQuad terrain;
-	private ViewPort viewPort;
-	private Spatial tree;
-	private AudioRenderer audioRenderer;
-	private Camera camera;
+	private BulletAppState 		bulletAppState;
+	private RigidBodyControl 	landscape;
+	private AssetManager 		assetManager;
+	private Node 				rootNode;
+	private WaterFilter 		water;
+	private TerrainQuad 		terrain;
+	private ViewPort 			viewPort;
+	private Spatial 			tree1, tree2, tree3, tree4;
+	private AudioRenderer 		audioRenderer;
+	private Camera 				camera;
+	private Material			terrainMaterial;
+	private PssmShadowRenderer	pssmRenderer;
 	private FilterPostProcessor fpp;
-	private Vector3f lightDir = new Vector3f(-0.74319214f, -0.50267837f,
-			0.84856685f); // same as light source
-	private float initialWaterHeight = 0; // choose a value for your scene
+	private Vector3f 			lightDir = new Vector3f(-0.74319214f, -0.50267837f,0.84856685f); // same as light source
+	private float 				initialWaterHeight = 0; // choose a value for your scene
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
@@ -83,14 +86,65 @@ public class World extends AbstractAppState {
 	public World(Node rootNode) {
 		this.rootNode = rootNode;
 	}
+	
+	public void loadGrass() {
+//		http://jmonkeyengine.org/wiki/doku.php/jme3:contributions:vegetationsystem:grass
+//		http://jmonkeyengine.org/wiki/doku.php/jme3:contributions:vegetationsystem:trees
+		
+		//Step 1 - set up the forester.
+//		forester = Forester.getInstance();
+//		forester.initialize(rootNode, camera, terrain, app);
+//		 
+//		//Step 2 - set up the grassloader.
+//		GrassLoader grassLoader = forester.createGrassLoader(512,4,250f, 20f);
+//		 
+//		//Step 3 - set up the datagrid (using the default uniform distribution provider here).
+//		UDGrassProvider ud = grassLoader.createUDProvider();
+//		ud.setBounds(-1, 1, -1, 1);
+//		 
+//		 
+//		//Step 4 - set up a grass layer
+//		 
+//		Material grassMat = assetManager.loadMaterial("Grass.j3m");
+//		 
+//		GrassLayer layer = grassLoader.addLayer(grassMat,MeshType.CROSSQUADS);
+//		 
+//		layer.setLocalDensityFactor(0.1f);
+//		layer.setMinHeight(2.f);
+//		layer.setMaxHeight(2.4f);
+//		layer.setMinWidth(2.f);
+//		layer.setMaxWidth(2.4f);
+	}
+	
+	public void loadShadows () {
+		rootNode.setShadowMode(ShadowMode.Off); // off allt sen aktivera separat
+		pssmRenderer = new PssmShadowRenderer(assetManager, 1024, 3);
+	    pssmRenderer.setDirection(new Vector3f(lightDir).normalizeLocal()); // light direction
+	    pssmRenderer.setShadowIntensity(0.2f);
+	    viewPort.addProcessor(pssmRenderer);	}
 
 	public void loadTerrainModels() {
 //    	ShadowMode treeShadow = 
-    	
-    	tree = assetManager.loadModel("Models/tree/tree.j3o");
-    	tree.setLocalTranslation(0, 0, 0);
-//    	tree.setShadowMode(ShadowMode)
-    	rootNode.attachChild(tree);
+		
+    	tree1 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+    	tree2 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+    	tree3 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+//    	tree4 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+    	tree1.setLocalTranslation(10, 2, 0);
+    	tree2.setLocalTranslation(-4, 4, -4);
+    	tree3.setLocalTranslation(10, 4, 10);
+    	tree1.setLocalScale(3);
+    	tree2.setLocalScale(3.5f);
+    	tree3.setLocalScale(2.6f);
+    	tree1.setLocalRotation(new Quaternion(0, 0.3f, 0, 0));
+    	tree1.setLocalRotation(new Quaternion(0, 0.9f, 0, 0));
+    	tree1.setLocalRotation(new Quaternion(0, 0.1f, 0, 0));
+    	tree1.setShadowMode(ShadowMode.Cast);
+    	tree2.setShadowMode(ShadowMode.Cast);
+    	tree3.setShadowMode(ShadowMode.Cast);
+    	rootNode.attachChild(tree1);
+    	rootNode.attachChild(tree2);
+    	rootNode.attachChild(tree3);
     }
 
 	public void loadTerrain() {
@@ -113,20 +167,25 @@ public class World extends AbstractAppState {
 		 */
 		int patchSize = 65;
 		terrain = new TerrainQuad("my terrain", patchSize, 513, heightmap.getHeightMap());
-		terrain.setMaterial(assetManager.loadMaterial("Materials/terrain.j3m"));
-		terrain.setLocalTranslation(0, -30f, 0);
+		terrainMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
+//		terrainMaterial.getAdditionalRenderState().setWireframe(true); // debug
+		terrain.setMaterial(terrainMaterial);
+		terrain.setLocalTranslation(0, -30.5f, 0);
 		// terrain.setLocalRotation(new Quaternion(0, 1f, 0, 1f)); //buggig man går långsamt
 		terrain.setLocalScale(1f, 1f, 1f);
 		rootNode.attachChild(terrain);
+		
+		terrain.setShadowMode(ShadowMode.Receive);
 
 		/** 5. The LOD (level of detail) depends on were the camera is: */
 		TerrainLodControl control = new TerrainLodControl(terrain, camera);
 		terrain.addControl(control);
 
-		// water = new WaterFilter(rootNode, lightDir);
-		// water.setWaterHeight(initialWaterHeight);
-		// water.setReflectionMapSize(128);
-		// fpp.addFilter(water);
+		water = new WaterFilter(rootNode, lightDir);
+		water.setWaterHeight(initialWaterHeight);
+		water.setReflectionMapSize(128);
+		fpp.addFilter(water);
+		viewPort.addProcessor(fpp);
 	}
 	
 	public void loadSky() {
@@ -173,8 +232,7 @@ public class World extends AbstractAppState {
 		// We set up collision detection for the scene by creating a
 		// compound collision shape and a static RigidBodyControl with mass
 		// zero.*/
-		CollisionShape terrainShape = CollisionShapeFactory
-				.createMeshShape((Node) terrain);
+		CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) terrain);
 		landscape = new RigidBodyControl(terrainShape, 0);
 		terrain.addControl(landscape);
 

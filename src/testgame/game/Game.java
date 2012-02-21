@@ -49,6 +49,7 @@ public class Game extends AbstractAppState {
         world.loadTerrainModels();
         world.loadLights();
         world.loadSky();
+        world.loadShadows();
         world.initWorldPhysics();
 //      world.initPostEffects();
         world.initSound();
