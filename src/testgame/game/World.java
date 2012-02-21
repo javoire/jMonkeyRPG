@@ -87,9 +87,9 @@ public class World extends AbstractAppState {
         AbstractHeightMap heightmap = null;
         Texture heightMapImage = assetManager.loadTexture("Models/terrain/heightmap.png");
         heightmap = new ImageBasedHeightMap(heightMapImage.getImage(), 0.5f);
-        heightmap.setHeightScale(128);
-        heightmap.smooth(0.5f, 1);
+        heightmap.setHeightScale(200);
         heightmap.load();
+        heightmap.smooth(0.9f, 1);
      
         /** 3. We have prepared material and heightmap. 
          * Now we create the actual terrain:
@@ -104,7 +104,7 @@ public class World extends AbstractAppState {
      
         /** 4. We give the terrain its material, position & scale it, and attach it. */
         terrain.setMaterial(assetManager.loadMaterial("Materials/terrain.j3m"));
-        terrain.setLocalTranslation(0, -87, 0);
+        terrain.setLocalTranslation(0, -60, 0);
         terrain.setLocalScale(2f, 1f, 2f);
         rootNode.attachChild(terrain);
      
@@ -113,11 +113,11 @@ public class World extends AbstractAppState {
         terrain.addControl(control);
 
         //      fpp     = new FilterPostProcessor(assetManager);
-        water   = new WaterFilter(rootNode, lightDir);
-        
-        water.setWaterHeight(initialWaterHeight);
-        water.setReflectionMapSize(128);
-        fpp.addFilter(water);
+//        water   = new WaterFilter(rootNode, lightDir);
+//        
+//        water.setWaterHeight(initialWaterHeight);
+//        water.setReflectionMapSize(128);
+//        fpp.addFilter(water);
         
 //        TerrainLodControl lodControl = ((Node)world_scene).getControl(TerrainLodControl.class);
         
