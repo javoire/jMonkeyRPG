@@ -1,9 +1,10 @@
 jMonkeyEngine 3 test game
 
 Notes to self:
-- jmonkey can't convert .blend -> .j3o with to highpoly objects.
-* solution, ??
-* trying with heightmaps. still jagged steps in landscape. try 16bit?
+- using heightmaps for terrain
+* create in blender with blend-texture
+* create rgb-alphamap in blender
+* render with orthogonal 512x512 camera in top view
 
 - If textures go black in blender, try:
 * flipping normals in edit mode or
