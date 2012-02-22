@@ -122,11 +122,11 @@ public class World extends AbstractAppState {
 	
 	public void loadShadows () {
 		rootNode.setShadowMode(ShadowMode.Off); // off allt sen aktivera separat
-		pssmRenderer = new PssmShadowRenderer(assetManager, 512, 1);
+		pssmRenderer = new PssmShadowRenderer(assetManager, 256, 1);
 	    pssmRenderer.setDirection(new Vector3f(lightDir).normalizeLocal()); // light direction
 	    pssmRenderer.setShadowIntensity(0.2f);
 	    pssmRenderer.setFilterMode(FilterMode.Bilinear);
-	    pssmRenderer.setEdgesThickness(-20);
+	    pssmRenderer.setEdgesThickness(-200);
 	    viewPort.addProcessor(pssmRenderer);	}
 
 	public void loadTerrainModels() {		
@@ -139,20 +139,19 @@ public class World extends AbstractAppState {
 		Spatial bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
     	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
     	
-    	Control leavesLodControl1 = new TreeLodControl(leaves, camera);
-    	leaves.addControl(leavesLodControl1);
-    	
+    	Control leavesLodControl1 = new LeavesLodControl(leaves, camera);
+    	leaves.addControl(leavesLodControl1);    	
+
     	tree1.attachChild(bark);
     	tree1.attachChild(leaves);
-    	
 
     	/* more trees */
     	Node tree2 = tree1.clone(true);
     	Node tree3 = tree1.clone(true);
     	
     	tree1.setLocalTranslation(40, 0, 0);
-    	tree2.setLocalTranslation(-4, 0, -4);
-    	tree3.setLocalTranslation(40, 0, 40);
+    	tree2.setLocalTranslation(-4, 0, -40);
+    	tree3.setLocalTranslation(40, 0, 140);
     	
     	tree1.setLocalScale(3);
     	tree2.setLocalScale(3.5f);
