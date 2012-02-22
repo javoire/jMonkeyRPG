@@ -29,8 +29,10 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.shadow.BasicShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer;
+import com.jme3.shadow.PssmShadowRenderer.FilterMode;
 //import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.terrain.Terrain;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
@@ -55,7 +57,6 @@ public class World extends AbstractAppState {
 	private WaterFilter 		water;
 	private TerrainQuad 		terrain;
 	private ViewPort 			viewPort;
-	private Spatial 			tree1, tree2, tree3, tree4;
 	private AudioRenderer 		audioRenderer;
 	private Camera 				camera;
 	private Material			terrainMaterial;
@@ -118,33 +119,45 @@ public class World extends AbstractAppState {
 	
 	public void loadShadows () {
 		rootNode.setShadowMode(ShadowMode.Off); // off allt sen aktivera separat
-		pssmRenderer = new PssmShadowRenderer(assetManager, 1024, 3);
+		pssmRenderer = new PssmShadowRenderer(assetManager, 512, 1);
 	    pssmRenderer.setDirection(new Vector3f(lightDir).normalizeLocal()); // light direction
 	    pssmRenderer.setShadowIntensity(0.2f);
+	    pssmRenderer.setFilterMode(FilterMode.Bilinear);
+	    pssmRenderer.setEdgesThickness(-20);
 	    viewPort.addProcessor(pssmRenderer);	}
 
 	public void loadTerrainModels() {
 //    	ShadowMode treeShadow = 
 		
-    	tree1 = assetManager.loadModel("Models/tree/tree_convert.j3o");
-    	tree2 = assetManager.loadModel("Models/tree/tree_convert.j3o");
-    	tree3 = assetManager.loadModel("Models/tree/tree_convert.j3o");
-//    	tree4 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+		Node treeNode = new Node("TreeNode");
+		
+		treeNode.setCullHint(CullHint.Dynamic);
+		
+    	Spatial tree1 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+    	Spatial tree2 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+    	Spatial tree3 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+    	
     	tree1.setLocalTranslation(10, 2, 0);
     	tree2.setLocalTranslation(-4, 4, -4);
     	tree3.setLocalTranslation(10, 4, 10);
+    	
     	tree1.setLocalScale(3);
     	tree2.setLocalScale(3.5f);
     	tree3.setLocalScale(2.6f);
+    	
     	tree1.setLocalRotation(new Quaternion(0, 0.3f, 0, 0));
     	tree1.setLocalRotation(new Quaternion(0, 0.9f, 0, 0));
     	tree1.setLocalRotation(new Quaternion(0, 0.1f, 0, 0));
+    	
     	tree1.setShadowMode(ShadowMode.Cast);
     	tree2.setShadowMode(ShadowMode.Cast);
     	tree3.setShadowMode(ShadowMode.Cast);
-    	rootNode.attachChild(tree1);
-    	rootNode.attachChild(tree2);
-    	rootNode.attachChild(tree3);
+    	
+    	/* attach */
+    	rootNode.attachChild(treeNode);
+    	treeNode.attachChild(tree1);
+    	treeNode.attachChild(tree2);
+    	treeNode.attachChild(tree3);
     }
 
 	public void loadTerrain() {
