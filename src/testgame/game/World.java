@@ -30,6 +30,7 @@ import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
+import com.jme3.scene.control.Control;
 import com.jme3.shadow.BasicShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer.FilterMode;
@@ -37,6 +38,8 @@ import com.jme3.shadow.PssmShadowRenderer.FilterMode;
 import com.jme3.terrain.Terrain;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.geomipmap.TerrainQuad;
+import com.jme3.terrain.geomipmap.lodcalc.DistanceLodCalculator;
+import com.jme3.terrain.geomipmap.lodcalc.LodCalculator;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
@@ -126,38 +129,47 @@ public class World extends AbstractAppState {
 	    pssmRenderer.setEdgesThickness(-20);
 	    viewPort.addProcessor(pssmRenderer);	}
 
-	public void loadTerrainModels() {
-//    	ShadowMode treeShadow = 
+	public void loadTerrainModels() {		
+		Node treeParent = new Node("AllTreesNode");
+		Node tree1 = new Node("Tree");
 		
-		Node treeNode = new Node("TreeNode");
+		treeParent.setCullHint(CullHint.Dynamic);
 		
-		treeNode.setCullHint(CullHint.Dynamic);
-		
-    	Spatial tree1 = assetManager.loadModel("Models/tree/tree_convert.j3o");
-    	Spatial tree2 = assetManager.loadModel("Models/tree/tree_convert.j3o");
-    	Spatial tree3 = assetManager.loadModel("Models/tree/tree_convert.j3o");
+		/* tree */
+		Spatial bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
+    	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
     	
-    	tree1.setLocalTranslation(10, 2, 0);
+    	Control leavesLodControl = new LeavesLodControl(leaves, camera);
+    	leaves.addControl(leavesLodControl);
+    	
+    	tree1.attachChild(bark);
+    	tree1.attachChild(leaves);
+
+    	/* more trees */
+    	Node tree2 = tree1.clone(true);
+    	Node tree3 = tree1.clone(true);
+    	
+    	tree1.setLocalTranslation(40, 2, 0);
     	tree2.setLocalTranslation(-4, 4, -4);
-    	tree3.setLocalTranslation(10, 4, 10);
+    	tree3.setLocalTranslation(40, 4, 40);
     	
     	tree1.setLocalScale(3);
     	tree2.setLocalScale(3.5f);
     	tree3.setLocalScale(2.6f);
     	
     	tree1.setLocalRotation(new Quaternion(0, 0.3f, 0, 0));
-    	tree1.setLocalRotation(new Quaternion(0, 0.9f, 0, 0));
-    	tree1.setLocalRotation(new Quaternion(0, 0.1f, 0, 0));
+    	tree2.setLocalRotation(new Quaternion(0, 0.9f, 0, 0));
+    	tree3.setLocalRotation(new Quaternion(0, 0.1f, 0, 0));
     	
     	tree1.setShadowMode(ShadowMode.Cast);
     	tree2.setShadowMode(ShadowMode.Cast);
     	tree3.setShadowMode(ShadowMode.Cast);
-    	
+    	    	
     	/* attach */
-    	rootNode.attachChild(treeNode);
-    	treeNode.attachChild(tree1);
-    	treeNode.attachChild(tree2);
-    	treeNode.attachChild(tree3);
+    	rootNode.attachChild(treeParent);
+     	treeParent.attachChild(tree1);
+//    	treeParent.attachChild(tree2);
+//    	treeParent.attachChild(tree3);
     }
 
 	public void loadTerrain() {
@@ -178,21 +190,21 @@ public class World extends AbstractAppState {
 		 * 3.4) As LOD step scale we supply Vector3f(1,1,1). 3.5) We supply the
 		 * prepared heightmap itself.
 		 */
-		int patchSize = 65;
+		int patchSize = 514;
 		terrain = new TerrainQuad("my terrain", patchSize, 513, heightmap.getHeightMap());
 		terrainMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
 //		terrainMaterial.getAdditionalRenderState().setWireframe(true); // debug
 		terrain.setMaterial(terrainMaterial);
 		terrain.setLocalTranslation(0, -30.5f, 0);
-		// terrain.setLocalRotation(new Quaternion(0, 1f, 0, 1f)); //buggig man går långsamt
 		terrain.setLocalScale(1f, 1f, 1f);
 		rootNode.attachChild(terrain);
 		
 		terrain.setShadowMode(ShadowMode.Receive);
 
 		/** 5. The LOD (level of detail) depends on were the camera is: */
-		TerrainLodControl control = new TerrainLodControl(terrain, camera);
-		terrain.addControl(control);
+		TerrainLodControl lodControl = new TerrainLodControl(terrain, camera);
+		lodControl.setLodCalculator(new DistanceLodCalculator(32, 3.1f));
+		terrain.addControl(lodControl);
 
 		water = new WaterFilter(rootNode, lightDir);
 		water.setWaterHeight(initialWaterHeight);
