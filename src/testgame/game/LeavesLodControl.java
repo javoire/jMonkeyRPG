@@ -54,14 +54,26 @@ public class LeavesLodControl extends AbstractControl {
     		
 //    		leaves.runControlRender(new RenderManager(viewPort.get), vp)
     		
-//			System.out.print(distance);
-//    		System.out.print("\n");
+			System.out.print(distance);
+    		System.out.print("\n");
     			
-    		if ( distance < 10 ) {
+    		if ( distance < 50 ) {
     			leaves.setLodLevel(0);
     		}
-    		if ( distance > 10 ) {
-    			leaves.setLodLevel(10);
+    		if ( distance > 70 && distance <= 90) {
+    			leaves.setLodLevel(1);
+    		}
+    		if ( distance > 90 && distance <= 110) {
+    			leaves.setLodLevel(2);
+    		}
+    		if ( distance > 110 && distance <= 130) {
+    			leaves.setLodLevel(3);
+    		}
+    		if ( distance > 130 && distance <= 200) {
+    			leaves.setLodLevel(4);
+    		}
+    		if ( distance > 200) {
+    			leaves.setLodLevel(5);
     		}
     	}
     }
