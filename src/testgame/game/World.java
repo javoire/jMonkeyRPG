@@ -17,6 +17,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
+import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Matrix3f;
@@ -24,6 +25,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
+import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
@@ -31,6 +33,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.control.Control;
+import com.jme3.scene.control.LightControl;
 import com.jme3.shadow.BasicShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer.FilterMode;
@@ -122,11 +125,12 @@ public class World extends AbstractAppState {
 	
 	public void loadShadows () {
 		rootNode.setShadowMode(ShadowMode.Off); // off allt sen aktivera separat
-		pssmRenderer = new PssmShadowRenderer(assetManager, 256, 1);
+		pssmRenderer = new PssmShadowRenderer(assetManager, 512, 1);
 	    pssmRenderer.setDirection(new Vector3f(lightDir).normalizeLocal()); // light direction
-	    pssmRenderer.setShadowIntensity(0.2f);
+	    pssmRenderer.setShadowIntensity(0.4f);
 	    pssmRenderer.setFilterMode(FilterMode.Bilinear);
-	    pssmRenderer.setEdgesThickness(-200);
+	    pssmRenderer.setEdgesThickness(30);
+	    pssmRenderer.setShadowZExtend(500);
 	    viewPort.addProcessor(pssmRenderer);	}
 
 	public void loadTerrainModels() {		
@@ -151,7 +155,7 @@ public class World extends AbstractAppState {
     	
     	tree1.setLocalTranslation(40, 0, 0);
     	tree2.setLocalTranslation(-4, 0, -40);
-    	tree3.setLocalTranslation(40, 0, 140);
+    	tree3.setLocalTranslation(40, 0, 70);
     	
     	tree1.setLocalScale(3);
     	tree2.setLocalScale(3.5f);
@@ -190,7 +194,7 @@ public class World extends AbstractAppState {
 		 * 3.4) As LOD step scale we supply Vector3f(1,1,1). 3.5) We supply the
 		 * prepared heightmap itself.
 		 */
-		int patchSize = 514;
+		int patchSize = 33;
 		terrain = new TerrainQuad("my terrain", patchSize, 513, heightmap.getHeightMap());
 		terrainMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
 //		terrainMaterial.getAdditionalRenderState().setWireframe(true); // debug
@@ -205,12 +209,6 @@ public class World extends AbstractAppState {
 		TerrainLodControl lodControl = new TerrainLodControl(terrain, camera);
 		lodControl.setLodCalculator(new DistanceLodCalculator(32, 3.1f));
 		terrain.addControl(lodControl);
-
-		water = new WaterFilter(rootNode, lightDir);
-		water.setWaterHeight(initialWaterHeight);
-		water.setReflectionMapSize(128);
-		fpp.addFilter(water);
-		viewPort.addProcessor(fpp);
 	}
 	
 	public void loadSky() {
@@ -221,22 +219,40 @@ public class World extends AbstractAppState {
 	public void loadLights() {
 		DirectionalLight sun = new DirectionalLight();
 		AmbientLight amb = new AmbientLight();
+		ColorRGBA sunColor= new ColorRGBA(0.9f,0.77f,0.52f,2f);
+		
 		sun.setDirection(lightDir);
-		amb.setColor(new ColorRGBA(0.9f,0.67f,0.32f,2f).mult(2));
+		sun.setColor(sunColor.mult(2));
+		amb.setColor(sunColor.mult(2));
+		
+		PointLight lamp_light = new PointLight();
+		lamp_light.setColor(ColorRGBA.Orange);
+		lamp_light.setRadius(100f);
+		lamp_light.setPosition(new Vector3f(0,3,0));
+//		rootNode.addLight(lamp_light);
 
 		rootNode.addLight(sun);
 		rootNode.addLight(amb);
 	}
 
 	public void initPostEffects() {
-		BloomFilter bloom = new BloomFilter();
-
-		bloom.setBloomIntensity(0.05f);
-		bloom.setBlurScale(0.4f);
-		bloom.setExposurePower(2f);
-		bloom.setDownSamplingFactor(5f);
+//		BloomFilter bloom = new BloomFilter();
+//
+//		bloom.setBloomIntensity(0.05f);
+//		bloom.setBlurScale(0.4f);
+//		bloom.setExposurePower(2f);
+//		bloom.setDownSamplingFactor(5f);
 
 		fpp.addFilter(bloom);
+		
+		water = new WaterFilter(rootNode, lightDir);
+		water.setWaterHeight(initialWaterHeight);
+		water.setReflectionMapSize(128);
+		fpp.addFilter(water);
+		
+		SSAOFilter ssaoFilter = new SSAOFilter(12.94f, 5f, 0.33f, 0.61f);
+//		fpp.addFilter(ssaoFilter);
+		
 		viewPort.addProcessor(fpp);
 	}
 

@@ -9,3 +9,6 @@ Notes to self:
 - If textures go black in blender, try:
 * flipping normals in edit mode or
 * checking/unchecking premultiply on every texture
+
+- alphatextures:
+* use png with alphachannel to make it work with shadowrenderer

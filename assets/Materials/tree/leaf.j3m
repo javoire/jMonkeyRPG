@@ -1,18 +1,18 @@
 Material leaf : Common/MatDefs/Light/Lighting.j3md {
+
+	Transparent On
+
      MaterialParameters {
      
-     	DiffuseMap: Textures/tree/leaf.jpg
-        AlphaMap : Textures/tree/leaf_alpha.jpg
-
+     	DiffuseMap: Textures/tree/leaf.png
+		UseAlpha : true
         Shininess : 1.0
-        GlowColor : 1.0 1.0 1.0 1.0
-        Specular : 1 1 1 1
-        Diffuse : 1 1 1 1
-        Ambient : 1 1 1 1
         VertexLighting : true
+        AlphaDiscardThreshold : 0.5
      }
     AdditionalRenderState {
       Blend Alpha
+      AlphaTestFalloff 0.50
       FaceCull Off
     }
 }
