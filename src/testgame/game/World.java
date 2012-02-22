@@ -129,12 +129,12 @@ public class World extends AbstractAppState {
 	    pssmRenderer.setDirection(new Vector3f(lightDir).normalizeLocal()); // light direction
 	    pssmRenderer.setShadowIntensity(0.4f);
 	    pssmRenderer.setFilterMode(FilterMode.Bilinear);
-	    pssmRenderer.setEdgesThickness(30);
+	    pssmRenderer.setEdgesThickness(0);
 	    pssmRenderer.setShadowZExtend(500);
 	    viewPort.addProcessor(pssmRenderer);	}
 
 	public void loadTerrainModels() {		
-		Node treeParent = new Node("AllTreesNode");
+		Node treeParent = new Node("treeParent");
 		Node tree1 = new Node("Tree");
 		
 		treeParent.setCullHint(CullHint.Dynamic);
@@ -142,13 +142,13 @@ public class World extends AbstractAppState {
 		/* tree */
 		Spatial bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
     	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
-    	
+    	    	
     	Control leavesLodControl1 = new LeavesLodControl(leaves, camera);
     	leaves.addControl(leavesLodControl1);    	
 
     	tree1.attachChild(bark);
     	tree1.attachChild(leaves);
-
+    	    	
     	/* more trees */
     	Node tree2 = tree1.clone(true);
     	Node tree3 = tree1.clone(true);
@@ -174,6 +174,21 @@ public class World extends AbstractAppState {
      	treeParent.attachChild(tree1);
     	treeParent.attachChild(tree2);
     	treeParent.attachChild(tree3);
+    	
+    	CollisionShape treeShape1 = CollisionShapeFactory.createMeshShape(tree1);
+    	CollisionShape treeShape2 = CollisionShapeFactory.createMeshShape(tree2);
+    	CollisionShape treeShape3 = CollisionShapeFactory.createMeshShape(tree3);
+    	
+		RigidBodyControl treeBodyControl1 = new RigidBodyControl(treeShape1, 0);
+		RigidBodyControl treeBodyControl2 = new RigidBodyControl(treeShape2, 0);
+		RigidBodyControl treeBodyControl3 = new RigidBodyControl(treeShape3, 0);
+		tree1.addControl(treeBodyControl1);
+		tree2.addControl(treeBodyControl2);
+		tree3.addControl(treeBodyControl3);
+		bulletAppState.getPhysicsSpace().add(tree1);
+		bulletAppState.getPhysicsSpace().add(tree2);
+		bulletAppState.getPhysicsSpace().add(tree3);
+
     }
 
 	public void loadTerrain() {
@@ -237,20 +252,18 @@ public class World extends AbstractAppState {
 
 	public void initPostEffects() {
 //		BloomFilter bloom = new BloomFilter();
-//
 //		bloom.setBloomIntensity(0.05f);
 //		bloom.setBlurScale(0.4f);
 //		bloom.setExposurePower(2f);
 //		bloom.setDownSamplingFactor(5f);
-
-		fpp.addFilter(bloom);
+//		fpp.addFilter(bloom);
 		
 		water = new WaterFilter(rootNode, lightDir);
 		water.setWaterHeight(initialWaterHeight);
 		water.setReflectionMapSize(128);
 		fpp.addFilter(water);
 		
-		SSAOFilter ssaoFilter = new SSAOFilter(12.94f, 5f, 0.33f, 0.61f);
+//		SSAOFilter ssaoFilter = new SSAOFilter(12.94f, 5f, 0.33f, 0.61f);
 //		fpp.addFilter(ssaoFilter);
 		
 		viewPort.addProcessor(fpp);
