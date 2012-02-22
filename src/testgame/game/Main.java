@@ -61,7 +61,7 @@ public class Main extends SimpleApplication {
     public void simpleUpdate(float tpf) {
         game.startGame(); // cannot be called in init
 
-        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+//        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
     }
 
 }

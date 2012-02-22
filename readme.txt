@@ -12,3 +12,5 @@ Notes to self:
 
 - alphatextures:
 * use png with alphachannel to make it work with shadowrenderer
+
+

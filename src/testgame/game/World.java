@@ -7,6 +7,7 @@ package testgame.game;
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.AudioNode;
@@ -25,6 +26,8 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
+import com.jme3.post.filters.FogFilter;
+import com.jme3.post.filters.LightScatteringFilter;
 import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
@@ -68,7 +71,7 @@ public class World extends AbstractAppState {
 	private Material			terrainMaterial;
 	private PssmShadowRenderer	pssmRenderer;
 	private FilterPostProcessor fpp;
-	private Vector3f 			lightDir = new Vector3f(-0.74319214f, -0.50267837f,0.84856685f); // same as light source
+	private Vector3f 			lightDir = new Vector3f(-0.74319214f, -0.20267837f,0.84856685f); // same as light source
 	private float 				initialWaterHeight = 0; // choose a value for your scene
 
 	@Override
@@ -125,7 +128,7 @@ public class World extends AbstractAppState {
 	
 	public void loadShadows () {
 		rootNode.setShadowMode(ShadowMode.Off); // off allt sen aktivera separat
-		pssmRenderer = new PssmShadowRenderer(assetManager, 512, 1);
+		pssmRenderer = new PssmShadowRenderer(assetManager, 1024, 1);
 	    pssmRenderer.setDirection(new Vector3f(lightDir).normalizeLocal()); // light direction
 	    pssmRenderer.setShadowIntensity(0.4f);
 	    pssmRenderer.setFilterMode(FilterMode.Bilinear);
@@ -142,7 +145,16 @@ public class World extends AbstractAppState {
 		/* tree */
 		Spatial bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
     	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
-    	    	
+
+    	/* hade funkat om LODlevels fanns i blenderfilen */
+//		Spatial tree = assetManager.loadModel("Models/tree/tree_convert.blend");
+//    	rootNode.attachChild(tree);
+//    	Spatial bark = rootNode.getChild("bark");
+//    	Spatial leaves = rootNode.getChild("leaves");
+//    	
+//    	bark.setMaterial(assetManager.loadMaterial("Materials/tree/stam.j3m"));
+//    	leaves.setMaterial(assetManager.loadMaterial("Materials/tree/leaf.j3m"));
+
     	Control leavesLodControl1 = new LeavesLodControl(leaves, camera);
     	leaves.addControl(leavesLodControl1);    	
 
@@ -155,7 +167,7 @@ public class World extends AbstractAppState {
     	
     	tree1.setLocalTranslation(40, 0, 0);
     	tree2.setLocalTranslation(-4, 0, -40);
-    	tree3.setLocalTranslation(40, 0, 70);
+    	tree3.setLocalTranslation(40, 1, 70);
     	
     	tree1.setLocalScale(3);
     	tree2.setLocalScale(3.5f);
@@ -174,11 +186,12 @@ public class World extends AbstractAppState {
      	treeParent.attachChild(tree1);
     	treeParent.attachChild(tree2);
     	treeParent.attachChild(tree3);
-    	
+
+    	/* physics */
+    	/* TODO: fixa så bara physics på stammen */
     	CollisionShape treeShape1 = CollisionShapeFactory.createMeshShape(tree1);
     	CollisionShape treeShape2 = CollisionShapeFactory.createMeshShape(tree2);
     	CollisionShape treeShape3 = CollisionShapeFactory.createMeshShape(tree3);
-    	
 		RigidBodyControl treeBodyControl1 = new RigidBodyControl(treeShape1, 0);
 		RigidBodyControl treeBodyControl2 = new RigidBodyControl(treeShape2, 0);
 		RigidBodyControl treeBodyControl3 = new RigidBodyControl(treeShape3, 0);
@@ -195,7 +208,8 @@ public class World extends AbstractAppState {
 
 		/** 2. Create the height map */
 		AbstractHeightMap heightmap = null;
-		Texture heightMapImage = assetManager.loadTexture("Models/terrain/heightmap.png");
+//		Texture heightMapImage = assetManager.loadTexture("Models/terrain/heightmap.png");
+		Texture heightMapImage = assetManager.loadTexture("Models/terrain/heightmap_256.png");
 		heightmap = new ImageBasedHeightMap(heightMapImage.getImage(), 1f);
 		heightmap.setHeightScale(60);
 		heightmap.load();
@@ -210,12 +224,12 @@ public class World extends AbstractAppState {
 		 * prepared heightmap itself.
 		 */
 		int patchSize = 33;
-		terrain = new TerrainQuad("my terrain", patchSize, 513, heightmap.getHeightMap());
+		terrain = new TerrainQuad("my terrain", patchSize, 257, heightmap.getHeightMap());
 		terrainMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
 //		terrainMaterial.getAdditionalRenderState().setWireframe(true); // debug
 		terrain.setMaterial(terrainMaterial);
 		terrain.setLocalTranslation(0, -30.5f, 0);
-		terrain.setLocalScale(1f, 1f, 1f);
+		terrain.setLocalScale(2f, 1f, 2f);
 		rootNode.attachChild(terrain);
 		
 		terrain.setShadowMode(ShadowMode.Receive);
@@ -260,8 +274,26 @@ public class World extends AbstractAppState {
 		
 		water = new WaterFilter(rootNode, lightDir);
 		water.setWaterHeight(initialWaterHeight);
-		water.setReflectionMapSize(128);
+		water.setReflectionMapSize(256);
+		water.setReflectionDisplace(10);
+		water.setWaterTransparency(0.2f);
 		fpp.addFilter(water);
+
+		/* light scattering */
+//        Vector3f lightPos = lightDir.multLocal(-3000);
+//        LightScatteringFilter lightFilter = new LightScatteringFilter(lightPos);
+//        lightFilter.setLightDensity(0.3f);
+//        lightFilter.setBlurWidth(2f);
+//        lightFilter.setBlurStart(0.01f);
+//        fpp.addFilter(lightFilter);
+		
+		
+		/* fog */
+//        FogFilter fog = new FogFilter();
+//        fog.setFogColor(new ColorRGBA(0.9f, 0.9f, 0.9f, 1.0f));
+//        fog.setFogDistance(900);
+//        fog.setFogDensity(1.0f);
+//        fpp.addFilter(fog);
 		
 //		SSAOFilter ssaoFilter = new SSAOFilter(12.94f, 5f, 0.33f, 0.61f);
 //		fpp.addFilter(ssaoFilter);
