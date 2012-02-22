@@ -139,19 +139,20 @@ public class World extends AbstractAppState {
 		Spatial bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
     	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
     	
-    	Control leavesLodControl = new LeavesLodControl(leaves, camera);
-    	leaves.addControl(leavesLodControl);
+    	Control leavesLodControl1 = new TreeLodControl(leaves, camera);
+    	leaves.addControl(leavesLodControl1);
     	
     	tree1.attachChild(bark);
     	tree1.attachChild(leaves);
+    	
 
     	/* more trees */
     	Node tree2 = tree1.clone(true);
     	Node tree3 = tree1.clone(true);
     	
-    	tree1.setLocalTranslation(40, 2, 0);
-    	tree2.setLocalTranslation(-4, 4, -4);
-    	tree3.setLocalTranslation(40, 4, 40);
+    	tree1.setLocalTranslation(40, 0, 0);
+    	tree2.setLocalTranslation(-4, 0, -4);
+    	tree3.setLocalTranslation(40, 0, 40);
     	
     	tree1.setLocalScale(3);
     	tree2.setLocalScale(3.5f);
@@ -168,8 +169,8 @@ public class World extends AbstractAppState {
     	/* attach */
     	rootNode.attachChild(treeParent);
      	treeParent.attachChild(tree1);
-//    	treeParent.attachChild(tree2);
-//    	treeParent.attachChild(tree3);
+    	treeParent.attachChild(tree2);
+    	treeParent.attachChild(tree3);
     }
 
 	public void loadTerrain() {
