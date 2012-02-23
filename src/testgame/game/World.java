@@ -146,15 +146,6 @@ public class World extends AbstractAppState {
 		Spatial bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
     	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
 
-    	/* hade funkat om LODlevels fanns i blenderfilen */
-//		Spatial tree = assetManager.loadModel("Models/tree/tree_convert.blend");
-//    	rootNode.attachChild(tree);
-//    	Spatial bark = rootNode.getChild("bark");
-//    	Spatial leaves = rootNode.getChild("leaves");
-//    	
-//    	bark.setMaterial(assetManager.loadMaterial("Materials/tree/stam.j3m"));
-//    	leaves.setMaterial(assetManager.loadMaterial("Materials/tree/leaf.j3m"));
-
     	Control leavesLodControl1 = new LeavesLodControl(leaves, camera);
     	leaves.addControl(leavesLodControl1);    	
 
@@ -164,48 +155,64 @@ public class World extends AbstractAppState {
     	/* more trees */
     	Node tree2 = tree1.clone(true);
     	Node tree3 = tree1.clone(true);
+    	Node tree4 = tree1.clone(true);
+    	Node tree5 = tree1.clone(true);
     	
-    	tree1.setLocalTranslation(40, 0, 0);
-    	tree2.setLocalTranslation(-4, 0, -40);
-    	tree3.setLocalTranslation(40, 1, 70);
+    	tree1.setLocalTranslation(-8, 2, 60);
+    	tree2.setLocalTranslation(6, 2, 82);
+    	tree3.setLocalTranslation(74, 2, 75);
+    	tree4.setLocalTranslation(103, 2, 66);
+    	tree5.setLocalTranslation(81, 2, 44);
     	
-    	tree1.setLocalScale(3);
+    	tree1.setLocalScale(4);
     	tree2.setLocalScale(3.5f);
-    	tree3.setLocalScale(2.6f);
+    	tree3.setLocalScale(3.7f);
+    	tree4.setLocalScale(3.0f);
+    	tree5.setLocalScale(4f);
     	
-    	tree1.setLocalRotation(new Quaternion(0, 0.3f, 0, 0));
-    	tree2.setLocalRotation(new Quaternion(0, 0.9f, 0, 0));
-    	tree3.setLocalRotation(new Quaternion(0, 0.1f, 0, 0));
+    	tree1.setLocalRotation(new Quaternion(0, -0.04f, 0, 0));
+    	tree2.setLocalRotation(new Quaternion(0, 0.37f, 0, 0));
+    	tree3.setLocalRotation(new Quaternion(0, 0.21f, 0, 0));
+    	tree4.setLocalRotation(new Quaternion(0, 0.04f, 0, 0));
+    	tree5.setLocalRotation(new Quaternion(0, 0.08f, 0, 0));
     	
-    	tree1.setShadowMode(ShadowMode.Cast);
-    	tree2.setShadowMode(ShadowMode.Cast);
-    	tree3.setShadowMode(ShadowMode.Cast);
-    	    	
+    	treeParent.setShadowMode(ShadowMode.Cast);
+
     	/* attach */
     	rootNode.attachChild(treeParent);
      	treeParent.attachChild(tree1);
     	treeParent.attachChild(tree2);
     	treeParent.attachChild(tree3);
+    	treeParent.attachChild(tree4);
+    	treeParent.attachChild(tree5);
 
     	/* physics */
     	/* TODO: fixa så bara physics på stammen */
     	CollisionShape treeShape1 = CollisionShapeFactory.createMeshShape(tree1);
     	CollisionShape treeShape2 = CollisionShapeFactory.createMeshShape(tree2);
     	CollisionShape treeShape3 = CollisionShapeFactory.createMeshShape(tree3);
+    	CollisionShape treeShape4 = CollisionShapeFactory.createMeshShape(tree4);
+    	CollisionShape treeShape5 = CollisionShapeFactory.createMeshShape(tree5);
 		RigidBodyControl treeBodyControl1 = new RigidBodyControl(treeShape1, 0);
 		RigidBodyControl treeBodyControl2 = new RigidBodyControl(treeShape2, 0);
 		RigidBodyControl treeBodyControl3 = new RigidBodyControl(treeShape3, 0);
+		RigidBodyControl treeBodyControl4 = new RigidBodyControl(treeShape4, 0);
+		RigidBodyControl treeBodyControl5 = new RigidBodyControl(treeShape5, 0);
 		tree1.addControl(treeBodyControl1);
 		tree2.addControl(treeBodyControl2);
 		tree3.addControl(treeBodyControl3);
+		tree4.addControl(treeBodyControl4);
+		tree5.addControl(treeBodyControl5);
 		bulletAppState.getPhysicsSpace().add(tree1);
 		bulletAppState.getPhysicsSpace().add(tree2);
 		bulletAppState.getPhysicsSpace().add(tree3);
+		bulletAppState.getPhysicsSpace().add(tree4);
+		bulletAppState.getPhysicsSpace().add(tree5);
 
     }
 
 	public void loadTerrain() {
-
+				
 		/** 2. Create the height map */
 		AbstractHeightMap heightmap = null;
 //		Texture heightMapImage = assetManager.loadTexture("Models/terrain/heightmap.png");
@@ -230,6 +237,13 @@ public class World extends AbstractAppState {
 		terrain.setMaterial(terrainMaterial);
 		terrain.setLocalTranslation(0, -30.5f, 0);
 		terrain.setLocalScale(2f, 1f, 2f);
+
+//		rotation buggggggar slopes, man går långasmt
+		//		Vector3f axis = Vector3f.UNIT_Y; // this equals (0, 1, 0) and does not require to create a new object
+//		float angle = -3.14f/4;
+//		Quaternion rootRotation = rootNode.getLocalRotation().fromAngleAxis(angle, axis);
+//		terrain.setLocalRotation(rootRotation);
+
 		rootNode.attachChild(terrain);
 		
 		terrain.setShadowMode(ShadowMode.Receive);
@@ -276,7 +290,8 @@ public class World extends AbstractAppState {
 		water.setWaterHeight(initialWaterHeight);
 		water.setReflectionMapSize(256);
 		water.setReflectionDisplace(10);
-		water.setWaterTransparency(0.2f);
+		water.setFoamExistence(new Vector3f(0.45f,4.35f,3));
+		water.setWaterTransparency(0.02f);
 		fpp.addFilter(water);
 
 		/* light scattering */
