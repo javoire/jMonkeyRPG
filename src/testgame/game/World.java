@@ -87,7 +87,7 @@ public class World extends AbstractAppState {
 		audioRenderer 		= app.getAudioRenderer();
 		camera 				= app.getCamera();
 
-		assetManager.registerLocator("./assets/", FileLocator.class.getName());
+		assetManager.registerLocator("./assets/", FileLocator.class.getName()); // kommentera bort denna vid build!!!
 
 		fpp = new FilterPostProcessor(assetManager);
 
@@ -290,8 +290,8 @@ public class World extends AbstractAppState {
 		water.setWaterHeight(initialWaterHeight);
 		water.setReflectionMapSize(256);
 		water.setReflectionDisplace(10);
-		water.setFoamExistence(new Vector3f(0.45f,4.35f,3));
-		water.setWaterTransparency(0.02f);
+		water.setFoamExistence(new Vector3f(0.45f,4.35f,1.5f));
+		water.setWaterTransparency(0.08f);
 		fpp.addFilter(water);
 
 		/* light scattering */
@@ -301,7 +301,6 @@ public class World extends AbstractAppState {
 //        lightFilter.setBlurWidth(2f);
 //        lightFilter.setBlurStart(0.01f);
 //        fpp.addFilter(lightFilter);
-		
 		
 		/* fog */
 //        FogFilter fog = new FogFilter();
@@ -319,10 +318,10 @@ public class World extends AbstractAppState {
 	public void initSound() {
 		// AudioNode nature = new AudioNode(assetManager,
 		// "Sound/Environment/Nature.ogg", false);
-		AudioNode waves = new AudioNode(assetManager,"Sound/Environment/Ocean Waves.ogg", false);
+		AudioNode waves = new AudioNode(assetManager,"Sounds/Environment/Ocean Waves.ogg", false);
 
 		waves.setLooping(true);
-		waves.setVolume(0.05f);
+		waves.setVolume(0.01f);
 
 		audioRenderer.playSource(waves);
 	}
