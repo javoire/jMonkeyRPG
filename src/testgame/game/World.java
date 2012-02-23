@@ -72,7 +72,7 @@ public class World extends AbstractAppState {
 	private PssmShadowRenderer	pssmRenderer;
 	private FilterPostProcessor fpp;
 	private Vector3f 			lightDir = new Vector3f(-0.74319214f, -0.20267837f,0.84856685f); // same as light source
-	private float 				initialWaterHeight = 0; // choose a value for your scene
+	private float 				initialWaterHeight = -1; // choose a value for your scene
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
