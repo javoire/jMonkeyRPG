@@ -22,7 +22,7 @@ public class Main extends SimpleApplication {
         java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
         
         Main app = new Main();
-        app.setShowSettings(true); // splash screen
+        app.setShowSettings(false); // splash screen
         app.start();
     }
 
