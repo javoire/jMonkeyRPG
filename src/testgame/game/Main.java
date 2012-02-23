@@ -22,7 +22,13 @@ public class Main extends SimpleApplication {
         java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
         
         Main app = new Main();
-        app.setShowSettings(false); // splash screen
+        AppSettings appSettings = new AppSettings(true);
+        
+        appSettings.setTitle("JDs fantastic game of awesome adventures...");
+        
+        
+        app.setShowSettings(true); // splash screen
+        app.setSettings(appSettings);
         app.start();
     }
 
