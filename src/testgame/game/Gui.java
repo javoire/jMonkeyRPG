@@ -8,10 +8,17 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
+import com.jme3.audio.AudioRenderer;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
+import com.jme3.input.FlyByCamera;
+import com.jme3.input.InputManager;
+import com.jme3.niftygui.NiftyJmeDisplay;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
+
+import de.lessvoid.nifty.Nifty;
 
 /**
  *
@@ -22,7 +29,11 @@ public class Gui extends AbstractAppState {
     private Node guiNode;
     private AppSettings settings;
     private AssetManager assetManager;
+    private InputManager inputManager;
+    private AudioRenderer audioRenderer;
+    private ViewPort guiViewPort;
     private BitmapFont guiFont;
+    private FlyByCamera flyCam;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -30,12 +41,16 @@ public class Gui extends AbstractAppState {
         //TODO: initialize your AppState, e.g. attach spatials to rootNode
         //this is called on the OpenGL thread after the AppState has been attached
         this.assetManager = app.getAssetManager();
+        this.inputManager = app.getInputManager();
+        this.audioRenderer = app.getAudioRenderer();
+        this.guiViewPort = app.getGuiViewPort();
     }
     
-    public Gui (Node guiNode, BitmapFont guiFont,  AppSettings settings) {
+    public Gui (Node guiNode, BitmapFont guiFont,  AppSettings settings, FlyByCamera flyCam) {
         this.guiNode = guiNode;
         this.settings = settings;
         this.guiFont = guiFont;
+        this.flyCam = flyCam;
     }
     
     @Override
@@ -45,6 +60,22 @@ public class Gui extends AbstractAppState {
     
     public void initGui() {
         initCrosshair();
+    }
+    
+    public void loadStartMenu() {
+    	NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
+		
+    	/** Create a new NiftyGUI object */
+		Nifty nifty = niftyDisplay.getNifty();
+		
+		/** Read your XML and initialize your custom ScreenController */
+//		nifty.fromXml("Interface/screen.xml", "start");
+		nifty.fromXml("Interface/screen.xml", "start", new StartScreen(null));
+		
+		guiViewPort.addProcessor(niftyDisplay);
+		
+		// disable the fly cam
+		flyCam.setDragToRotate(true);
     }
     
     public void initCrosshair() {

@@ -2,6 +2,7 @@ package testgame.game;
  
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.input.FlyByCamera;
 import com.jme3.math.ColorRGBA;
 //import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.system.AppSettings;
@@ -15,10 +16,7 @@ public class Main extends SimpleApplication {
     private Player          player;
     private BulletAppState  bulletAppState;
     
-    public static void main(String[] args) {
-        AppSettings settings = new AppSettings(true);
-        settings.setTitle("Awesome Game :D");
-        
+    public static void main(String[] args) {        
         java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
         
         Main app = new Main();
@@ -26,8 +24,7 @@ public class Main extends SimpleApplication {
         
         appSettings.setTitle("JDs fantastic game of awesome adventures...");
         
-        
-        app.setShowSettings(true); // splash screen
+        app.setShowSettings(false); // splash screen
         app.setSettings(appSettings);
         app.start();
     }
@@ -40,7 +37,7 @@ public class Main extends SimpleApplication {
 
         world           = new World(rootNode);
         game            = new Game();
-        gui             = new Gui(guiNode, guiFont, settings);
+        gui             = new Gui(guiNode, guiFont, settings, flyCam);
         player          = new Player();
         bulletAppState  = new BulletAppState();
 
@@ -54,18 +51,18 @@ public class Main extends SimpleApplication {
         viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 
         flyCam.setMoveSpeed(30);
-
+        
 //        this.loadStatsView();
 //        this.loadFPSText();
 //        this.setDisplayFps(true);
 //        this.setDisplayStatView(false);
     }
     
-     
-    
   @Override
     public void simpleUpdate(float tpf) {
-        game.startGame(); // cannot be called in init
+	  
+	  	gui.loadStartMenu();
+//        game.startGame(); // cannot be called in init
 
 //        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
     }
