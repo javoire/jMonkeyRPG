@@ -87,8 +87,6 @@ public class World extends AbstractAppState {
 		audioRenderer 		= app.getAudioRenderer();
 		camera 				= app.getCamera();
 
-		assetManager.registerLocator("./assets/", FileLocator.class.getName()); // kommentera bort denna vid build!!!
-
 		fpp = new FilterPostProcessor(assetManager);
 
 	}

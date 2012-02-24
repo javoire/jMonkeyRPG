@@ -4,18 +4,16 @@
 	xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty.xsd http://nifty-gui.sourceforge.net/nifty.xsd">
 	<useControls filename="nifty-default-controls.xml" />
 	<useStyles filename="nifty-default-styles.xml" />
-	<screen id="start" controller="testgame.game.StartScreen">
-		<layer id="background" childLayout="center">
+	<screen id="start" controller="testgame.game.Gui">
+		<layer id="background" childLayout="center" >
 			<image filename="Interface/images/menu_bg.png"></image>
 		</layer>
 		<layer id="foreground" childLayout="vertical">
-			<panel id="panel_mid" height="100%" width="50%" align="center"
-				childLayout="center">
-				<control name="button" id="StartButton" align="center"
-					valign="center" visibleToMouse="true">
+			<panel id="panel_mid" height="100%" width="50%" align="center" childLayout="center">
+				<control name="button" label="Start" id="StartButton" align="center" valign="center" visibleToMouse="true">
+					<interact onClick="startGame(enterWorld)" />
 				</control>
-<!-- 				<image filename="Interface/images/button_start.png"></image> -->
-<!-- 				<interact onClick="startGame(enterWorld)" ></interact> -->
+<!-- detta ska in style.xml..	<image filename="Interface/images/button_start.png"></image> -->
 			</panel>
 		</layer>
 	</screen>
