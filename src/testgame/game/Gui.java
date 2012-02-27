@@ -33,7 +33,7 @@ public class Gui extends AbstractAppState implements ScreenController {
 	}
 	
 	public void hoverStartButton() {
-		System.out.print("tja");
+//		System.out.print("tja");
 	}
 
 	/** Nifty GUI ScreenControl methods */ 
@@ -41,12 +41,13 @@ public class Gui extends AbstractAppState implements ScreenController {
 	public void bind(Nifty nifty, Screen screen) {
 		this.nifty = nifty;
 		this.screen = screen;
-		
 	}
 	
 	public void onStartScreen() { }
 
-	public void onEndScreen() { }
+	public void onEndScreen() { 
+		System.out.print("close!");
+	}
 
 	/** jME3 AppState methods */ 
 
@@ -60,5 +61,4 @@ public class Gui extends AbstractAppState implements ScreenController {
 	public void update(float tpf) { 
 		/** jME update loop! */ 
 	}
-
 }

@@ -2,10 +2,10 @@
 <nifty xmlns="http://nifty-gui.sourceforge.net/nifty.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty.xsd http://nifty-gui.sourceforge.net/nifty.xsd">
-	<useStyles filename="nifty-default-styles.xml" />
+<!-- 	<useStyles filename="nifty-default-styles.xml" /> -->
 	<useControls filename="nifty-default-controls.xml" />
 	<screen id="start" controller="testgame.game.Gui">
-		<layer id="background" backgroundColor="black" childLayout="center" >
+		<layer id="background" backgroundColor="#000f" childLayout="center" width="100%" height="100%">
 		</layer>
 		<layer id="backgroundImage" childLayout="center" >
 			<effect>
@@ -14,18 +14,16 @@
 			<image filename="Interface/images/menu_bg.png"></image>
 		</layer>
 		<layer id="foreground" childLayout="vertical">
-<!-- 			<effect> -->
-<!-- 				<onStartScreen name="fade" /> -->
-<!-- 			</effect> -->
-			<panel id="panel_mid" height="100%" width="60%" align="center" childLayout="center" backgroundImage="Interface/images/button_start.png" >
-				<interact onMouseOver="hoverStartButton()" />
-				<control name="StartButton" id="StartButton" align="center" valign="center" visibleToMouse="true">
+			<effect>
+				<onStartScreen name="fade" />
+			</effect>
+			<panel id="panel_mid" height="480px" width="405px" align="center" childLayout="center" backgroundImage="Interface/images/start_bg.png">
+				<control name="StartButton" width="136px" height="45px" id="StartButton" align="center" valign="center" visibleToMouse="true">
 					<interact onRelease="startGame(enterWorld)" />
 					<effect>
-<!-- 						<onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/> -->
-<!-- 						<onEndScreen name="move" mode="out" direction="bottom" length="300" startDelay="0" inherit="true"/> -->
-<!-- 						<onHover name="pulsate" scaleFactor="0.008" startColor="#f600" endColor="#ffff" post="true"/> -->
+						<onHover name="pulsate" scaleFactor="0.001" startColor="#f600" endColor="#fff1" post="true"/>
         			</effect>
+					<image filename="Interface/images/button_start.png"></image>
 				</control>
 <!-- detta ska in style.xml..	<image filename="Interface/images/button_start.png"></image> -->
 			</panel>
@@ -38,6 +36,9 @@
 		<layer id="foreground" childLayout="center">
 			<panel id="panel_mid" height="90%" width="100%" align="center"
 				childLayout="center">
+<!-- 				<effect> -->
+<!-- 					<onShow name="fade" start="#f" end="#0" length="2000"></onShow> -->
+<!-- 				</effect> -->
 				<image filename="Interface/images/entering_world.png" valign="bottom"></image>
 			</panel>
 		</layer>
