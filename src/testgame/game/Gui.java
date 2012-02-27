@@ -31,6 +31,10 @@ public class Gui extends AbstractAppState implements ScreenController {
 		nifty.gotoScreen(nextScreen);  // switch to another screen
 		// start the game and do some more stuff...
 	}
+	
+	public void hoverStartButton() {
+		System.out.print("tja");
+	}
 
 	/** Nifty GUI ScreenControl methods */ 
 

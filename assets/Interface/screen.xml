@@ -5,12 +5,21 @@
 	<useStyles filename="nifty-default-styles.xml" />
 	<useControls filename="nifty-default-controls.xml" />
 	<screen id="start" controller="testgame.game.Gui">
-		<layer id="background" childLayout="center" >
+		<layer id="background" backgroundColor="black" childLayout="center" >
+		</layer>
+		<layer id="backgroundImage" childLayout="center" >
+			<effect>
+				<onStartScreen name="fade" />
+			</effect>
 			<image filename="Interface/images/menu_bg.png"></image>
 		</layer>
 		<layer id="foreground" childLayout="vertical">
-			<panel id="panel_mid" height="100%" width="50%" align="center" childLayout="center">
-				<control name="button" label="Start" id="StartButton" align="center" valign="center" visibleToMouse="true">
+<!-- 			<effect> -->
+<!-- 				<onStartScreen name="fade" /> -->
+<!-- 			</effect> -->
+			<panel id="panel_mid" height="100%" width="60%" align="center" childLayout="center" backgroundImage="Interface/images/button_start.png" >
+				<interact onMouseOver="hoverStartButton()" />
+				<control name="StartButton" id="StartButton" align="center" valign="center" visibleToMouse="true">
 					<interact onRelease="startGame(enterWorld)" />
 					<effect>
 <!-- 						<onStartScreen name="move" mode="in" direction="top" length="300" startDelay="0" inherit="true"/> -->
