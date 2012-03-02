@@ -61,17 +61,7 @@ public class Main extends SimpleApplication {
 
         flyCam.setMoveSpeed(30);
         
-        
-    	/** Create a new NiftyGUI object */
-		Nifty nifty = gui.getNifty();
-		/** Read your XML and initialize your custom ScreenController */
-//		nifty.fromXml("Interface/screen.xml", "start");
-		nifty.fromXml("Interface/screen.xml", "start", new Gui(null));
-		guiViewPort.addProcessor(gui);
-		
-		// disable the fly cam
-		flyCam.setDragToRotate(true);
-        //        gui.loadStartMenu();
+//        loadStartMenu();
         
 //        this.loadStatsView();
 //        this.loadFPSText();
@@ -79,10 +69,23 @@ public class Main extends SimpleApplication {
 //        this.setDisplayStatView(false);
     }
     
+   public void loadStartMenu() {
+   		/** Create a new NiftyGUI object */
+		Nifty nifty = gui.getNifty();
+		/** Read your XML and initialize your custom ScreenController */
+		//nifty.fromXml("Interface/screen.xml", "start");
+		nifty.fromXml("Interface/screen.xml", "start", new Gui(null));
+		guiViewPort.addProcessor(gui);
+		
+		// disable the fly cam
+		flyCam.setDragToRotate(true);
+       //gui.loadStartMenu();
+   }
+    
   @Override
     public void simpleUpdate(float tpf) {
 	  
-//        game.startGame(); // cannot be called in init
+        game.startGame(); // cannot be called in init
 
 //        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
     }
