@@ -15,7 +15,7 @@ import com.jme3.app.state.AppStateManager;
 public class Game extends AbstractAppState {
     
     private World               world;
-    private BasicGui                 gui;
+    private BasicGui            basicGui;
     private Player              player;
         
     private boolean             running;
@@ -27,7 +27,7 @@ public class Game extends AbstractAppState {
         //this is called on the OpenGL thread after the AppState has been attached
         
         world           = app.getStateManager().getState(World.class);
-        gui             = app.getStateManager().getState(BasicGui.class);
+        basicGui        = app.getStateManager().getState(BasicGui.class);
         player          = app.getStateManager().getState(Player.class);
     }
     
@@ -55,7 +55,7 @@ public class Game extends AbstractAppState {
         world.initSound();
 
         /* GUI */
-        gui.initGui();
+        basicGui.initGui();
         
         /* PLAYER */
         player.initPlayer();
