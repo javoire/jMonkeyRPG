@@ -4,6 +4,8 @@
  */
 package testgame.game;
 
+import testgame.inventory.Inventory;
+
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -13,12 +15,9 @@ import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
 import com.jme3.input.FlyByCamera;
 import com.jme3.input.InputManager;
-import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
-
-import de.lessvoid.nifty.Nifty;
 
 /**
  *
@@ -40,17 +39,17 @@ public class BasicGui extends AbstractAppState {
         super.initialize(stateManager, app);
         //TODO: initialize your AppState, e.g. attach spatials to rootNode
         //this is called on the OpenGL thread after the AppState has been attached
-        this.assetManager = app.getAssetManager();
-        this.inputManager = app.getInputManager();
-        this.audioRenderer = app.getAudioRenderer();
-        this.guiViewPort = app.getGuiViewPort();
+        this.assetManager 	= app.getAssetManager();
+        this.inputManager 	= app.getInputManager();
+        this.audioRenderer 	= app.getAudioRenderer();
+        this.guiViewPort 	= app.getGuiViewPort();
     }
     
     public BasicGui (Node guiNode, BitmapFont guiFont,  AppSettings settings, FlyByCamera flyCam) {
-        this.guiNode = guiNode;
-        this.settings = settings;
-        this.guiFont = guiFont;
-        this.flyCam = flyCam;
+        this.guiNode 	= guiNode;
+        this.settings 	= settings;
+        this.guiFont 	= guiFont;
+        this.flyCam 	= flyCam;
     }
     
     @Override
@@ -73,6 +72,10 @@ public class BasicGui extends AbstractAppState {
           settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2,
           settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
         guiNode.attachChild(ch);
+    }
+    
+    public void initInventory(Inventory inventory) {
+//    	Vector<String> items = inventory.getItemList();
     }
     
     

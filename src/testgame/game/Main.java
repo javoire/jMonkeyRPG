@@ -1,17 +1,17 @@
 package testgame.game;
  
+import java.util.logging.Level;
+
+import testgame.inventory.Inventory;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.input.FlyByCamera;
 import com.jme3.math.ColorRGBA;
 import com.jme3.niftygui.NiftyJmeDisplay;
-//import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.system.AppSettings;
 
 import de.lessvoid.nifty.Nifty;
-
-import java.util.logging.Level;
  
 public class Main extends SimpleApplication {
  
@@ -45,11 +45,14 @@ public class Main extends SimpleApplication {
         game            = new Game();
         basicGui        = new BasicGui(guiNode, guiFont, settings, flyCam);
         gui				= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
-        player          = new Player();
+        player          = new Player(rootNode);
         bulletAppState  = new BulletAppState();
+        
+        player.setInventory(new Inventory(10));
 
 		assetManager.registerLocator("./assets/", FileLocator.class.getName()); // kommentera bort denna vid build!!!
-        
+		bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
+		
         // attach all statemanagers
         stateManager.attach(bulletAppState);
         stateManager.attach(world);
@@ -84,10 +87,7 @@ public class Main extends SimpleApplication {
     
   @Override
     public void simpleUpdate(float tpf) {
-	  
         game.startGame(); // cannot be called in init
-
 //        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
     }
-
 }

@@ -4,6 +4,8 @@
  */
 package testgame.game;
 
+import testgame.inventory.Inventory;
+
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -17,6 +19,7 @@ public class Game extends AbstractAppState {
     private World               world;
     private BasicGui            basicGui;
     private Player              player;
+    private Inventory			inventory;
         
     private boolean             running;
         
@@ -29,6 +32,8 @@ public class Game extends AbstractAppState {
         world           = app.getStateManager().getState(World.class);
         basicGui        = app.getStateManager().getState(BasicGui.class);
         player          = app.getStateManager().getState(Player.class);
+        
+        inventory		= player.getInventory();
     }
     
     public boolean startGame() {
@@ -56,6 +61,7 @@ public class Game extends AbstractAppState {
 
         /* GUI */
         basicGui.initGui();
+        basicGui.initInventory(inventory);
         
         /* PLAYER */
         player.initPlayer();

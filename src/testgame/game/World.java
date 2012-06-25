@@ -210,7 +210,6 @@ public class World extends AbstractAppState {
     }
 
 	public void loadTerrain() {
-				
 		/** 2. Create the height map */
 		AbstractHeightMap heightmap = null;
 //		Texture heightMapImage = assetManager.loadTexture("Models/terrain/heightmap.png");
