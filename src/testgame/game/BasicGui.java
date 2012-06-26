@@ -36,6 +36,8 @@ public class BasicGui extends AbstractAppState {
     private ViewPort guiViewPort;
     private BitmapFont guiFont;
     private FlyByCamera flyCam;
+	private int fontSize;
+	private BitmapText targetInfo;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -62,15 +64,18 @@ public class BasicGui extends AbstractAppState {
     }
     
     public void initGui() {
-        initCrosshair();
+    	guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    	fontSize = guiFont.getCharSet().getRenderedSize();
+    	targetInfo = new BitmapText(guiFont, false);
+    	targetInfo.setSize(fontSize);
+    	guiNode.attachChild(targetInfo);
     }
     
     public void initCrosshair() {
           /** A centred plus sign to help the player aim. */
 //        guiNode.detachAllChildren();
-        guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
         BitmapText ch = new BitmapText(guiFont, false);
-        ch.setSize(guiFont.getCharSet().getRenderedSize() * 4/3);
+        ch.setSize(fontSize*4/3);
         ch.setText("+"); // crosshairs
         ch.setLocalTranslation( // center
           settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2,
@@ -78,14 +83,28 @@ public class BasicGui extends AbstractAppState {
         guiNode.attachChild(ch);
     }
     
+    /**
+     * Displays info on the screen from a string.
+     * @param info Info to be shown. If it's "" nothing will be shown
+     */
+    public void displayTargetInfo(String info) {
+    	if(info.equals("")) {
+    		targetInfo.setText("");
+    	} else {
+	        targetInfo.setText(info);
+	        targetInfo.setLocalTranslation( // center under crosshair
+	          settings.getWidth() / 2 - targetInfo.getLineWidth() / 2,
+	          settings.getHeight() / 2 - targetInfo.getLineHeight()*2, 0);
+    	}
+    }
+    
     public void initInventory(Inventory inventory) {
-        guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
     	Vector<String> items = inventory.getItemList();
     	Iterator<String> i = items.iterator();
     	int j = 1;
     	while(i.hasNext()) {
 	    	BitmapText ch = new BitmapText(guiFont, false);
-	    	ch.setSize(guiFont.getCharSet().getRenderedSize());
+	    	ch.setSize(fontSize);
 	    	ch.setText(i.next());
 	        ch.setLocalTranslation(
 	        		settings.getWidth()-90, 
@@ -104,4 +123,8 @@ public class BasicGui extends AbstractAppState {
         //e.g. remove all spatials from rootNode
         //this is called on the OpenGL thread after the AppState has been detached
     }
+
+	public void clearTargetInfo() {
+		guiNode.detachChild(targetInfo);
+	}
 }

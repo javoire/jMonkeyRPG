@@ -21,7 +21,7 @@ public class HarvestingAppState extends AbstractAppState implements
 
 	@Override
 	public void update(float tpf) {
-
+		
 	}
 
 	@Override

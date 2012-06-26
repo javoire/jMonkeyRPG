@@ -3,6 +3,7 @@ package testgame.controls;
 import testgame.game.Player;
 import testgame.objects.Tree;
 
+import com.jme3.app.Application;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
@@ -16,30 +17,26 @@ public class HarvestingControl extends AbstractControl {
 	
 	// TODO check when player is in range to display amount available to harvest and allow harvest
 	public HarvestingControl() {
-		
 	}
 	
-	public HarvestingControl(Player player_) {
-		player = player_;
-		tree = (Tree) spatial;
+	public HarvestingControl(Application app) {
+
 	}
 	
 	@Override
 	public Control cloneForSpatial(Spatial spatial) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	protected void controlUpdate(float tpf) {
-		if(tree != null) {
-			
+		if(spatial != null) {
+
 		}
 	}
 
 	@Override
 	protected void controlRender(RenderManager rm, ViewPort vp) {
-		// TODO Auto-generated method stub
 		
 	}
 }

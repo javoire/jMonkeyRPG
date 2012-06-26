@@ -28,9 +28,7 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
-import com.jme3.scene.control.Control;
 import com.jme3.shadow.PssmShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer.FilterMode;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
@@ -63,6 +61,7 @@ public class World extends AbstractAppState {
 	private Vector3f 			lightDir = new Vector3f(-0.74319214f, -0.20267837f,0.84856685f); // same as light source
 	private float 				initialWaterHeight = -1; // choose a value for your scene
 	private Application			app;
+	private Node 				trees; 
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app_) {
@@ -126,19 +125,9 @@ public class World extends AbstractAppState {
 	    viewPort.addProcessor(pssmRenderer);	}
 
 	public void loadTrees() {		
-		Node treeParent = new Node("treeParent");
+		trees = new Node("treeParent");
 		Tree tree1 = new Tree(app);
-		treeParent.setCullHint(CullHint.Dynamic);
-		
-		/* tree */
-//		Tree bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
-//    	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
-
-//    	Control leavesLodControl1 = new LeavesLodControl(leaves, camera);
-//    	leaves.addControl(leavesLodControl1);    	
-
-//    	tree1.attachChild(bark);
-//    	tree1.attachChild(leaves);
+		trees.setCullHint(CullHint.Dynamic);
     	    	
     	/* more trees */
 //    	Node tree2 = tree1.clone(true);
@@ -164,11 +153,11 @@ public class World extends AbstractAppState {
 //    	tree4.setLocalRotation(new Quaternion(0, 0.04f, 0, 0));
 //    	tree5.setLocalRotation(new Quaternion(0, 0.08f, 0, 0));
 //    	
-    	treeParent.setShadowMode(ShadowMode.Cast);
+    	trees.setShadowMode(ShadowMode.Cast);
 
     	/* attach */
-    	rootNode.attachChild(treeParent);
-     	treeParent.attachChild(tree1);
+    	rootNode.attachChild(trees);
+     	trees.attachChild(tree1);
 //    	treeParent.attachChild(tree2);
 //    	treeParent.attachChild(tree3);
 //    	treeParent.attachChild(tree4);
@@ -341,5 +330,13 @@ public class World extends AbstractAppState {
 		// e.g. remove all spatials from rootNode
 		// this is called on the OpenGL thread after the AppState has been
 		// detached
+	}
+
+	public Node getTrees() {
+		return trees;
+	}
+
+	public void setTrees(Node trees) {
+		this.trees = trees;
 	}
 }

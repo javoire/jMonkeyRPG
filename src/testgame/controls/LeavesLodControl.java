@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package testgame.game;
+package testgame.controls;
 
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;

@@ -1,8 +1,9 @@
 package testgame.game;
- 
+
 import java.util.logging.Level;
 
 import testgame.appstates.HarvestingAppState;
+import testgame.appstates.PlayerTargetingAppState;
 import testgame.inventory.Inventory;
 
 import com.jme3.app.SimpleApplication;
@@ -13,82 +14,90 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.system.AppSettings;
 
 import de.lessvoid.nifty.Nifty;
- 
+
 public class Main extends SimpleApplication {
- 
-    private World           world;
-    private Game            game;
-    private BasicGui        basicGui;
-    private Player          player;
-    private BulletAppState  bulletAppState;
-    private HarvestingAppState harvestingAppState;
-    private NiftyJmeDisplay gui;
-    
-    public static void main(String[] args) {        
-        java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
-        Main app = new Main();
-        AppSettings appSettings = new AppSettings(true);
-        appSettings.setTitle("JDs fantastic game of awesome adventures...");
-        app.setShowSettings(false); // splash screen
-        app.setSettings(appSettings);
-        app.start();
-    }
 
-    @Override
-    public void simpleInitApp() {
-        
-//        app.setDisplayFps(true); // nullpointer exception
-//        app.setDisplayStatView(true); // stats on screen
+	private World world;
+	private Game game;
+	private BasicGui basicGui;
+	private Player player;
+	private BulletAppState bulletAppState;
+	private HarvestingAppState harvestingAppState;
+	private NiftyJmeDisplay gui;
+	private PlayerTargetingAppState playerTargetingAppState;
 
-        world           	= new World(rootNode);
-        game           		= new Game();
-        basicGui        	= new BasicGui(guiNode, guiFont, settings, flyCam);
-        gui					= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
-        player          	= new Player(rootNode);
-        bulletAppState  	= new BulletAppState();
-        harvestingAppState 	= new HarvestingAppState();
-        
-        player.setInventory(new Inventory(10));
+	public static void main(String[] args) {
+		java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
+		Main app = new Main();
+		AppSettings appSettings = new AppSettings(true);
+		appSettings.setTitle("JDs fantastic game of awesome adventures...");
+		app.setShowSettings(false); // splash screen
+		app.setSettings(appSettings);
+		app.start();
+	}
 
-		assetManager.registerLocator("./assets/", FileLocator.class.getName()); // kommentera bort denna vid build!!!
+	@Override
+	public void simpleInitApp() {
+
+		// app.setDisplayFps(true); // nullpointer exception
+		// app.setDisplayStatView(true); // stats on screen
+
+		world = new World(rootNode);
+		game = new Game();
+		basicGui = new BasicGui(guiNode, guiFont, settings, flyCam);
+		gui = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer,
+				guiViewPort);
+		player = new Player(rootNode);
+		bulletAppState = new BulletAppState();
+		harvestingAppState = new HarvestingAppState();
+		playerTargetingAppState = new PlayerTargetingAppState();
+
+		player.setInventory(new Inventory(10));
+
+		assetManager.registerLocator("./assets/", FileLocator.class.getName()); // kommentera
+																				// bort
+																				// denna
+																				// vid
+																				// build!!!
 		bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
-		
-        // attach all statemanagers
-        stateManager.attach(bulletAppState);
-        stateManager.attach(world);
-        stateManager.attach(game);
-        stateManager.attach(basicGui);
-        stateManager.attach(player);
-        stateManager.attach(harvestingAppState);
-        
-        viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 
-        flyCam.setMoveSpeed(30);
-        
-//        loadStartMenu();
-        
-//        this.loadStatsView();
-//        this.loadFPSText();
-//        this.setDisplayFps(true);
-//        this.setDisplayStatView(false);
-    }
-    
-   public void loadStartMenu() {
-   		/** Create a new NiftyGUI object */
+		// attach all statemanagers
+		stateManager.attach(bulletAppState);
+		stateManager.attach(world);
+		stateManager.attach(game);
+		stateManager.attach(basicGui);
+		stateManager.attach(player);
+		stateManager.attach(harvestingAppState);
+		stateManager.attach(playerTargetingAppState);
+
+		viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
+
+		flyCam.setMoveSpeed(30);
+
+		// loadStartMenu();
+
+		// this.loadStatsView();
+		// this.loadFPSText();
+		// this.setDisplayFps(true);
+		// this.setDisplayStatView(false);
+	}
+
+	public void loadStartMenu() {
+		/** Create a new NiftyGUI object */
 		Nifty nifty = gui.getNifty();
 		/** Read your XML and initialize your custom ScreenController */
-		//nifty.fromXml("Interface/screen.xml", "start");
+		// nifty.fromXml("Interface/screen.xml", "start");
 		nifty.fromXml("Interface/screen.xml", "start", new Gui(null));
 		guiViewPort.addProcessor(gui);
-		
+
 		// disable the fly cam
 		flyCam.setDragToRotate(true);
-       //gui.loadStartMenu();
-   }
-    
-  @Override
-    public void simpleUpdate(float tpf) {
-        game.startGame(); // cannot be called in init
-//        bulletAppState.getPhysicsSpace().enableDebug(assetManager);
-    }
+		// gui.loadStartMenu();
+	}
+
+	@Override
+	public void simpleUpdate(float tpf) {
+		game.startGame(); // cannot be called in init
+		// bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+	}
 }

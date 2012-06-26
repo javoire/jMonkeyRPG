@@ -43,7 +43,7 @@ public class Game extends AbstractAppState {
     
     public boolean startGame() {
         
-        if(running)
+        if(running) // make sure this method only runs once
             return false;
         
         running = true;
@@ -66,6 +66,7 @@ public class Game extends AbstractAppState {
 
         /* GUI */
         basicGui.initGui();
+        basicGui.initCrosshair();
         basicGui.initInventory(inventory);
         
         /* PLAYER */

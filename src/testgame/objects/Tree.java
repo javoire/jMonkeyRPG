@@ -1,15 +1,14 @@
 package testgame.objects;
 
 import testgame.controls.HarvestingControl;
-import testgame.game.LeavesLodControl;
+import testgame.controls.LeavesLodControl;
 
 import com.jme3.app.Application;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.Control;
 
 public class Tree extends Node {
-	
+
 	private Spatial bark;
 	private Spatial leaves;
 	/**
@@ -20,20 +19,22 @@ public class Tree extends Node {
 	 * modifier for how much wood that is harvested per hit
 	 */
 	private double quality;
-	
+
 	public Tree(Application app) {
 		setBark(app.getAssetManager().loadModel("Models/tree/tree_bark.j3o"));
-    	setLeaves(app.getAssetManager().loadModel("Models/tree/tree_leaves.j3o"));
-    	amount = 200;
-    	quality = 0.7;
-    	
-    	Control leavesLodControl = new LeavesLodControl(getLeaves(), app.getCamera());
-    	Control HarvestingControl = new HarvestingControl();
-    	getLeaves().addControl(leavesLodControl);
-    	getBark().addControl(HarvestingControl);
-    	
-    	attachChild(getBark());
-    	attachChild(getLeaves());
+		setLeaves(app.getAssetManager()
+				.loadModel("Models/tree/tree_leaves.j3o"));
+		bark.setName("Tree");
+		leaves.setName("Tree Leaves");
+		amount = 200;
+		quality = 0.7;
+
+		getLeaves().addControl(
+				new LeavesLodControl(getLeaves(), app.getCamera()));
+		getBark().addControl(new HarvestingControl(app));
+
+		attachChild(getBark());
+		attachChild(getLeaves());
 	}
 
 	public int getAmount() {
