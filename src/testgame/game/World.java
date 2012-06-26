@@ -4,12 +4,12 @@
  */
 package testgame.game;
 
+import testgame.objects.Tree;
+
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioRenderer;
 import com.jme3.bullet.BulletAppState;
@@ -21,14 +21,9 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.BloomFilter;
-import com.jme3.post.filters.FogFilter;
-import com.jme3.post.filters.LightScatteringFilter;
-import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
@@ -36,20 +31,14 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.control.Control;
-import com.jme3.scene.control.LightControl;
-import com.jme3.shadow.BasicShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer;
 import com.jme3.shadow.PssmShadowRenderer.FilterMode;
-//import com.jme3.scene.plugins.blender.BlenderLoader;
-import com.jme3.terrain.Terrain;
 import com.jme3.terrain.geomipmap.TerrainLodControl;
 import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.terrain.geomipmap.lodcalc.DistanceLodCalculator;
-import com.jme3.terrain.geomipmap.lodcalc.LodCalculator;
 import com.jme3.terrain.heightmap.AbstractHeightMap;
 import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
-import com.jme3.texture.Texture.WrapMode;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
@@ -73,14 +62,16 @@ public class World extends AbstractAppState {
 	private FilterPostProcessor fpp;
 	private Vector3f 			lightDir = new Vector3f(-0.74319214f, -0.20267837f,0.84856685f); // same as light source
 	private float 				initialWaterHeight = -1; // choose a value for your scene
+	private Application			app;
 
 	@Override
-	public void initialize(AppStateManager stateManager, Application app) {
-		super.initialize(stateManager, app);
+	public void initialize(AppStateManager stateManager, Application app_) {
+		super.initialize(stateManager, app_);
 		// TODO: initialize your AppState, e.g. attach spatials to rootNode
 		// this is called on the OpenGL thread after the AppState has been
 		// attached
 
+		app 				= app_;
 		assetManager 		= app.getAssetManager();
 		bulletAppState 		= app.getStateManager().getState(BulletAppState.class);
 		viewPort 			= app.getViewPort();
@@ -134,78 +125,77 @@ public class World extends AbstractAppState {
 	    pssmRenderer.setShadowZExtend(500);
 	    viewPort.addProcessor(pssmRenderer);	}
 
-	public void loadTerrainModels() {		
+	public void loadTrees() {		
 		Node treeParent = new Node("treeParent");
-		Node tree1 = new Node("Tree");
-		
+		Tree tree1 = new Tree(app);
 		treeParent.setCullHint(CullHint.Dynamic);
 		
 		/* tree */
-		Spatial bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
-    	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
+//		Tree bark = assetManager.loadModel("Models/tree/tree_bark.j3o");
+//    	Spatial leaves = assetManager.loadModel("Models/tree/tree_leaves.j3o");
 
-    	Control leavesLodControl1 = new LeavesLodControl(leaves, camera);
-    	leaves.addControl(leavesLodControl1);    	
+//    	Control leavesLodControl1 = new LeavesLodControl(leaves, camera);
+//    	leaves.addControl(leavesLodControl1);    	
 
-    	tree1.attachChild(bark);
-    	tree1.attachChild(leaves);
+//    	tree1.attachChild(bark);
+//    	tree1.attachChild(leaves);
     	    	
     	/* more trees */
-    	Node tree2 = tree1.clone(true);
-    	Node tree3 = tree1.clone(true);
-    	Node tree4 = tree1.clone(true);
-    	Node tree5 = tree1.clone(true);
-    	
+//    	Node tree2 = tree1.clone(true);
+//    	Node tree3 = tree1.clone(true);
+//    	Node tree4 = tree1.clone(true);
+//    	Node tree5 = tree1.clone(true);
+//    	
     	tree1.setLocalTranslation(-8, 2, 60);
-    	tree2.setLocalTranslation(6, 2, 82);
-    	tree3.setLocalTranslation(74, 2, 75);
-    	tree4.setLocalTranslation(103, 2, 66);
-    	tree5.setLocalTranslation(81, 2, 44);
+//    	tree2.setLocalTranslation(6, 2, 82);
+//    	tree3.setLocalTranslation(74, 2, 75);
+//    	tree4.setLocalTranslation(103, 2, 66);
+//    	tree5.setLocalTranslation(81, 2, 44);
     	
     	tree1.setLocalScale(4);
-    	tree2.setLocalScale(3.5f);
-    	tree3.setLocalScale(3.7f);
-    	tree4.setLocalScale(3.0f);
-    	tree5.setLocalScale(4f);
+//    	tree2.setLocalScale(3.5f);
+//    	tree3.setLocalScale(3.7f);
+//    	tree4.setLocalScale(3.0f);
+//    	tree5.setLocalScale(4f);
     	
     	tree1.setLocalRotation(new Quaternion(0, -0.04f, 0, 0));
-    	tree2.setLocalRotation(new Quaternion(0, 0.37f, 0, 0));
-    	tree3.setLocalRotation(new Quaternion(0, 0.21f, 0, 0));
-    	tree4.setLocalRotation(new Quaternion(0, 0.04f, 0, 0));
-    	tree5.setLocalRotation(new Quaternion(0, 0.08f, 0, 0));
-    	
+//    	tree2.setLocalRotation(new Quaternion(0, 0.37f, 0, 0));
+//    	tree3.setLocalRotation(new Quaternion(0, 0.21f, 0, 0));
+//    	tree4.setLocalRotation(new Quaternion(0, 0.04f, 0, 0));
+//    	tree5.setLocalRotation(new Quaternion(0, 0.08f, 0, 0));
+//    	
     	treeParent.setShadowMode(ShadowMode.Cast);
 
     	/* attach */
     	rootNode.attachChild(treeParent);
      	treeParent.attachChild(tree1);
-    	treeParent.attachChild(tree2);
-    	treeParent.attachChild(tree3);
-    	treeParent.attachChild(tree4);
-    	treeParent.attachChild(tree5);
+//    	treeParent.attachChild(tree2);
+//    	treeParent.attachChild(tree3);
+//    	treeParent.attachChild(tree4);
+//    	treeParent.attachChild(tree5);
 
     	/* physics */
     	/* TODO: fixa så bara physics på stammen */
     	CollisionShape treeShape1 = CollisionShapeFactory.createMeshShape(tree1);
-    	CollisionShape treeShape2 = CollisionShapeFactory.createMeshShape(tree2);
-    	CollisionShape treeShape3 = CollisionShapeFactory.createMeshShape(tree3);
-    	CollisionShape treeShape4 = CollisionShapeFactory.createMeshShape(tree4);
-    	CollisionShape treeShape5 = CollisionShapeFactory.createMeshShape(tree5);
+//    	CollisionShape treeShape2 = CollisionShapeFactory.createMeshShape(tree2);
+//    	CollisionShape treeShape3 = CollisionShapeFactory.createMeshShape(tree3);
+//    	CollisionShape treeShape4 = CollisionShapeFactory.createMeshShape(tree4);
+//    	CollisionShape treeShape5 = CollisionShapeFactory.createMeshShape(tree5);
 		RigidBodyControl treeBodyControl1 = new RigidBodyControl(treeShape1, 0);
-		RigidBodyControl treeBodyControl2 = new RigidBodyControl(treeShape2, 0);
-		RigidBodyControl treeBodyControl3 = new RigidBodyControl(treeShape3, 0);
-		RigidBodyControl treeBodyControl4 = new RigidBodyControl(treeShape4, 0);
-		RigidBodyControl treeBodyControl5 = new RigidBodyControl(treeShape5, 0);
+//		RigidBodyControl treeBodyControl2 = new RigidBodyControl(treeShape2, 0);
+//		RigidBodyControl treeBodyControl3 = new RigidBodyControl(treeShape3, 0);
+//		RigidBodyControl treeBodyControl4 = new RigidBodyControl(treeShape4, 0);
+//		RigidBodyControl treeBodyControl5 = new RigidBodyControl(treeShape5, 0);
 		tree1.addControl(treeBodyControl1);
-		tree2.addControl(treeBodyControl2);
-		tree3.addControl(treeBodyControl3);
-		tree4.addControl(treeBodyControl4);
-		tree5.addControl(treeBodyControl5);
+//		tree2.addControl(treeBodyControl2);
+//		tree3.addControl(treeBodyControl3);
+//		tree4.addControl(treeBodyControl4);
+//		tree5.addControl(treeBodyControl5);
 		bulletAppState.getPhysicsSpace().add(tree1);
-		bulletAppState.getPhysicsSpace().add(tree2);
-		bulletAppState.getPhysicsSpace().add(tree3);
-		bulletAppState.getPhysicsSpace().add(tree4);
-		bulletAppState.getPhysicsSpace().add(tree5);
+//		bulletAppState.getPhysicsSpace().add(tree2);
+//		bulletAppState.getPhysicsSpace().add(tree3);
+//		bulletAppState.getPhysicsSpace().add(tree4);
+//		bulletAppState.getPhysicsSpace().add(tree5);
 
     }
 

@@ -2,6 +2,7 @@ package testgame.game;
  
 import java.util.logging.Level;
 
+import testgame.appstates.HarvestingAppState;
 import testgame.inventory.Inventory;
 
 import com.jme3.app.SimpleApplication;
@@ -20,16 +21,14 @@ public class Main extends SimpleApplication {
     private BasicGui        basicGui;
     private Player          player;
     private BulletAppState  bulletAppState;
+    private HarvestingAppState harvestingAppState;
     private NiftyJmeDisplay gui;
     
     public static void main(String[] args) {        
         java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
-        
         Main app = new Main();
         AppSettings appSettings = new AppSettings(true);
-        
         appSettings.setTitle("JDs fantastic game of awesome adventures...");
-        
         app.setShowSettings(false); // splash screen
         app.setSettings(appSettings);
         app.start();
@@ -41,12 +40,13 @@ public class Main extends SimpleApplication {
 //        app.setDisplayFps(true); // nullpointer exception
 //        app.setDisplayStatView(true); // stats on screen
 
-        world           = new World(rootNode);
-        game            = new Game();
-        basicGui        = new BasicGui(guiNode, guiFont, settings, flyCam);
-        gui				= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
-        player          = new Player(rootNode);
-        bulletAppState  = new BulletAppState();
+        world           	= new World(rootNode);
+        game           		= new Game();
+        basicGui        	= new BasicGui(guiNode, guiFont, settings, flyCam);
+        gui					= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
+        player          	= new Player(rootNode);
+        bulletAppState  	= new BulletAppState();
+        harvestingAppState 	= new HarvestingAppState();
         
         player.setInventory(new Inventory(10));
 
@@ -59,6 +59,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(game);
         stateManager.attach(basicGui);
         stateManager.attach(player);
+        stateManager.attach(harvestingAppState);
         
         viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 

@@ -22,11 +22,14 @@ public class Inventory extends Vector<Item> {
 	}
 
 	public Vector<String> getItemList() {
+		Vector<String> items = new Vector<String>();
 		Iterator<Item> i = iterator();
 		while(i.hasNext()) {
-			
+			Item item = i.next();
+			if(item!= null)
+				items.add(item.getName());
 		}
-		return null;
+		return items;
 	}
 	
 //	public get()

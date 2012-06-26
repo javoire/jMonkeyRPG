@@ -4,6 +4,9 @@
  */
 package testgame.game;
 
+import java.util.Iterator;
+import java.util.Vector;
+
 import testgame.inventory.Inventory;
 
 import com.jme3.app.Application;
@@ -50,6 +53,7 @@ public class BasicGui extends AbstractAppState {
         this.settings 	= settings;
         this.guiFont 	= guiFont;
         this.flyCam 	= flyCam;
+        
     }
     
     @Override
@@ -75,7 +79,21 @@ public class BasicGui extends AbstractAppState {
     }
     
     public void initInventory(Inventory inventory) {
-//    	Vector<String> items = inventory.getItemList();
+        guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    	Vector<String> items = inventory.getItemList();
+    	Iterator<String> i = items.iterator();
+    	int j = 1;
+    	while(i.hasNext()) {
+	    	BitmapText ch = new BitmapText(guiFont, false);
+	    	ch.setSize(guiFont.getCharSet().getRenderedSize());
+	    	ch.setText(i.next());
+	        ch.setLocalTranslation(
+	        		settings.getWidth()-90, 
+	        		settings.getHeight()-ch.getLineHeight()*j, 
+	        		0);
+	        j += 1;
+	    	guiNode.attachChild(ch);
+    	}
     }
     
     

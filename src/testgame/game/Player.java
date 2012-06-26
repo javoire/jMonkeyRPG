@@ -118,7 +118,7 @@ public class Player extends AbstractAppState implements ActionListener {
         } else if (binding.equals("Jump")) {
             playerControl.jump();
 	    } else if (binding.equals("Shoot") && !value) {
-	    	shoot();
+//	    	shoot();
 	    }
     }
     

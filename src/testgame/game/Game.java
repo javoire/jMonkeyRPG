@@ -5,6 +5,7 @@
 package testgame.game;
 
 import testgame.inventory.Inventory;
+import testgame.items.Item;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -34,6 +35,10 @@ public class Game extends AbstractAppState {
         player          = app.getStateManager().getState(Player.class);
         
         inventory		= player.getInventory();
+        inventory.add(new Item("Item1"));
+        inventory.add(new Item("Item2"));
+        inventory.add(new Item("Item3"));
+        inventory.add(new Item("Item4"));
     }
     
     public boolean startGame() {
@@ -51,7 +56,7 @@ public class Game extends AbstractAppState {
     public void loadWorld() { 
     	/* WORLD */
         world.loadTerrain();
-        world.loadTerrainModels();
+        world.loadTrees();
         world.loadLights();
         world.loadSky();
         world.loadShadows();
