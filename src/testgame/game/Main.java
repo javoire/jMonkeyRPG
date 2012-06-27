@@ -42,15 +42,15 @@ public class Main extends SimpleApplication {
 		// app.setDisplayFps(true); // nullpointer exception
 		// app.setDisplayStatView(true); // stats on screen
 
-		world = new World(rootNode);
-		game = new Game();
-		basicGui = new BasicGui(guiNode, guiFont, settings, flyCam);
-		gui = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer,
-				guiViewPort);
-		player = new Player(rootNode);
-		bulletAppState = new BulletAppState();
-		harvestingAppState = new HarvestingAppState();
-		playerTargetingAppState = new PlayerTargetingAppState();
+		world						= new World(rootNode);
+		game				 		= new Game();
+		basicGui			 		= new BasicGui(guiNode, guiFont, settings, flyCam);
+		gui 						= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer,
+											guiViewPort);
+		player 						= new Player(rootNode);
+		bulletAppState 				= new BulletAppState();
+		harvestingAppState 			= new HarvestingAppState();
+		playerTargetingAppState 	= new PlayerTargetingAppState();
 
 		player.setInventory(new Inventory(10));
 
@@ -67,8 +67,8 @@ public class Main extends SimpleApplication {
 		stateManager.attach(game);
 		stateManager.attach(basicGui);
 		stateManager.attach(player);
-		stateManager.attach(harvestingAppState);
 		stateManager.attach(playerTargetingAppState);
+		stateManager.attach(harvestingAppState);
 
 		viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 

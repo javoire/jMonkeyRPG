@@ -7,6 +7,7 @@ package testgame.game;
 import java.util.Iterator;
 import java.util.Vector;
 
+import testgame.appstates.TargetInfo;
 import testgame.inventory.Inventory;
 
 import com.jme3.app.Application;
@@ -38,6 +39,7 @@ public class BasicGui extends AbstractAppState {
     private FlyByCamera flyCam;
 	private int fontSize;
 	private BitmapText targetInfo;
+	private BitmapText harvestInfo;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -48,6 +50,21 @@ public class BasicGui extends AbstractAppState {
         this.inputManager 	= app.getInputManager();
         this.audioRenderer 	= app.getAudioRenderer();
         this.guiViewPort 	= app.getGuiViewPort();
+        
+     	guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
+    	fontSize = guiFont.getCharSet().getRenderedSize();
+    	targetInfo = new BitmapText(guiFont, false);
+    	targetInfo.setSize(fontSize);
+        targetInfo.setLocalTranslation( // center under crosshair
+  	          settings.getWidth() / 2 - targetInfo.getLineWidth() / 2,
+  	          settings.getHeight() / 2 - targetInfo.getLineHeight()*2, 0);
+    	harvestInfo = new BitmapText(guiFont, false);
+    	harvestInfo.setSize(fontSize);
+        harvestInfo.setLocalTranslation( // center under crosshair
+        		settings.getWidth() / 2 - targetInfo.getLineWidth() / 2,
+        		settings.getHeight() / 2 - targetInfo.getLineHeight()*4, 0);
+    	guiNode.attachChild(targetInfo);
+    	guiNode.attachChild(harvestInfo);
     }
     
     public BasicGui (Node guiNode, BitmapFont guiFont,  AppSettings settings, FlyByCamera flyCam) {
@@ -64,38 +81,25 @@ public class BasicGui extends AbstractAppState {
     }
     
     public void initGui() {
-    	guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-    	fontSize = guiFont.getCharSet().getRenderedSize();
-    	targetInfo = new BitmapText(guiFont, false);
-    	targetInfo.setSize(fontSize);
-    	guiNode.attachChild(targetInfo);
+   
     }
     
     public void initCrosshair() {
-          /** A centred plus sign to help the player aim. */
-//        guiNode.detachAllChildren();
         BitmapText ch = new BitmapText(guiFont, false);
         ch.setSize(fontSize*4/3);
         ch.setText("+"); // crosshairs
-        ch.setLocalTranslation( // center
-          settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2,
-          settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
+		ch.setLocalTranslation(settings.getWidth() / 2
+				- guiFont.getCharSet().getRenderedSize() / 3 * 2,
+				settings.getHeight() / 2 + ch.getLineHeight() / 2, 0);
         guiNode.attachChild(ch);
     }
     
     /**
      * Displays info on the screen from a string.
-     * @param info Info to be shown. If it's "" nothing will be shown
+     * @param info Targetinfo object
      */
-    public void displayTargetInfo(String info) {
-    	if(info.equals("")) {
-    		targetInfo.setText("");
-    	} else {
-	        targetInfo.setText(info);
-	        targetInfo.setLocalTranslation( // center under crosshair
-	          settings.getWidth() / 2 - targetInfo.getLineWidth() / 2,
-	          settings.getHeight() / 2 - targetInfo.getLineHeight()*2, 0);
-    	}
+    public void displayTargetInfo(TargetInfo info) {
+    	targetInfo.setText(info.getString());
     }
     
     public void initInventory(Inventory inventory) {
@@ -125,6 +129,6 @@ public class BasicGui extends AbstractAppState {
     }
 
 	public void clearTargetInfo() {
-		guiNode.detachChild(targetInfo);
+		targetInfo.setText("");
 	}
 }

@@ -24,10 +24,12 @@ public class Tree extends Node {
 		setBark(app.getAssetManager().loadModel("Models/tree/tree_bark.j3o"));
 		setLeaves(app.getAssetManager()
 				.loadModel("Models/tree/tree_leaves.j3o"));
-		bark.setName("Tree");
-		leaves.setName("Tree Leaves");
 		amount = 200;
 		quality = 0.7;
+		bark.setName("Tree");
+		bark.setUserData("amount", amount);
+		bark.setUserData("isHarvestable", true);
+		leaves.setName("Tree Leaves");
 
 		getLeaves().addControl(
 				new LeavesLodControl(getLeaves(), app.getCamera()));
@@ -43,6 +45,7 @@ public class Tree extends Node {
 
 	public void setAmount(int amount) {
 		this.amount = amount;
+		bark.setUserData("amount", amount);
 	}
 
 	public double getQuality() {
