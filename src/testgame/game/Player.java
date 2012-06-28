@@ -7,6 +7,7 @@ package testgame.game;
 import jme3test.bullet.BombControl;
 import testgame.appstates.HarvestingAppState;
 import testgame.appstates.PlayerTargetingAppState;
+import testgame.appstates.TargetInfo;
 import testgame.inventory.Inventory;
 
 import com.jme3.app.Application;
@@ -54,6 +55,7 @@ public class Player extends AbstractAppState implements ActionListener {
     private Inventory					inventory;
     private HarvestingAppState 			harvester;
     private PlayerTargetingAppState 	targeter;
+    private TargetInfo 					targetInfo;
     
     private boolean left = false, right = false, up = false, down = false;
 
@@ -69,6 +71,7 @@ public class Player extends AbstractAppState implements ActionListener {
         assetManager	= app.getAssetManager();
         targeter		= app.getStateManager().getState(PlayerTargetingAppState.class);
         harvester		= app.getStateManager().getState(HarvestingAppState.class);
+        targetInfo		= app.getStateManager().getState(TargetInfo.class);
 
         // create player object
         CapsuleCollisionShape capsuleShape  = new CapsuleCollisionShape(1.5f, 6f, 1);        
@@ -132,7 +135,7 @@ public class Player extends AbstractAppState implements ActionListener {
     private void harvest() {
     	// fråga playertargeting om den e harvestable
     	// sen harvest
-    	if(targeter.isTargetHarvestable())
+    	if(targetInfo.isHarvestable())
     		harvester.tryHarvest();
     }
 

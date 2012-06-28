@@ -18,6 +18,7 @@ public class HarvestingControl extends AbstractControl {
 	private int amount;
 	private Camera cam;
 	private String type;
+	private int minDistance;
 	
 	// TODO check when player is in range to display amount available to harvest and allow harvest
 	public HarvestingControl() {
@@ -27,6 +28,7 @@ public class HarvestingControl extends AbstractControl {
 		cam = camera;
 		amount = 200;
 		type = "Wood";
+		minDistance = 1; // in meters
 	}
 	
 	@Override
@@ -60,5 +62,14 @@ public class HarvestingControl extends AbstractControl {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public void subtractFromAmount(int i) {
+		if(amount > 0)
+			amount -= i;
+	}
+
+	public int getMinDistance() {
+		return minDistance;
 	}
 }

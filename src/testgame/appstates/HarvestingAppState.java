@@ -1,5 +1,6 @@
 package testgame.appstates;
 
+import testgame.controls.HarvestingControl;
 import testgame.game.BasicGui;
 import testgame.game.World;
 
@@ -21,7 +22,7 @@ public class HarvestingAppState extends AbstractAppState implements
 	private Camera cam;
 	private Node trees;
 	private World world;
-//	private HarvestInfo harvestInfo;
+	private TargetInfo targetInfo;
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
@@ -30,12 +31,12 @@ public class HarvestingAppState extends AbstractAppState implements
 		gui 	= app.getStateManager().getState(BasicGui.class);
 		cam 	= app.getCamera();
 		world	= app.getStateManager().getState(World.class);
+		targetInfo = app.getStateManager().getState(TargetInfo.class);
 	}
 
 	@Override
 	public void update(float tpf) {
 
-	
 	}
 
 	@Override
@@ -43,17 +44,17 @@ public class HarvestingAppState extends AbstractAppState implements
 
 	}
 
-	public void setHarvestableNode(Node node) {
+//	public void setHarvestableNode(Node node) {
 //		harvestableNode = node;
 //		if(node != null)
 //			harvestIsPossible = true;
 //		else
 //			harvestIsPossible = false;
-	}
+//	}
 
-	public Node getHarvestableNode() {
-		return harvestableNode;
-	}
+//	public Node getHarvestableNode() {
+//		return harvestableNode;
+//	}
 
     /**
      * 
@@ -61,6 +62,9 @@ public class HarvestingAppState extends AbstractAppState implements
      * klicka höger -> få resources
      */
 	public void tryHarvest() {
-		
+		Node harvestNode = targetInfo.getNode();
+		HarvestingControl harvestControl = harvestNode.getControl(HarvestingControl.class);
+		if (targetInfo.getIntDistance() < harvestControl.getMinDistance())
+			harvestControl.subtractFromAmount(5);
 	}
 }
