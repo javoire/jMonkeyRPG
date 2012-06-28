@@ -4,6 +4,7 @@ import java.util.logging.Level;
 
 import testgame.appstates.HarvestingAppState;
 import testgame.appstates.PlayerTargetingAppState;
+import testgame.appstates.TargetInfo;
 import testgame.inventory.Inventory;
 
 import com.jme3.app.SimpleApplication;
@@ -25,6 +26,7 @@ public class Main extends SimpleApplication {
 	private HarvestingAppState harvestingAppState;
 	private NiftyJmeDisplay gui;
 	private PlayerTargetingAppState playerTargetingAppState;
+	private TargetInfo targetInfo;
 
 	public static void main(String[] args) {
 		java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
@@ -50,6 +52,7 @@ public class Main extends SimpleApplication {
 		player 						= new Player(rootNode);
 		bulletAppState 				= new BulletAppState();
 		harvestingAppState 			= new HarvestingAppState();
+		targetInfo					= new TargetInfo();
 		playerTargetingAppState 	= new PlayerTargetingAppState();
 
 		player.setInventory(new Inventory(10));
@@ -67,8 +70,9 @@ public class Main extends SimpleApplication {
 		stateManager.attach(game);
 		stateManager.attach(basicGui);
 		stateManager.attach(player);
-		stateManager.attach(playerTargetingAppState);
+		stateManager.attach(targetInfo);
 		stateManager.attach(harvestingAppState);
+		stateManager.attach(playerTargetingAppState);
 
 		viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 

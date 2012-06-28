@@ -5,6 +5,8 @@
 package testgame.game;
 
 import jme3test.bullet.BombControl;
+import testgame.appstates.HarvestingAppState;
+import testgame.appstates.PlayerTargetingAppState;
 import testgame.inventory.Inventory;
 
 import com.jme3.app.Application;
@@ -50,6 +52,8 @@ public class Player extends AbstractAppState implements ActionListener {
     private Node 						rootNode;
     private Vector3f            		walkDirection = new Vector3f();
     private Inventory					inventory;
+    private HarvestingAppState 			harvester;
+    private PlayerTargetingAppState 	targeter;
     
     private boolean left = false, right = false, up = false, down = false;
 
@@ -63,6 +67,8 @@ public class Player extends AbstractAppState implements ActionListener {
         bulletAppState 	= app.getStateManager().getState(BulletAppState.class);
         cam            	= app.getCamera();
         assetManager	= app.getAssetManager();
+        targeter		= app.getStateManager().getState(PlayerTargetingAppState.class);
+        harvester		= app.getStateManager().getState(HarvestingAppState.class);
 
         // create player object
         CapsuleCollisionShape capsuleShape  = new CapsuleCollisionShape(1.5f, 6f, 1);        
@@ -88,13 +94,12 @@ public class Player extends AbstractAppState implements ActionListener {
     
     @Override
     public void update(float tpf) {
-        //TODO: implement behavior during runtime
         Vector3f camDir = cam.getDirection().clone().multLocal(0.4f);
         Vector3f camLeft = cam.getLeft().clone().multLocal(0.2f);
         
         walkDirection.set(0, 0, 0);
         
-        if (left)  { walkDirection.addLocal(camLeft.setY(0)); } // set y 0 to move player upwards.
+        if (left)  { walkDirection.addLocal(camLeft.setY(0)); } // set y 0 to not move player upwards.
         if (right) { walkDirection.addLocal(camLeft.setY(0).negate()); }
         if (up)    { walkDirection.addLocal(camDir.setY(0)); }
         if (down)  { walkDirection.addLocal(camDir.setY(0).negate()); }
@@ -119,10 +124,19 @@ public class Player extends AbstractAppState implements ActionListener {
             playerControl.jump();
 	    } else if (binding.equals("Shoot") && !value) {
 //	    	shoot();
+	    } else if (binding.equals("Harvest") && !value) {
+	    	harvest();
 	    }
     }
     
-    public void shoot() {
+    private void harvest() {
+    	// fråga playertargeting om den e harvestable
+    	// sen harvest
+    	if(targeter.isTargetHarvestable())
+    		harvester.tryHarvest();
+    }
+
+	public void shoot() {
         Geometry bulletGeom = new Geometry("bullet", bullet);
         bulletGeom.setMaterial(bulletMat);
         bulletGeom.setShadowMode(ShadowMode.CastAndReceive);
@@ -156,12 +170,14 @@ public class Player extends AbstractAppState implements ActionListener {
         inputManager.addMapping("Down", new KeyTrigger(KeyInput.KEY_S));
         inputManager.addMapping("Jump", new KeyTrigger(KeyInput.KEY_SPACE));
         inputManager.addMapping("Shoot", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        inputManager.addMapping("Harvest", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
         inputManager.addListener(this, "Left");
         inputManager.addListener(this, "Right");
         inputManager.addListener(this, "Up");
         inputManager.addListener(this, "Down");
         inputManager.addListener(this, "Jump");
         inputManager.addListener(this, "Shoot");
+        inputManager.addListener(this, "Harvest");
     }
     
     @Override

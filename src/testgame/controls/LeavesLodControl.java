@@ -41,19 +41,11 @@ public class LeavesLodControl extends AbstractControl {
 
     @Override
     protected void controlUpdate(float tpf) {
-        //TODO: add code that controls Spatial,
-        //e.g. spatial.rotate(tpf,tpf,tpf);
-    	
-    	// update lod level based on distance to camera
-    	if (camera != null) {
+    	if (camera != null) { // update lod level based on distance to camera
     		cameraLocation = camera.getLocation();
     		leavesLocation = leaves.getWorldTranslation();
 
     		float distance = cameraLocation.distance(leavesLocation);
-    		
-//    		System.out.print(leavesLocation.x);
-//    		System.out.print("\n");
-    		
     		
     		if ( distance <= 160 ) {
     			leaves.setLodLevel(2);

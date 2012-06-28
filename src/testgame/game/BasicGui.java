@@ -38,8 +38,7 @@ public class BasicGui extends AbstractAppState {
     private BitmapFont guiFont;
     private FlyByCamera flyCam;
 	private int fontSize;
-	private BitmapText targetInfo;
-	private BitmapText harvestInfo;
+	private BitmapText targetInfoText;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -53,18 +52,9 @@ public class BasicGui extends AbstractAppState {
         
      	guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
     	fontSize = guiFont.getCharSet().getRenderedSize();
-    	targetInfo = new BitmapText(guiFont, false);
-    	targetInfo.setSize(fontSize);
-        targetInfo.setLocalTranslation( // center under crosshair
-  	          settings.getWidth() / 2 - targetInfo.getLineWidth() / 2,
-  	          settings.getHeight() / 2 - targetInfo.getLineHeight()*2, 0);
-    	harvestInfo = new BitmapText(guiFont, false);
-    	harvestInfo.setSize(fontSize);
-        harvestInfo.setLocalTranslation( // center under crosshair
-        		settings.getWidth() / 2 - targetInfo.getLineWidth() / 2,
-        		settings.getHeight() / 2 - targetInfo.getLineHeight()*4, 0);
-    	guiNode.attachChild(targetInfo);
-    	guiNode.attachChild(harvestInfo);
+    	targetInfoText = new BitmapText(guiFont, false);
+    	targetInfoText.setSize(fontSize);
+    	guiNode.attachChild(targetInfoText);
     }
     
     public BasicGui (Node guiNode, BitmapFont guiFont,  AppSettings settings, FlyByCamera flyCam) {
@@ -99,7 +89,10 @@ public class BasicGui extends AbstractAppState {
      * @param info Targetinfo object
      */
     public void displayTargetInfo(TargetInfo info) {
-    	targetInfo.setText(info.getString());
+    	targetInfoText.setText(info.getString());
+        targetInfoText.setLocalTranslation( // center under crosshair
+    	          settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2,
+    	          settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
     }
     
     public void initInventory(Inventory inventory) {
@@ -129,6 +122,6 @@ public class BasicGui extends AbstractAppState {
     }
 
 	public void clearTargetInfo() {
-		targetInfo.setText("");
+		targetInfoText.setText("");
 	}
 }

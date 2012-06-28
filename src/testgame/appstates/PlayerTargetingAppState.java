@@ -8,7 +8,6 @@ import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.math.Ray;
@@ -35,7 +34,8 @@ public class PlayerTargetingAppState extends AbstractAppState implements
 		this.cam 		= app.getCamera();
 		this.world	 	= app.getStateManager().getState(World.class);
 		this.gui 		= app.getStateManager().getState(BasicGui.class);
-		this.harvester 	= app.getStateManager().getState(HarvestingAppState.class);
+		harvester 		= app.getStateManager().getState(HarvestingAppState.class);
+		targetInfo		= app.getStateManager().getState(TargetInfo.class);
 	}
 	
 	public CollisionResults findTarget() {
@@ -44,7 +44,6 @@ public class PlayerTargetingAppState extends AbstractAppState implements
 		trees.collideWith(ray, results); // checks all children to trees
 		if(results.size() == 0)
 			return null;
-		// check if close enough
 		if(results.getClosestCollision().getDistance() < 60) // closer than 5m
 			return results;
 		else
@@ -55,22 +54,29 @@ public class PlayerTargetingAppState extends AbstractAppState implements
 	public void update(float tpf) {
 		this.trees = world.getTrees();
 		if(trees != null) {
-			// TODO kolla om man targetar t.ex ett trŠd: isf underŠtta harvesterAppState
 			CollisionResults results = findTarget();
 			if(results != null && results.size() > 0) {
-				targetInfo = getTargetInfo(results);
+				getTargetInfo(results);
 				gui.displayTargetInfo(targetInfo);
+//				if(isTargetHarvestable()) // TODO underrŠtta harvester att man kan harvesta
+//					targetInfo.isHarvestable();
 			} else {
 				gui.clearTargetInfo();
 			}
 		}
 	}
 
+	public boolean isTargetHarvestable() {
+		if(!targetInfo.hasTarget()) { return false; }
+		if(targetInfo.isHarvestable()) { return true; }
+		return false;
+	}
+	
 	private TargetInfo getTargetInfo(CollisionResults results) {
 		if(results != null) {
 			if(results.size() > 0) {
-				TargetInfo info = new TargetInfo((results.getClosestCollision()));
-				return info;
+				targetInfo.setResults((results.getClosestCollision()));
+				return targetInfo;
 			}
 		} 
 		return null;

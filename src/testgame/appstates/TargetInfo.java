@@ -1,23 +1,40 @@
 package testgame.appstates;
 
+import testgame.controls.HarvestingControl;
+
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.collision.CollisionResult;
-import com.jme3.font.BitmapText;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 
 public class TargetInfo extends AbstractAppState {
 	
-	CollisionResult result;
-	Geometry targetGeom;
+	private CollisionResult result = null;
+	private Geometry targetGeom;
 	private Node targetNode;
 	private Float distance;
 	private String name;
+	private HarvestingControl harvestingControl = null;
+	
+	public TargetInfo() {
+		
+	}
 
-	public TargetInfo(CollisionResult collisionResult) {
+//	public TargetInfo(CollisionResult collisionResult) {
+//		result = collisionResult;
+//		targetGeom = collisionResult.getGeometry();
+//		targetNode = targetGeom.getParent();
+//	}
+//	
+	public void setResults(CollisionResult collisionResult) {
 		result = collisionResult;
 		targetGeom = collisionResult.getGeometry();
 		targetNode = targetGeom.getParent();
+	}
+	
+	public boolean hasTarget() {
+		if(result != null) { return true; }
+		return false;
 	}
 
 	public String getName() {
@@ -37,7 +54,9 @@ public class TargetInfo extends AbstractAppState {
 	}
 
 	public boolean isHarvestable() {
-		if(targetNode.getUserData("isHarvestable") != null)
+		// TODO kolla om den har en harvester controller
+		harvestingControl  = targetNode.getControl(HarvestingControl.class);
+		if(harvestingControl != null)
 			return true;
 		else
 			return false;
@@ -58,9 +77,10 @@ public class TargetInfo extends AbstractAppState {
 				+ getIntDistance()
 				+ " m";
 		if(isHarvestable())// lägg på harvest info
-			infoString += "\nAmount: " + targetNode.getUserData("amount");
+			infoString += "\n" + harvestingControl.getType() + ": " + harvestingControl.getAmount();
 		if(!infoString.equals(""))
 			return infoString;
 		return null;
 	}
+
 }

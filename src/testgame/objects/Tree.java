@@ -27,13 +27,16 @@ public class Tree extends Node {
 		amount = 200;
 		quality = 0.7;
 		bark.setName("Tree");
-		bark.setUserData("amount", amount);
-		bark.setUserData("isHarvestable", true);
+//		bark.setUserData("amount", amount);
+//		bark.setUserData("isHarvestable", true);
 		leaves.setName("Tree Leaves");
 
-		getLeaves().addControl(
-				new LeavesLodControl(getLeaves(), app.getCamera()));
-		getBark().addControl(new HarvestingControl(app));
+		leaves.addControl(
+				new LeavesLodControl(leaves, app.getCamera()));
+		HarvestingControl harvester = new HarvestingControl(app.getCamera());
+		harvester.setAmount(300);
+		harvester.setType("Wood");
+		bark.addControl(harvester);
 
 		attachChild(getBark());
 		attachChild(getLeaves());
