@@ -39,6 +39,7 @@ public class BasicGui extends AbstractAppState {
     private FlyByCamera flyCam;
 	private int fontSize;
 	private BitmapText targetInfoText;
+	private TargetInfo targetInfo;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -49,6 +50,7 @@ public class BasicGui extends AbstractAppState {
         this.inputManager 	= app.getInputManager();
         this.audioRenderer 	= app.getAudioRenderer();
         this.guiViewPort 	= app.getGuiViewPort();
+        targetInfo			= app.getStateManager().getState(TargetInfo.class);
         
      	guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
     	fontSize = guiFont.getCharSet().getRenderedSize();
@@ -68,9 +70,16 @@ public class BasicGui extends AbstractAppState {
     @Override
     public void update(float tpf) {
         //TODO: implement behavior during runtime
+    	displayTargetInfo();
+    	displayInventory();
     }
     
-    public void initGui() {
+    private void displayInventory() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void initGui() {
    
     }
     
@@ -88,11 +97,12 @@ public class BasicGui extends AbstractAppState {
      * Displays info on the screen from a string.
      * @param info Targetinfo object
      */
-    public void displayTargetInfo(TargetInfo info) {
-    	targetInfoText.setText(info.getString());
+    public void displayTargetInfo() {
+    	if(targetInfo.hasTarget()) targetInfoText.setText(targetInfo.getString());
+    	else targetInfoText.setText("");
         targetInfoText.setLocalTranslation( // center under crosshair
-    	          settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2,
-    	          settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
+  	          settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2,
+  	          settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
     }
     
     public void initInventory(Inventory inventory) {

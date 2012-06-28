@@ -69,7 +69,7 @@ public class HarvestingControl extends AbstractControl {
 			amount -= i;
 	}
 
-	public int getMinDistance() {
+	public int getHarvestableDistance() {
 		return minDistance;
 	}
 }

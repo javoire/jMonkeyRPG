@@ -3,7 +3,6 @@ package testgame.game;
 import java.util.logging.Level;
 
 import testgame.appstates.HarvestingAppState;
-import testgame.appstates.PlayerTargetingAppState;
 import testgame.appstates.TargetInfo;
 import testgame.inventory.Inventory;
 
@@ -18,15 +17,15 @@ import de.lessvoid.nifty.Nifty;
 
 public class Main extends SimpleApplication {
 
-	private World world;
-	private Game game;
-	private BasicGui basicGui;
-	private Player player;
-	private BulletAppState bulletAppState;
-	private HarvestingAppState harvestingAppState;
-	private NiftyJmeDisplay gui;
-	private PlayerTargetingAppState playerTargetingAppState;
-	private TargetInfo targetInfo;
+	private World 						world;
+	private Game 						game;
+	private BasicGui 					basicGui;
+	private Player 						player;
+	private BulletAppState 				bulletAppState;
+	private HarvestingAppState 			harvestingAppState;
+	private NiftyJmeDisplay 			gui;
+	private TargetInfo 					targetInfo;
+	private Inventory 					inventory;
 
 	public static void main(String[] args) {
 		java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
@@ -53,9 +52,7 @@ public class Main extends SimpleApplication {
 		bulletAppState 				= new BulletAppState();
 		harvestingAppState 			= new HarvestingAppState();
 		targetInfo					= new TargetInfo();
-		playerTargetingAppState 	= new PlayerTargetingAppState();
-
-		player.setInventory(new Inventory(10));
+		inventory					= new Inventory(10);
 
 		assetManager.registerLocator("./assets/", FileLocator.class.getName()); // kommentera
 																				// bort
@@ -70,9 +67,9 @@ public class Main extends SimpleApplication {
 		stateManager.attach(game);
 		stateManager.attach(basicGui);
 		stateManager.attach(player);
+		stateManager.attach(inventory);
 		stateManager.attach(targetInfo);
 		stateManager.attach(harvestingAppState);
-		stateManager.attach(playerTargetingAppState);
 
 		viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 

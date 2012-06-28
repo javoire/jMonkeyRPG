@@ -49,7 +49,7 @@ public class World extends AbstractAppState {
 	private BulletAppState 		bulletAppState;
 	private RigidBodyControl 	landscape;
 	private AssetManager 		assetManager;
-	private Node 				rootNode;
+	private Node 				root;
 	private WaterFilter 		water;
 	private TerrainQuad 		terrain;
 	private ViewPort 			viewPort;
@@ -61,7 +61,9 @@ public class World extends AbstractAppState {
 	private Vector3f 			lightDir = new Vector3f(-0.74319214f, -0.20267837f,0.84856685f); // same as light source
 	private float 				initialWaterHeight = -1; // choose a value for your scene
 	private Application			app;
-	private Node 				trees; 
+	private Node 				trees;
+	private Node harvestables;
+	private Node targetables; 
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app_) {
@@ -78,11 +80,14 @@ public class World extends AbstractAppState {
 		camera 				= app.getCamera();
 
 		fpp = new FilterPostProcessor(assetManager);
-
+		targetables = new Node("targetables");
+		harvestables = new Node("harvestables");
+		targetables.attachChild(harvestables);
+		root.attachChild(targetables);
 	}
 
 	public World(Node rootNode) {
-		this.rootNode = rootNode;
+		this.root = rootNode;
 	}
 	
 	public void loadGrass() {
@@ -115,7 +120,7 @@ public class World extends AbstractAppState {
 	}
 	
 	public void loadShadows () {
-		rootNode.setShadowMode(ShadowMode.Off); // off allt sen aktivera separat
+		root.setShadowMode(ShadowMode.Off); // off allt sen aktivera separat
 		pssmRenderer = new PssmShadowRenderer(assetManager, 1024, 1);
 	    pssmRenderer.setDirection(new Vector3f(lightDir).normalizeLocal()); // light direction
 	    pssmRenderer.setShadowIntensity(0.4f);
@@ -125,8 +130,8 @@ public class World extends AbstractAppState {
 	    viewPort.addProcessor(pssmRenderer);	}
 
 	public void loadTrees() {		
-		trees = new Node("treeParent");
-		Tree tree1 = new Tree(app);
+		trees = new Node("trees");
+		Tree tree = new Tree(app);
 		trees.setCullHint(CullHint.Dynamic);
     	    	
     	/* more trees */
@@ -135,19 +140,19 @@ public class World extends AbstractAppState {
 //    	Node tree4 = tree1.clone(true);
 //    	Node tree5 = tree1.clone(true);
 //    	
-    	tree1.setLocalTranslation(-8, 2, 60);
+    	tree.setLocalTranslation(-8, 2, 60);
 //    	tree2.setLocalTranslation(6, 2, 82);
 //    	tree3.setLocalTranslation(74, 2, 75);
 //    	tree4.setLocalTranslation(103, 2, 66);
 //    	tree5.setLocalTranslation(81, 2, 44);
     	
-    	tree1.setLocalScale(4);
+    	tree.setLocalScale(4);
 //    	tree2.setLocalScale(3.5f);
 //    	tree3.setLocalScale(3.7f);
 //    	tree4.setLocalScale(3.0f);
 //    	tree5.setLocalScale(4f);
     	
-    	tree1.setLocalRotation(new Quaternion(0, -0.04f, 0, 0));
+    	tree.setLocalRotation(new Quaternion(0, -0.04f, 0, 0));
 //    	tree2.setLocalRotation(new Quaternion(0, 0.37f, 0, 0));
 //    	tree3.setLocalRotation(new Quaternion(0, 0.21f, 0, 0));
 //    	tree4.setLocalRotation(new Quaternion(0, 0.04f, 0, 0));
@@ -156,8 +161,8 @@ public class World extends AbstractAppState {
     	trees.setShadowMode(ShadowMode.Cast);
 
     	/* attach */
-    	rootNode.attachChild(trees);
-     	trees.attachChild(tree1);
+    	harvestables.attachChild(trees);
+     	trees.attachChild(tree);
 //    	treeParent.attachChild(tree2);
 //    	treeParent.attachChild(tree3);
 //    	treeParent.attachChild(tree4);
@@ -165,7 +170,7 @@ public class World extends AbstractAppState {
 
     	/* physics */
     	/* TODO: fixa så bara physics på stammen */
-    	CollisionShape treeShape1 = CollisionShapeFactory.createMeshShape(tree1);
+    	CollisionShape treeShape1 = CollisionShapeFactory.createMeshShape(tree);
 //    	CollisionShape treeShape2 = CollisionShapeFactory.createMeshShape(tree2);
 //    	CollisionShape treeShape3 = CollisionShapeFactory.createMeshShape(tree3);
 //    	CollisionShape treeShape4 = CollisionShapeFactory.createMeshShape(tree4);
@@ -175,12 +180,12 @@ public class World extends AbstractAppState {
 //		RigidBodyControl treeBodyControl3 = new RigidBodyControl(treeShape3, 0);
 //		RigidBodyControl treeBodyControl4 = new RigidBodyControl(treeShape4, 0);
 //		RigidBodyControl treeBodyControl5 = new RigidBodyControl(treeShape5, 0);
-		tree1.addControl(treeBodyControl1);
+		tree.addControl(treeBodyControl1);
 //		tree2.addControl(treeBodyControl2);
 //		tree3.addControl(treeBodyControl3);
 //		tree4.addControl(treeBodyControl4);
 //		tree5.addControl(treeBodyControl5);
-		bulletAppState.getPhysicsSpace().add(tree1);
+		bulletAppState.getPhysicsSpace().add(tree);
 //		bulletAppState.getPhysicsSpace().add(tree2);
 //		bulletAppState.getPhysicsSpace().add(tree3);
 //		bulletAppState.getPhysicsSpace().add(tree4);
@@ -220,7 +225,7 @@ public class World extends AbstractAppState {
 //		Quaternion rootRotation = rootNode.getLocalRotation().fromAngleAxis(angle, axis);
 //		terrain.setLocalRotation(rootRotation);
 
-		rootNode.attachChild(terrain);
+		root.attachChild(terrain);
 		
 		terrain.setShadowMode(ShadowMode.Receive);
 
@@ -232,7 +237,7 @@ public class World extends AbstractAppState {
 	
 	public void loadSky() {
 		// rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
-		rootNode.attachChild(SkyFactory.createSky(assetManager,"Scenes/Beach/FullskiesSunset0068.dds", false));
+		root.attachChild(SkyFactory.createSky(assetManager,"Scenes/Beach/FullskiesSunset0068.dds", false));
 	}
 
 	public void loadLights() {
@@ -250,8 +255,8 @@ public class World extends AbstractAppState {
 		lamp_light.setPosition(new Vector3f(0,3,0));
 //		rootNode.addLight(lamp_light);
 
-		rootNode.addLight(sun);
-		rootNode.addLight(amb);
+		root.addLight(sun);
+		root.addLight(amb);
 	}
 
 	public void initPostEffects() {
@@ -262,7 +267,7 @@ public class World extends AbstractAppState {
 //		bloom.setDownSamplingFactor(5f);
 //		fpp.addFilter(bloom);
 		
-		water = new WaterFilter(rootNode, lightDir);
+		water = new WaterFilter(root, lightDir);
 		water.setWaterHeight(initialWaterHeight);
 		water.setReflectionMapSize(256);
 		water.setReflectionDisplace(10);
@@ -338,5 +343,9 @@ public class World extends AbstractAppState {
 
 	public void setTrees(Node trees) {
 		this.trees = trees;
+	}
+
+	public Node getTargetables() {
+		return targetables;
 	}
 }

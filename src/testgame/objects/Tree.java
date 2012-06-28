@@ -11,24 +11,12 @@ public class Tree extends Node {
 
 	private Spatial bark;
 	private Spatial leaves;
-	/**
-	 * how much wood can be harvested
-	 */
-	private int amount;
-	/**
-	 * modifier for how much wood that is harvested per hit
-	 */
-	private double quality;
 
 	public Tree(Application app) {
 		setBark(app.getAssetManager().loadModel("Models/tree/tree_bark.j3o"));
 		setLeaves(app.getAssetManager()
 				.loadModel("Models/tree/tree_leaves.j3o"));
-		amount = 200;
-		quality = 0.7;
 		bark.setName("Tree");
-//		bark.setUserData("amount", amount);
-//		bark.setUserData("isHarvestable", true);
 		leaves.setName("Tree Leaves");
 
 		leaves.addControl(
@@ -40,23 +28,6 @@ public class Tree extends Node {
 
 		attachChild(getBark());
 		attachChild(getLeaves());
-	}
-
-	public int getAmount() {
-		return amount;
-	}
-
-	public void setAmount(int amount) {
-		this.amount = amount;
-		bark.setUserData("amount", amount);
-	}
-
-	public double getQuality() {
-		return quality;
-	}
-
-	public void setQuality(int quality) {
-		this.quality = quality;
 	}
 
 	public Spatial getBark() {

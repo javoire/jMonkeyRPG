@@ -6,7 +6,6 @@ package testgame.game;
 
 import jme3test.bullet.BombControl;
 import testgame.appstates.HarvestingAppState;
-import testgame.appstates.PlayerTargetingAppState;
 import testgame.appstates.TargetInfo;
 import testgame.inventory.Inventory;
 
@@ -54,7 +53,6 @@ public class Player extends AbstractAppState implements ActionListener {
     private Vector3f            		walkDirection = new Vector3f();
     private Inventory					inventory;
     private HarvestingAppState 			harvester;
-    private PlayerTargetingAppState 	targeter;
     private TargetInfo 					targetInfo;
     
     private boolean left = false, right = false, up = false, down = false;
@@ -69,9 +67,9 @@ public class Player extends AbstractAppState implements ActionListener {
         bulletAppState 	= app.getStateManager().getState(BulletAppState.class);
         cam            	= app.getCamera();
         assetManager	= app.getAssetManager();
-        targeter		= app.getStateManager().getState(PlayerTargetingAppState.class);
         harvester		= app.getStateManager().getState(HarvestingAppState.class);
         targetInfo		= app.getStateManager().getState(TargetInfo.class);
+        inventory		= app.getStateManager().getState(Inventory.class);
 
         // create player object
         CapsuleCollisionShape capsuleShape  = new CapsuleCollisionShape(1.5f, 6f, 1);        
@@ -190,12 +188,4 @@ public class Player extends AbstractAppState implements ActionListener {
         //e.g. remove all spatials from rootNode
         //this is called on the OpenGL thread after the AppState has been detached
     }
-
-	public Inventory getInventory() {
-		return inventory;
-	}
-
-	public void setInventory(Inventory inventory) {
-		this.inventory = inventory;
-	}
 }
