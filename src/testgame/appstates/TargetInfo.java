@@ -16,10 +16,10 @@ import com.jme3.scene.Node;
 public class TargetInfo extends AbstractAppState {
 	
 	private CollisionResult result = null;
-	private Geometry targetGeom;
-	private Node targetNode;
-	private Float distance;
-	private String name;
+	private Geometry targetGeom = null;
+	private Node targetNode = null;
+	private Float distance = -1f;
+	private String name = null;
 	private HarvestingControl harvestingControl = null;
 	private World world;
 	private Node targetables;
@@ -39,8 +39,7 @@ public class TargetInfo extends AbstractAppState {
 	}
 	
 	/**
-	 * kolla efter target
-	 * om ingen target: result = null;
+	 * Constanly look for target. If non, result = null
 	 */
 	@Override
 	public void update(float tpf) {
@@ -51,20 +50,15 @@ public class TargetInfo extends AbstractAppState {
 		if(targetables != null) {
 			CollisionResults results = new CollisionResults();
 			Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-			targetables.collideWith(ray, results); // checks all children to trees
+			targetables.collideWith(ray, results); // checks all targetable objects
 			if(results != null && results.size() > 0) {
 				if(results.getClosestCollision().getDistance() < maxTargetingRange) {
-					if(results.size() > 0)
+					if(results.size() > 0) {
 						setResult(results.getClosestCollision());
-					else
-						result = null;
-				} else {
-					result = null;
-				}
-			} else {
-				result = null;
-			}
-		}
+					} else { result = null;	}
+				} else { result = null; }
+			} else { result = null;	}
+		} else { result = null; }
 	}
 
 	public void setResult(CollisionResult collisionResult) {
@@ -79,19 +73,25 @@ public class TargetInfo extends AbstractAppState {
 	}
 
 	public String getName() {
+		if(!hasTarget())
+			return null;
 		name = targetNode.getName();
 		return name;
 	}
 
 	public float getDistance() {
+		if(!hasTarget())
+			return -1;
 		distance = result.getDistance();
 		return distance/10;
 	}
 
 	public int getIntDistance() {
-		distance = result.getDistance();
+		if(!hasTarget())
+			return -1;
+		distance = getDistance();
 		int distanceInt = distance.intValue();
-		return distanceInt/10;
+		return distanceInt;
 	}
 
 	public boolean isHarvestable() {
@@ -111,12 +111,11 @@ public class TargetInfo extends AbstractAppState {
 	}
 	
 	public String getString() {
-		// TODO fixa den strängen som ska visas i target info. med lr utan harvest info t.ex
 		String infoString = getName()
 				+ ": "
 				+ getIntDistance()
 				+ " m";
-		if(isHarvestable())// lägg på harvest info
+		if(isHarvestable()) // add harvest info
 			infoString += "\n" + harvestingControl.getType() + ": " + harvestingControl.getAmount();
 		if(!infoString.equals(""))
 			return infoString;

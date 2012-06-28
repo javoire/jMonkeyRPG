@@ -8,7 +8,6 @@ Material leaf : Common/MatDefs/Light/Lighting.j3md {
 		UseAlpha : true
         Shininess : 1.0
         VertexLighting : true
-        AlphaDiscardThreshold : 0.5
      }
     AdditionalRenderState {
       Blend Alpha

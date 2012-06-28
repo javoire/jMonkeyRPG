@@ -313,7 +313,7 @@ public class World extends AbstractAppState {
 		// We set up collision detection for the scene by creating a
 		// compound collision shape and a static RigidBodyControl with mass
 		// zero.*/
-		CollisionShape terrainShape = CollisionShapeFactory.createMeshShape((Node) terrain);
+		CollisionShape terrainShape = CollisionShapeFactory.createMeshShape(terrain);
 		landscape = new RigidBodyControl(terrainShape, 0);
 		terrain.addControl(landscape);
 

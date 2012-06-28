@@ -4,15 +4,10 @@
  */
 package testgame.game;
 
-import java.util.List;
-
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.font.BitmapFont;
-import com.jme3.font.BitmapText;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
@@ -40,13 +35,16 @@ public class Gui extends AbstractAppState implements ScreenController {
 
 	/** Nifty GUI ScreenControl methods */ 
 
+	@Override
 	public void bind(Nifty nifty, Screen screen) {
 		this.nifty = nifty;
 		this.screen = screen;
 	}
 	
+	@Override
 	public void onStartScreen() { }
 
+	@Override
 	public void onEndScreen() { 
 		System.out.print("close!");
 	}

@@ -7,7 +7,6 @@ import testgame.appstates.TargetInfo;
 import testgame.inventory.Inventory;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.plugins.FileLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.niftygui.NiftyJmeDisplay;
@@ -54,11 +53,6 @@ public class Main extends SimpleApplication {
 		targetInfo					= new TargetInfo();
 		inventory					= new Inventory(10);
 
-		assetManager.registerLocator("./assets/", FileLocator.class.getName()); // kommentera
-																				// bort
-																				// denna
-																				// vid
-																				// build!!!
 		bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
 
 		// attach all statemanagers
@@ -76,7 +70,6 @@ public class Main extends SimpleApplication {
 		flyCam.setMoveSpeed(30);
 
 		// loadStartMenu();
-
 		// this.loadStatsView();
 		// this.loadFPSText();
 		// this.setDisplayFps(true);

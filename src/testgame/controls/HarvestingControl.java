@@ -3,7 +3,6 @@ package testgame.controls;
 import testgame.game.Player;
 import testgame.objects.Tree;
 
-import com.jme3.app.Application;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;

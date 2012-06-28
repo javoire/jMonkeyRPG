@@ -32,11 +32,8 @@ public class BasicGui extends AbstractAppState {
     private Node guiNode;
     private AppSettings settings;
     private AssetManager assetManager;
-    private InputManager inputManager;
-    private AudioRenderer audioRenderer;
     private ViewPort guiViewPort;
     private BitmapFont guiFont;
-    private FlyByCamera flyCam;
 	private int fontSize;
 	private BitmapText targetInfoText;
 	private TargetInfo targetInfo;
@@ -46,14 +43,12 @@ public class BasicGui extends AbstractAppState {
         super.initialize(stateManager, app);
         //TODO: initialize your AppState, e.g. attach spatials to rootNode
         //this is called on the OpenGL thread after the AppState has been attached
-        this.assetManager 	= app.getAssetManager();
-        this.inputManager 	= app.getInputManager();
-        this.audioRenderer 	= app.getAudioRenderer();
-        this.guiViewPort 	= app.getGuiViewPort();
+        assetManager 	= app.getAssetManager();
+        guiViewPort 	= app.getGuiViewPort();
         targetInfo			= app.getStateManager().getState(TargetInfo.class);
-        
-     	guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
-    	fontSize = guiFont.getCharSet().getRenderedSize();
+     	guiFont 			= assetManager.loadFont("Interface/Fonts/Default.fnt");
+    	fontSize 			= guiFont.getCharSet().getRenderedSize();
+
     	targetInfoText = new BitmapText(guiFont, false);
     	targetInfoText.setSize(fontSize);
     	guiNode.attachChild(targetInfoText);
@@ -63,13 +58,10 @@ public class BasicGui extends AbstractAppState {
         this.guiNode 	= guiNode;
         this.settings 	= settings;
         this.guiFont 	= guiFont;
-        this.flyCam 	= flyCam;
-        
     }
     
     @Override
     public void update(float tpf) {
-        //TODO: implement behavior during runtime
     	displayTargetInfo();
     	displayInventory();
     }
@@ -79,10 +71,6 @@ public class BasicGui extends AbstractAppState {
 		
 	}
 
-	public void initGui() {
-   
-    }
-    
     public void initCrosshair() {
         BitmapText ch = new BitmapText(guiFont, false);
         ch.setSize(fontSize*4/3);
@@ -94,16 +82,18 @@ public class BasicGui extends AbstractAppState {
     }
     
     /**
-     * Displays info on the screen from a string.
-     * @param info Targetinfo object
+     * Checks if targets exists, then retrieves info from TargetInfo and displays
+     * on a gui node
      */
     public void displayTargetInfo() {
-    	if(targetInfo.hasTarget()) targetInfoText.setText(targetInfo.getString());
-    	else targetInfoText.setText("");
-        targetInfoText.setLocalTranslation( // center under crosshair
-  	          settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2,
-  	          settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
-    }
+    	if(targetInfo.hasTarget()) { 
+    		targetInfoText.setText(targetInfo.getString());
+	    	targetInfoText.setLocalTranslation( // center under crosshair
+	    			settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2,
+	    			settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
+    	} else 
+    		targetInfoText.setText(" ");
+   }
     
     public void initInventory(Inventory inventory) {
     	Vector<String> items = inventory.getItemList();
@@ -122,7 +112,6 @@ public class BasicGui extends AbstractAppState {
     	}
     }
     
-    
     @Override
     public void cleanup() {
         super.cleanup();
@@ -130,8 +119,4 @@ public class BasicGui extends AbstractAppState {
         //e.g. remove all spatials from rootNode
         //this is called on the OpenGL thread after the AppState has been detached
     }
-
-	public void clearTargetInfo() {
-		targetInfoText.setText("");
-	}
 }

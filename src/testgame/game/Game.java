@@ -49,12 +49,22 @@ public class Game extends AbstractAppState {
         running = true;
         
         loadWorld();
+        loadGui();
+        loadPlayer();
         
         return running;
     }
     
-    public void loadWorld() { 
-    	/* WORLD */
+    private void loadPlayer() {
+    	player.initPlayer();
+	}
+
+	private void loadGui() {
+		basicGui.initCrosshair();
+		basicGui.initInventory(inventory);
+	}
+
+	public void loadWorld() { 
         world.loadTerrain();
         world.loadTrees();
         world.loadLights();
@@ -63,20 +73,11 @@ public class Game extends AbstractAppState {
         world.initWorldPhysics();
         world.initPostEffects();
         world.initSound();
-
-        /* GUI */
-        basicGui.initGui();
-        basicGui.initCrosshair();
-        basicGui.initInventory(inventory);
-        
-        /* PLAYER */
-        player.initPlayer();
     }
     
     @Override
     public void update(float tpf) {
         //TODO: implement behavior during runtime
-       
     }
         
     @Override

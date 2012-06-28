@@ -112,7 +112,8 @@ public class Player extends AbstractAppState implements ActionListener {
     
     /** These are our custom actions triggered by key presses.
     * We do not walk yet, we just keep track of the direction the user pressed. */
-    public void onAction(String binding, boolean value, float tpf) {
+    @Override
+	public void onAction(String binding, boolean value, float tpf) {
         if (binding.equals("Left")) {
             if (value) { left = true; } else { left = false; }
         } else if (binding.equals("Right")) {
@@ -126,17 +127,10 @@ public class Player extends AbstractAppState implements ActionListener {
 	    } else if (binding.equals("Shoot") && !value) {
 //	    	shoot();
 	    } else if (binding.equals("Harvest") && !value) {
-	    	harvest();
+	    	harvester.tryHarvest();
 	    }
     }
     
-    private void harvest() {
-    	// fråga playertargeting om den e harvestable
-    	// sen harvest
-    	if(targetInfo.isHarvestable())
-    		harvester.tryHarvest();
-    }
-
 	public void shoot() {
         Geometry bulletGeom = new Geometry("bullet", bullet);
         bulletGeom.setMaterial(bulletMat);

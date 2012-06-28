@@ -15,11 +15,7 @@ import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
-import com.jme3.terrain.Terrain;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -77,7 +73,8 @@ public class LeavesLodControl extends AbstractControl {
         //not called when spatial is culled.
     }
     
-    public Control cloneForSpatial(Spatial spatial) {
+    @Override
+	public Control cloneForSpatial(Spatial spatial) {
     	
     	Camera cameraClone = camera;
     	

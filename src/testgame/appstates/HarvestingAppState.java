@@ -16,11 +16,12 @@ public class HarvestingAppState extends AbstractAppState implements
 	private TargetInfo targetInfo;
 	private int harvestAmount;
 	private Inventory inventory;
+	private Application app;
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
 		super.initialize(stateManager, app);
-		app 			= (SimpleApplication) app; // cast to a more specific class
+		this.app		= app; // cast to a more specific class
 		targetInfo 		= app.getStateManager().getState(TargetInfo.class);
 		inventory 		= app.getStateManager().getState(Inventory.class);
 		harvestAmount = 5; // denna ska räknas ut baserat på typ/kvalité av resource, kvalite av verktyg etc
@@ -37,15 +38,19 @@ public class HarvestingAppState extends AbstractAppState implements
 	}
 
     /**
-     * är vi tillr nära?
-     * klicka höger -> få resources
+     * Checks if we have a target and if it's close enough. 
+     * If that's the case we may gather resources.
      */
 	public void tryHarvest() {
-		Node harvestNode = targetInfo.getNode();
-		HarvestingControl harvestControl = harvestNode.getControl(HarvestingControl.class);
-		if (targetInfo.getIntDistance() < harvestControl.getHarvestableDistance()) {
-			harvestControl.subtractFromAmount(harvestAmount);
-			// lägg till i inventory
+		if (targetInfo.isHarvestable()) {
+			Node harvestNode = targetInfo.getNode();
+			HarvestingControl harvestControl = harvestNode
+					.getControl(HarvestingControl.class);
+			if (targetInfo.getIntDistance() < harvestControl
+					.getHarvestableDistance()) {
+				harvestControl.subtractFromAmount(harvestAmount);
+				// lägg till i inventory
+			}
 		}
 	}
 }
