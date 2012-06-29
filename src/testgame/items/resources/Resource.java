@@ -7,7 +7,8 @@ public class Resource extends AbstractItem {
 	public enum ResourceType {
 		WOOD,
 		STONE,
-		WATER
+		WATER,
+		FOLIAGE
 	}
 	
 	private ResourceType type;
@@ -22,6 +23,8 @@ public class Resource extends AbstractItem {
 			setName("Stone");
 		else if (type.equals(ResourceType.WATER))
 			setName("Water");
+		else if (type.equals(ResourceType.FOLIAGE))
+			setName("Foliage");
 		this.type = type;
 		this.quantity = 1;
 	}

@@ -67,7 +67,7 @@ public class HarvestingControl extends AbstractControl {
 	}
 
 	public int getHarvestableDistance() {
-		return minDistance;
+		return getMinDistance();
 	}
 
 	/**
@@ -100,5 +100,17 @@ public class HarvestingControl extends AbstractControl {
 
 	public void setResourceType(ResourceType resourceType) {
 		this.resourceType = resourceType;
+	}
+
+	public int getMinDistance() {
+		return minDistance;
+	}
+
+	/**
+	 * Sets minimum distant you can harvet from
+	 * @param minDistance In meters
+	 */
+	public void setMinDistance(int minDistance) {
+		this.minDistance = minDistance;
 	}
 }

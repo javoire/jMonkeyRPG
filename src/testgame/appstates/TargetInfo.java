@@ -2,7 +2,6 @@ package testgame.appstates;
 
 import testgame.controls.HarvestingControl;
 import testgame.game.World;
-import testgame.items.resources.Resource.ResourceType;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -16,16 +15,16 @@ import com.jme3.scene.Node;
 
 public class TargetInfo extends AbstractAppState {
 	
-	private CollisionResult result = null;
-	private Geometry targetGeom = null;
-	private Node targetNode = null;
-	private Float distance = -1f;
-	private String name = null;
-	private HarvestingControl harvestingControl = null;
-	private World world;
-	private Node targetables;
-	private Camera cam;
-	private float maxTargetingRange = 60;
+	private CollisionResult 	result = null;
+	private Geometry 			targetGeom = null;
+	private Node 				targetNode = null;
+	private Float 				distance = -1f;
+	private String 				name = null;
+	private HarvestingControl 	harvestingControl = null;
+	private World 				world;
+	private Node 				targetables;
+	private Camera				cam;
+	private float 				maxTargetingRange = 60;
 	
 	public TargetInfo() {
 		
@@ -109,12 +108,6 @@ public class TargetInfo extends AbstractAppState {
 			return false;
 	}
 	
-//	public ResourceType getResourceType() {
-//		if(isHarvestable())
-//			return harvestingControl.getResourceType();
-//		return null;
-//	}
-//
 	public Node getNode() {
 		return targetNode;
 	}
