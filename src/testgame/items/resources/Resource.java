@@ -8,7 +8,7 @@ public class Resource extends AbstractItem {
 		WOOD,
 		STONE,
 		WATER,
-		FOLIAGE
+		LEAVES
 	}
 	
 	private ResourceType type;
@@ -23,8 +23,8 @@ public class Resource extends AbstractItem {
 			setName("Stone");
 		else if (type.equals(ResourceType.WATER))
 			setName("Water");
-		else if (type.equals(ResourceType.FOLIAGE))
-			setName("Foliage");
+		else if (type.equals(ResourceType.LEAVES))
+			setName("Leaves");
 		this.type = type;
 		this.quantity = 1;
 	}
