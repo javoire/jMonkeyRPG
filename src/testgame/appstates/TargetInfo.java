@@ -2,6 +2,7 @@ package testgame.appstates;
 
 import testgame.controls.HarvestingControl;
 import testgame.game.World;
+import testgame.items.resources.Resource.ResourceType;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -94,14 +95,24 @@ public class TargetInfo extends AbstractAppState {
 		return distanceInt;
 	}
 
+	/**
+	 * Checks if it has HarvestingControl attached
+	 * @return True or false
+	 */
 	public boolean isHarvestable() {
-		harvestingControl  = targetNode.getControl(HarvestingControl.class);
+		harvestingControl = targetNode.getControl(HarvestingControl.class);
 		if(harvestingControl != null)
 			return true;
 		else
 			return false;
 	}
-
+	
+//	public ResourceType getResourceType() {
+//		if(isHarvestable())
+//			return harvestingControl.getResourceType();
+//		return null;
+//	}
+//
 	public Node getNode() {
 		return targetNode;
 	}
@@ -116,7 +127,7 @@ public class TargetInfo extends AbstractAppState {
 				+ getIntDistance()
 				+ " m";
 		if(isHarvestable()) // add harvest info
-			infoString += "\n" + harvestingControl.getType() + ": " + harvestingControl.getAmount();
+			infoString += "\n" + harvestingControl.getType() + ": " + harvestingControl.getQuantity();
 		if(!infoString.equals(""))
 			return infoString;
 		return null;

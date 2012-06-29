@@ -2,6 +2,7 @@ package testgame.objects;
 
 import testgame.controls.HarvestingControl;
 import testgame.controls.LeavesLodControl;
+import testgame.items.resources.Resource.ResourceType;
 
 import com.jme3.app.Application;
 import com.jme3.scene.Node;
@@ -21,8 +22,8 @@ public class Tree extends Node {
 
 		leaves.addControl(
 				new LeavesLodControl(leaves, app.getCamera()));
-		HarvestingControl harvester = new HarvestingControl(app.getCamera());
-		harvester.setAmount(300);
+		HarvestingControl harvester = new HarvestingControl(app.getCamera(), ResourceType.WOOD);
+		harvester.setQuantity(300);
 		harvester.setType("Wood");
 		bark.addControl(harvester);
 

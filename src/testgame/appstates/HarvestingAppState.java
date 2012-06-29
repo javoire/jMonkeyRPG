@@ -2,9 +2,9 @@ package testgame.appstates;
 
 import testgame.controls.HarvestingControl;
 import testgame.inventory.Inventory;
+import testgame.items.resources.Resource.ResourceType;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
@@ -39,19 +39,18 @@ public class HarvestingAppState extends AbstractAppState implements
 
     /**
      * Checks if we have a target and if it's close enough. 
-     * If that's the case we may gather resources.
+     * Then checks what type of resource, then take and puts in inventory.
      */
 	public void tryHarvest() {
 		if (targetInfo.isHarvestable()) {
-			Node harvestNode = targetInfo.getNode();
-			HarvestingControl harvestControl = harvestNode
-					.getControl(HarvestingControl.class);
+			HarvestingControl harvestControl = targetInfo.getNode().getControl(
+					HarvestingControl.class);
 			if (targetInfo.getIntDistance() < harvestControl
 					.getHarvestableDistance()) {
-				harvestControl.subtractFromAmount(harvestAmount);
-				// add wood to inventory
-				// if wood exists
-				// add quantity
+				switch (harvestControl.getResourceType()) {
+				case WOOD:
+					harvestControl.toInventory(harvestAmount, inventory, ResourceType.WOOD);
+				}
 			}
 		}
 	}
