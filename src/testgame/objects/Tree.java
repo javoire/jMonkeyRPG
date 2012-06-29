@@ -22,9 +22,8 @@ public class Tree extends Node {
 
 		leaves.addControl(
 				new LeavesLodControl(leaves, app.getCamera()));
-		HarvestingControl harvester = new HarvestingControl(app.getCamera(), ResourceType.WOOD);
-		harvester.setQuantity(300);
-		harvester.setType("Wood");
+		HarvestingControl harvester = new HarvestingControl(ResourceType.WOOD);
+		harvester.setQuantity(200);
 		bark.addControl(harvester);
 
 		attachChild(getBark());

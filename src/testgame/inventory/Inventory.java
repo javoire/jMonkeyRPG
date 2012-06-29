@@ -95,7 +95,7 @@ public class Inventory extends AbstractAppState {
 		Iterator<Resource> i = resources.iterator();
 		while(i.hasNext()) {
 			Resource res = i.next();
-			if(res.getResourceType().equals(ResourceType.WOOD))
+			if(res.getResourceType().equals(resource))
 				return res;
 		}
 		return null;

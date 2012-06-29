@@ -24,20 +24,19 @@ public class HarvestingControl extends AbstractControl {
 	Player player;
 	Tree tree;
 	private int quantity;
-	private Camera cam;
-	private String type;
 	private int minDistance;
 	private ResourceType resourceType;
+	private Resource resource;
 	
 	/**
 	 * @param camera
 	 * @param resType Which type of resource this Spatial has
 	 */
-	public HarvestingControl(Camera camera, ResourceType resType) {
-		cam 			= camera;
+	public HarvestingControl(ResourceType resType) {
 		resourceType 	= resType;
+		resource 		= new Resource(resType); 	// TODO dummy object just helps to get
+													// the name of the resource. fix. freaking ugly
 		quantity 		= 200;
-		type 			= "Wood";
 		minDistance 	= 1; // in meters
 	}
 	
@@ -49,7 +48,8 @@ public class HarvestingControl extends AbstractControl {
 	@Override
 	protected void controlUpdate(float tpf) {
 		if(spatial != null) {
-
+//			if(quantity < 300)
+//				quantity += 1*tpf;
 		}
 	}
 
@@ -64,14 +64,6 @@ public class HarvestingControl extends AbstractControl {
 
 	public void setQuantity(int amount) {
 		this.quantity = amount;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
 	}
 
 	public int getHarvestableDistance() {
@@ -100,6 +92,10 @@ public class HarvestingControl extends AbstractControl {
 
 	public ResourceType getResourceType() {
 		return resourceType;
+	}
+	
+	public String getResourceName() {
+		return resource.getName();
 	}
 
 	public void setResourceType(ResourceType resourceType) {

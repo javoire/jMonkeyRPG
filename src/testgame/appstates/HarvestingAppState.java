@@ -2,29 +2,25 @@ package testgame.appstates;
 
 import testgame.controls.HarvestingControl;
 import testgame.inventory.Inventory;
-import testgame.items.resources.Resource.ResourceType;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.input.controls.ActionListener;
-import com.jme3.scene.Node;
 
 public class HarvestingAppState extends AbstractAppState implements
 		ActionListener {
 
-	private TargetInfo targetInfo;
-	private int harvestAmount;
-	private Inventory inventory;
-	private Application app;
+	private TargetInfo 		targetInfo;
+	private int 			harvestAmount;
+	private Inventory 		inventory;
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
 		super.initialize(stateManager, app);
-		this.app		= app; // cast to a more specific class
 		targetInfo 		= app.getStateManager().getState(TargetInfo.class);
 		inventory 		= app.getStateManager().getState(Inventory.class);
-		harvestAmount = 5; // denna ska räknas ut baserat på typ/kvalité av resource, kvalite av verktyg etc
+		harvestAmount 	= 5; // denna ska räknas ut baserat på typ/kvalité av resource, kvalite av verktyg etc
 	}
 
 	@Override
@@ -47,10 +43,8 @@ public class HarvestingAppState extends AbstractAppState implements
 					HarvestingControl.class);
 			if (targetInfo.getIntDistance() < harvestControl
 					.getHarvestableDistance()) {
-				switch (harvestControl.getResourceType()) {
-				case WOOD:
-					harvestControl.toInventory(harvestAmount, inventory, ResourceType.WOOD);
-				}
+				harvestControl.toInventory(harvestAmount, inventory,
+						harvestControl.getResourceType());
 			}
 		}
 	}

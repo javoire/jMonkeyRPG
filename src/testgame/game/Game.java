@@ -40,7 +40,6 @@ public class Game extends AbstractAppState {
 
         inventory.add(new Weapon(WeaponType.BOW, "TestItem"));
         inventory.add(new Weapon(WeaponType.SWORD, "TestItem"));
-//        inventory.add(new Resource(ResourceType.WOOD));
     }
     
     public boolean startGame() {

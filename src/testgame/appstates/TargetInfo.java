@@ -96,10 +96,12 @@ public class TargetInfo extends AbstractAppState {
 	}
 
 	/**
-	 * Checks if it has HarvestingControl attached
+	 * Checks if it has HarvestingControl attached. Also populates the field harvestingControl
 	 * @return True or false
 	 */
 	public boolean isHarvestable() {
+		if(result == null)
+			return false;
 		harvestingControl = targetNode.getControl(HarvestingControl.class);
 		if(harvestingControl != null)
 			return true;
@@ -127,7 +129,7 @@ public class TargetInfo extends AbstractAppState {
 				+ getIntDistance()
 				+ " m";
 		if(isHarvestable()) // add harvest info
-			infoString += "\n" + harvestingControl.getType() + ": " + harvestingControl.getQuantity();
+			infoString += "\n" + harvestingControl.getResourceName() + ": " + harvestingControl.getQuantity();
 		if(!infoString.equals(""))
 			return infoString;
 		return null;

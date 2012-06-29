@@ -79,7 +79,7 @@ public class Hud extends AbstractAppState {
     private void displayInventory() {
     	Vector<String> items = inventory.getItemList();
     	Iterator<String> i = items.iterator();
-    	String inventoryString = "";
+    	String inventoryString = "Inventory:\n";
     	while(i.hasNext()) {
     		inventoryString += i.next() + "\n";
     	}

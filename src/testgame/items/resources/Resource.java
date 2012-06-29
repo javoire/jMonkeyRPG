@@ -15,16 +15,13 @@ public class Resource extends AbstractItem {
 	
 	public Resource(ResourceType type) {
 		super(ItemType.RESOURCE);
-		switch (type) {
-			case WOOD:
-				setName("Wood"); 
-			case STONE:
-				setName("Stone");
-			case WATER:
-				setName("Water");
-			default:
-				setName("Wood");
-		}
+		// TODO av någon JÄVLA anledning funkar inte switch här så måste köra på en ful satans if sats.... 
+		if (type.equals(ResourceType.WOOD))
+			setName("Wood");
+		else if (type.equals(ResourceType.STONE))
+			setName("Stone");
+		else if (type.equals(ResourceType.WATER))
+			setName("Water");
 		this.type = type;
 		this.quantity = 1;
 	}
