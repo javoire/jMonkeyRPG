@@ -5,8 +5,10 @@
 package testgame.game;
 
 import testgame.inventory.Inventory;
-import testgame.items.Item;
-import testgame.items.resources.Wood;
+import testgame.items.Weapon;
+import testgame.items.Weapon.WeaponType;
+import testgame.items.resources.Resource;
+import testgame.items.resources.Resource.ResourceType;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -19,7 +21,7 @@ import com.jme3.app.state.AppStateManager;
 public class Game extends AbstractAppState {
     
     private World               world;
-    private BasicGui            basicGui;
+    private Hud          		basicGui;
     private Player              player;
     private Inventory			inventory;
         
@@ -32,13 +34,13 @@ public class Game extends AbstractAppState {
         //this is called on the OpenGL thread after the AppState has been attached
         
         world           = app.getStateManager().getState(World.class);
-        basicGui        = app.getStateManager().getState(BasicGui.class);
+        basicGui        = app.getStateManager().getState(Hud.class);
         player          = app.getStateManager().getState(Player.class);
         inventory		= app.getStateManager().getState(Inventory.class);
 
-        inventory.add(new Item("Item1"));
-        inventory.add(new Item("Item2"));
-        inventory.add(new Wood());
+        inventory.add(new Weapon(WeaponType.BOW, "TestItem"));
+        inventory.add(new Weapon(WeaponType.SWORD, "TestItem"));
+        inventory.add(new Resource(ResourceType.WOOD));
     }
     
     public boolean startGame() {
@@ -61,7 +63,6 @@ public class Game extends AbstractAppState {
 
 	private void loadGui() {
 		basicGui.initCrosshair();
-		basicGui.initInventory(inventory);
 	}
 
 	public void loadWorld() { 

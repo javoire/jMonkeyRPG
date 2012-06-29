@@ -49,7 +49,9 @@ public class HarvestingAppState extends AbstractAppState implements
 			if (targetInfo.getIntDistance() < harvestControl
 					.getHarvestableDistance()) {
 				harvestControl.subtractFromAmount(harvestAmount);
-				// lŠgg till i inventory
+				// add wood to inventory
+				// if wood exists
+				// add quantity
 			}
 		}
 	}
