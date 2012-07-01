@@ -5,6 +5,9 @@ import java.util.logging.Level;
 import testgame.appstates.HarvestingAppState;
 import testgame.appstates.TargetInfo;
 import testgame.inventory.Inventory;
+import testgame.player.Player;
+import testgame.player.PlayerActions;
+import testgame.player.PlayerInput;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
@@ -18,19 +21,21 @@ public class Main extends SimpleApplication {
 
 	private World 						world;
 	private Game 						game;
-	private Hud 					basicGui;
+	private Hud 						basicGui;
 	private Player 						player;
 	private BulletAppState 				bulletAppState;
 	private HarvestingAppState 			harvestingAppState;
 	private NiftyJmeDisplay 			gui;
 	private TargetInfo 					targetInfo;
 	private Inventory 					inventory;
+	private PlayerInput 				playerInput;
+	private PlayerActions playerActions;
 
 	public static void main(String[] args) {
 		java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
 		Main app = new Main();
 		AppSettings appSettings = new AppSettings(true);
-		appSettings.setTitle("JDs fantastic game of awesome adventures...");
+		appSettings.setTitle("JDs awesome game of fantastic adventures...");
 		app.setShowSettings(false); // splash screen
 		app.setSettings(appSettings);
 		app.start();
@@ -38,13 +43,9 @@ public class Main extends SimpleApplication {
 
 	@Override
 	public void simpleInitApp() {
-
-		// app.setDisplayFps(true); // nullpointer exception
-		// app.setDisplayStatView(true); // stats on screen
-
 		world						= new World(rootNode);
 		game				 		= new Game();
-		basicGui			 		= new Hud(guiNode, guiFont, settings, flyCam);
+		basicGui			 		= new Hud(guiNode, guiFont, settings);
 		gui 						= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer,
 											guiViewPort);
 		player 						= new Player(rootNode);
@@ -52,6 +53,8 @@ public class Main extends SimpleApplication {
 		harvestingAppState 			= new HarvestingAppState();
 		targetInfo					= new TargetInfo();
 		inventory					= new Inventory(10);
+		playerInput					= new PlayerInput();
+		playerActions				= new PlayerActions(rootNode);
 
 		bulletAppState.setThreadingType(BulletAppState.ThreadingType.PARALLEL);
 
@@ -61,14 +64,15 @@ public class Main extends SimpleApplication {
 		stateManager.attach(game);
 		stateManager.attach(basicGui);
 		stateManager.attach(player);
+		stateManager.attach(playerInput);
+		stateManager.attach(playerActions);
 		stateManager.attach(inventory);
 		stateManager.attach(targetInfo);
 		stateManager.attach(harvestingAppState);
 
 		viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
 
-		flyCam.setMoveSpeed(30);
-
+//		flyCam.setMoveSpeed(30);
 		// loadStartMenu();
 		// this.loadStatsView();
 		// this.loadFPSText();
@@ -85,7 +89,7 @@ public class Main extends SimpleApplication {
 		guiViewPort.addProcessor(gui);
 
 		// disable the fly cam
-		flyCam.setDragToRotate(true);
+//		flyCam.setDragToRotate(true);
 		// gui.loadStartMenu();
 	}
 

@@ -84,6 +84,8 @@ public class World extends AbstractAppState {
 		harvestables = new Node("harvestables");
 		targetables.attachChild(harvestables);
 		root.attachChild(targetables);
+		
+//		bulletAppState.getPhysicsSpace().enableDebug(assetManager);
 	}
 
 	public World(Node rootNode) {

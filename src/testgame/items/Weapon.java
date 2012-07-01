@@ -4,7 +4,8 @@ public class Weapon extends EquipableItem {
 	
 	public enum WeaponType {
 		BOW,
-		SWORD
+		SWORD,
+		CANNON
 	}
 	
 	private WeaponType type;
@@ -21,6 +22,14 @@ public class Weapon extends EquipableItem {
 	}
 
 	public WeaponType getWeaponType() {
-		return type;
+		return this.type;
+	}
+
+	public void setWeaponType(WeaponType type) {
+		this.type = type;
+	}
+	
+	public void shoot() {
+		
 	}
 }

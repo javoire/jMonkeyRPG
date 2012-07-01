@@ -1,10 +1,10 @@
 package testgame.controls;
 
-import testgame.game.Player;
 import testgame.inventory.Inventory;
 import testgame.items.resources.Resource.ResourceType;
 import testgame.items.resources.Resource;
 import testgame.objects.Tree;
+import testgame.player.Player;
 
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;

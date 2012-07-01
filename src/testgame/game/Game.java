@@ -7,6 +7,7 @@ package testgame.game;
 import testgame.inventory.Inventory;
 import testgame.items.Weapon;
 import testgame.items.Weapon.WeaponType;
+import testgame.player.Player;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;

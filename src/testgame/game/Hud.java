@@ -64,7 +64,7 @@ public class Hud extends AbstractAppState {
     	hudRoot.attachChild(inventoryText);
     }
     
-    public Hud (Node guiNode, BitmapFont guiFont,  AppSettings settings, FlyByCamera flyCam) {
+    public Hud (Node guiNode, BitmapFont guiFont,  AppSettings settings) {
         this.hudRoot 	= guiNode;
         this.settings 	= settings;
         this.hudFont 	= guiFont;
