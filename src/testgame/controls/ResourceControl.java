@@ -19,7 +19,7 @@ import com.jme3.scene.control.Control;
  * @author Jonatan Dahl
  *
  */
-public class HarvestingControl extends AbstractControl {
+public class ResourceControl extends AbstractControl {
 	
 	Player player;
 	Tree tree;
@@ -32,7 +32,7 @@ public class HarvestingControl extends AbstractControl {
 	 * @param camera
 	 * @param resType Which type of resource this Spatial has
 	 */
-	public HarvestingControl(ResourceType resType) {
+	public ResourceControl(ResourceType resType) {
 		resourceType 	= resType;
 		resource 		= new Resource(resType); 	// TODO dummy object just helps to get
 													// the name of the resource. fix. freaking ugly

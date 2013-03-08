@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package testgame.game;
+package testgame.gui;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -13,7 +13,7 @@ import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
-public class Gui extends AbstractAppState implements ScreenController {
+public class Hud extends AbstractAppState implements ScreenController {
 
 	private Nifty nifty;
 	private Screen screen;
@@ -21,7 +21,7 @@ public class Gui extends AbstractAppState implements ScreenController {
 
 	/** custom methods */ 
 
-	public Gui(String data) { 
+	public Hud(String data) { 
 		/** You custom constructor, can accept arguments */ 
 	}
 

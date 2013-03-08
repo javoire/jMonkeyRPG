@@ -1,6 +1,6 @@
 package testgame.objects;
 
-import testgame.controls.HarvestingControl;
+import testgame.controls.ResourceControl;
 import testgame.controls.LeavesLodControl;
 import testgame.items.resources.Resource.ResourceType;
 
@@ -22,9 +22,9 @@ public class Tree extends Node {
 
 		leaves.addControl(
 				new LeavesLodControl(leaves, app.getCamera()));
-		HarvestingControl woodHarvester = new HarvestingControl(ResourceType.WOOD);
+		ResourceControl woodHarvester = new ResourceControl(ResourceType.WOOD);
 		woodHarvester.setQuantity(200);
-		HarvestingControl foliageHarvester = new HarvestingControl(ResourceType.LEAVES);
+		ResourceControl foliageHarvester = new ResourceControl(ResourceType.LEAVES);
 		foliageHarvester.setQuantity(200);
 		foliageHarvester.setMinDistance(4);
 		leaves.addControl(foliageHarvester);

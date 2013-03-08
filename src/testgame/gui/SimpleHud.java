@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package testgame.game;
+package testgame.gui;
 
 import java.util.Iterator;
 import java.util.Vector;
@@ -26,7 +26,7 @@ import com.jme3.system.AppSettings;
  *
  * @author jo_da12
  */
-public class Hud extends AbstractAppState {
+public class SimpleHud extends AbstractAppState {
     
     private Node 			hudRoot;
     private AppSettings 	settings;
@@ -42,8 +42,6 @@ public class Hud extends AbstractAppState {
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
         super.initialize(stateManager, app);
-        //TODO: initialize your AppState, e.g. attach spatials to rootNode
-        //this is called on the OpenGL thread after the AppState has been attached
         assetManager 		= app.getAssetManager();
         guiViewPort 		= app.getGuiViewPort();
         inventory			= app.getStateManager().getState(Inventory.class);
@@ -64,7 +62,11 @@ public class Hud extends AbstractAppState {
     	hudRoot.attachChild(inventoryText);
     }
     
-    public Hud (Node guiNode, BitmapFont guiFont,  AppSettings settings) {
+	public void init() {
+		initCrosshair();
+	}
+    
+    public SimpleHud (Node guiNode, BitmapFont guiFont,  AppSettings settings) {
         this.hudRoot 	= guiNode;
         this.settings 	= settings;
         this.hudFont 	= guiFont;

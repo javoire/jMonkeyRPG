@@ -25,6 +25,7 @@ public class Inventory extends AbstractAppState {
 	private Vector<Resource> resources = new Vector<Resource>();
 	private Vector<Weapon> weapons = new Vector<Weapon>();
 	private Vector<Ammunition> ammunition = new Vector<Ammunition>();
+	private Vector<Weapon> quickslot = new Vector<Weapon>(10);
 	
 	public boolean add(Resource resource) {
 		resources.add(resource);
@@ -99,5 +100,19 @@ public class Inventory extends AbstractAppState {
 				return res;
 		}
 		return null;
+	}
+	
+	public Weapon getQuickslot(int i) {
+		if(i < 0 || i >= quickslot.size())
+			return null;
+		
+		return quickslot.get(i);
+	}
+	
+	public void setQuickslot(int i, Weapon weapon) {
+		if(i >= 0) {
+			// TODO check if something exists on slot. then put this to inventory
+			quickslot.add(i, weapon);
+		}
 	}
 }

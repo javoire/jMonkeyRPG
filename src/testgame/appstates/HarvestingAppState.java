@@ -1,6 +1,6 @@
 package testgame.appstates;
 
-import testgame.controls.HarvestingControl;
+import testgame.controls.ResourceControl;
 import testgame.inventory.Inventory;
 
 import com.jme3.app.Application;
@@ -39,8 +39,8 @@ public class HarvestingAppState extends AbstractAppState implements
      */
 	public void tryHarvest() {
 		if (targetInfo.isHarvestable()) {
-			HarvestingControl harvestControl = targetInfo.getNode().getControl(
-					HarvestingControl.class);
+			ResourceControl harvestControl = targetInfo.getNode().getControl(
+					ResourceControl.class);
 			if (targetInfo.getIntDistance() < harvestControl
 					.getHarvestableDistance()) {
 				harvestControl.toInventory(harvestAmount, inventory,

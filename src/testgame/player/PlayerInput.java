@@ -1,6 +1,9 @@
 package testgame.player;
 
 import testgame.appstates.HarvestingAppState;
+import testgame.inventory.Inventory;
+import testgame.items.Weapon;
+import testgame.player.controls.PlayerEquipmentControl;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -41,14 +44,16 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
 	    }
 	}    
 
-    private Player 				player;
-	private HarvestingAppState 	harvester;
-	private InputManager 		inputManager;
-    private Vector3f 			walkDirection = new Vector3f();
-	private Camera 				cam;
-	private CharacterControl 	playerControl;
-	private PlayerActions 		playerActions;
-	private float 				sprintMultiplier = 3f;
+    private Player 					player;
+	private HarvestingAppState 		harvester;
+	private InputManager 			inputManager;
+    private Vector3f 				walkDirection = new Vector3f();
+	private Camera 					cam;
+	private CharacterControl 		playerControl;
+	private PlayerActions 			playerActions;
+	private Inventory 				inventory;
+	private PlayerEquipmentControl 	playerEquipment;
+	private float 					sprintMultiplier = 3f;
 	private boolean left = false, right = false, up = false, down = false, sprint = false;
 
 	@Override
@@ -59,14 +64,16 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
         inputManager   	= app.getInputManager();
         cam				= app.getCamera();
         playerActions	= app.getStateManager().getState(PlayerActions.class);
+        inventory		= app.getStateManager().getState(Inventory.class);
         playerControl 	= player.getPlayerControl();
+        playerEquipment = player.getEquipmentControl();
         initKeyBindings();
     }
 	
     @Override
     public void update(float tpf) {
-        Vector3f camDir = cam.getDirection().clone().multLocal(0.4f);
-        Vector3f camLeft = cam.getLeft().clone().multLocal(0.2f);
+        Vector3f camDir 	= cam.getDirection().clone().multLocal(0.4f);
+        Vector3f camLeft 	= cam.getLeft().clone().multLocal(0.2f);
         
         walkDirection.set(0, 0, 0);
         
@@ -96,11 +103,15 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
 	    	playerActions.shoot();
 	    } else if (binding.equals(KeyMap.HARVEST.toString()) && !value) {
 	    	harvester.tryHarvest();
-	    }
-//		switch (binding) {
-//		case KeyMap.LEFT.toString():
-//			System.out.print("tja");
-//		}
+	    } else if (binding.equals(KeyMap.SLOT_1.toString()) && !value) {
+	    	Weapon mainHand = inventory.getQuickslot(0);
+	    	if(mainHand != null)
+	    		playerEquipment.setMainHand(mainHand);
+		} else if (binding.equals(KeyMap.SLOT_2.toString()) && !value) {
+	    	Weapon mainHand = inventory.getQuickslot(1);
+	    	if(mainHand != null)
+	    		playerEquipment.setMainHand(mainHand);
+		}
 	}
     
 	private void initKeyBindings() {
@@ -111,6 +122,8 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
 		inputManager.addMapping(KeyMap.JUMP.toString(), new KeyTrigger(KeyInput.KEY_SPACE));
 		inputManager.addMapping(KeyMap.SHOOT.toString(), new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		inputManager.addMapping(KeyMap.HARVEST.toString(), new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
+		inputManager.addMapping(KeyMap.SLOT_1.toString(), new KeyTrigger(KeyInput.KEY_1));
+		inputManager.addMapping(KeyMap.SLOT_2.toString(), new KeyTrigger(KeyInput.KEY_2));
 		inputManager.addListener(this, KeyMap.LEFT.toString());
 		inputManager.addListener(this, KeyMap.RIGHT.toString());
 		inputManager.addListener(this, KeyMap.UP.toString());
@@ -118,5 +131,7 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
 		inputManager.addListener(this, KeyMap.JUMP.toString());
 		inputManager.addListener(this, KeyMap.SHOOT.toString());
 		inputManager.addListener(this, KeyMap.HARVEST.toString());
+		inputManager.addListener(this, KeyMap.SLOT_1.toString());
+		inputManager.addListener(this, KeyMap.SLOT_2.toString());
 	}
 }

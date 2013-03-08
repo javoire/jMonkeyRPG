@@ -1,6 +1,6 @@
 package testgame.appstates;
 
-import testgame.controls.HarvestingControl;
+import testgame.controls.ResourceControl;
 import testgame.game.World;
 
 import com.jme3.app.Application;
@@ -20,7 +20,7 @@ public class TargetInfo extends AbstractAppState {
 	private Node 				targetNode = null;
 	private Float 				distance = -1f;
 	private String 				name = null;
-	private HarvestingControl 	harvestingControl = null;
+	private ResourceControl 	harvestingControl = null;
 	private World 				world;
 	private Node 				targetables;
 	private Camera				cam;
@@ -101,7 +101,7 @@ public class TargetInfo extends AbstractAppState {
 	public boolean isHarvestable() {
 		if(result == null)
 			return false;
-		harvestingControl = targetNode.getControl(HarvestingControl.class);
+		harvestingControl = targetNode.getControl(ResourceControl.class);
 		if(harvestingControl != null)
 			return true;
 		else

@@ -4,6 +4,7 @@
  */
 package testgame.player;
 
+import testgame.inventory.Inventory;
 import testgame.items.weapons.Cannon;
 import testgame.items.weapons.FatCannon;
 import testgame.player.controls.PlayerAttributesControl;
@@ -32,6 +33,7 @@ public class Player extends AbstractAppState {
 	private PlayerAttributesControl 	attributesControl;
 	private PlayerEquipmentControl 		equipmentControl;
 	private Application 				app;
+	private Inventory inventory;
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -39,16 +41,28 @@ public class Player extends AbstractAppState {
         this.app			= app;
         cam            		= app.getCamera();
         bulletAppState 		= app.getStateManager().getState(BulletAppState.class);
+        inventory			= app.getStateManager().getState(Inventory.class);
         playerControl 		= new CharacterControl(new CapsuleCollisionShape(1.5f, 6f, 1), 0.05f);
         attributesControl 	= new PlayerAttributesControl();
         equipmentControl	= new PlayerEquipmentControl();
         
         initDefaultWeapons();
     }
+
+	public void init() {
+		playerControl.setJumpSpeed(30);
+    	playerControl.setFallSpeed(30);
+    	playerControl.setGravity(90);
+    	playerControl.setPhysicsLocation(new Vector3f(5, 100, 0));
+    	playerControl.setCollisionGroup(2);
+        bulletAppState.getPhysicsSpace().add(playerControl);
+	}
     
     private void initDefaultWeapons() {
     	Cannon cannon1 = new Cannon("Cannon 1", app);
     	FatCannon fatCannon = new FatCannon("Cannon Fat", app);
+    	inventory.setQuickslot(0, cannon1);
+    	inventory.setQuickslot(1, fatCannon);
     	equipmentControl.setMainHand(fatCannon);
 	}
 
@@ -72,15 +86,6 @@ public class Player extends AbstractAppState {
     
     public void setAttribute() {
     	
-    }
-    
-    public void initPlayer() {
-    	playerControl.setJumpSpeed(30);
-    	playerControl.setFallSpeed(30);
-    	playerControl.setGravity(90);
-    	playerControl.setPhysicsLocation(new Vector3f(5, 100, 0));
-    	playerControl.setCollisionGroup(2);
-        bulletAppState.getPhysicsSpace().add(playerControl);
     }
     
     @Override

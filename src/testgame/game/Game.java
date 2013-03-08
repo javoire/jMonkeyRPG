@@ -4,14 +4,21 @@
  */
 package testgame.game;
 
+import testgame.appstates.HarvestingAppState;
+import testgame.appstates.TargetInfo;
+import testgame.gui.SimpleHud;
 import testgame.inventory.Inventory;
 import testgame.items.Weapon;
 import testgame.items.Weapon.WeaponType;
 import testgame.player.Player;
+import testgame.player.PlayerActions;
+import testgame.player.PlayerInput;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.niftygui.NiftyJmeDisplay;
 
 /**
  *
@@ -20,7 +27,7 @@ import com.jme3.app.state.AppStateManager;
 public class Game extends AbstractAppState {
     
     private World               world;
-    private Hud          		basicGui;
+    private SimpleHud          	simpleGui;
     private Player              player;
     private Inventory			inventory;
         
@@ -33,7 +40,7 @@ public class Game extends AbstractAppState {
         //this is called on the OpenGL thread after the AppState has been attached
         
         world           = app.getStateManager().getState(World.class);
-        basicGui        = app.getStateManager().getState(Hud.class);
+        simpleGui       = app.getStateManager().getState(SimpleHud.class);
         player          = app.getStateManager().getState(Player.class);
         inventory		= app.getStateManager().getState(Inventory.class);
 
@@ -48,30 +55,11 @@ public class Game extends AbstractAppState {
         
         running = true;
         
-        loadWorld();
-        loadGui();
-        loadPlayer();
+        world.init();
+        player.init();
+        simpleGui.init();
         
         return running;
-    }
-    
-    private void loadPlayer() {
-    	player.initPlayer();
-	}
-
-	private void loadGui() {
-		basicGui.initCrosshair();
-	}
-
-	public void loadWorld() { 
-        world.loadTerrain();
-        world.loadTrees();
-        world.loadLights();
-        world.loadSky();
-        world.loadShadows();
-        world.initWorldPhysics();
-        world.initPostEffects();
-        world.initSound();
     }
     
     @Override

@@ -4,6 +4,8 @@ import java.util.logging.Level;
 
 import testgame.appstates.HarvestingAppState;
 import testgame.appstates.TargetInfo;
+import testgame.gui.Hud;
+import testgame.gui.SimpleHud;
 import testgame.inventory.Inventory;
 import testgame.player.Player;
 import testgame.player.PlayerActions;
@@ -21,7 +23,7 @@ public class Main extends SimpleApplication {
 
 	private World 						world;
 	private Game 						game;
-	private Hud 						basicGui;
+	private SimpleHud 						basicGui;
 	private Player 						player;
 	private BulletAppState 				bulletAppState;
 	private HarvestingAppState 			harvestingAppState;
@@ -45,7 +47,7 @@ public class Main extends SimpleApplication {
 	public void simpleInitApp() {
 		world						= new World(rootNode);
 		game				 		= new Game();
-		basicGui			 		= new Hud(guiNode, guiFont, settings);
+		basicGui			 		= new SimpleHud(guiNode, guiFont, settings);
 		gui 						= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer,
 											guiViewPort);
 		player 						= new Player(rootNode);
@@ -85,7 +87,7 @@ public class Main extends SimpleApplication {
 		Nifty nifty = gui.getNifty();
 		/** Read your XML and initialize your custom ScreenController */
 		// nifty.fromXml("Interface/screen.xml", "start");
-		nifty.fromXml("Interface/screen.xml", "start", new Gui(null));
+		nifty.fromXml("Interface/screen.xml", "start", new Hud(null));
 		guiViewPort.addProcessor(gui);
 
 		// disable the fly cam

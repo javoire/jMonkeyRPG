@@ -66,26 +66,35 @@ public class World extends AbstractAppState {
 	private Node targetables; 
 
 	@Override
-	public void initialize(AppStateManager stateManager, Application app_) {
-		super.initialize(stateManager, app_);
+	public void initialize(AppStateManager stateManager, Application app) {
+		super.initialize(stateManager, app);
 		// TODO: initialize your AppState, e.g. attach spatials to rootNode
 		// this is called on the OpenGL thread after the AppState has been
 		// attached
 
-		app 				= app_;
+		this.app 			= app;
 		assetManager 		= app.getAssetManager();
 		bulletAppState 		= app.getStateManager().getState(BulletAppState.class);
 		viewPort 			= app.getViewPort();
 		audioRenderer 		= app.getAudioRenderer();
 		camera 				= app.getCamera();
-
-		fpp = new FilterPostProcessor(assetManager);
-		targetables = new Node("targetables");
-		harvestables = new Node("harvestables");
+		fpp 			= new FilterPostProcessor(assetManager);
+		targetables 	= new Node("targetables");
+		harvestables 	= new Node("harvestables");
+		
 		targetables.attachChild(harvestables);
 		root.attachChild(targetables);
-		
-//		bulletAppState.getPhysicsSpace().enableDebug(assetManager);
+	}
+	
+	public void init() {
+		loadTerrain();
+        loadTrees();
+        loadLights();
+        loadSky();
+        loadShadows();
+        initWorldPhysics();
+        initPostEffects();
+        initSound();
 	}
 
 	public World(Node rootNode) {
