@@ -23,7 +23,7 @@ public class Main extends SimpleApplication {
 
 	private World 						world;
 	private Game 						game;
-	private SimpleHud 						basicGui;
+	private SimpleHud 					basicGui;
 	private Player 						player;
 	private BulletAppState 				bulletAppState;
 	private HarvestingAppState 			harvestingAppState;
@@ -31,7 +31,7 @@ public class Main extends SimpleApplication {
 	private TargetInfo 					targetInfo;
 	private Inventory 					inventory;
 	private PlayerInput 				playerInput;
-	private PlayerActions playerActions;
+	private PlayerActions 				playerActions;
 
 	public static void main(String[] args) {
 		java.util.logging.Logger.getLogger("").setLevel(Level.WARNING);
