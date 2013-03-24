@@ -1,3 +1,5 @@
 dist/*
 production_files/*
 build/*
+doc/*
+sdk/*

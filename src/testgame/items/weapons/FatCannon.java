@@ -43,6 +43,7 @@ public class FatCannon extends Weapon {
 	  	bullet 						= new Sphere(32, 32, 0.8f, true, false);
 	  	bulletCollisionShape 		= new SphereCollisionShape(0.8f);
 	  	TextureKey bulletTexKey 	= new TextureKey("Textures/Terrain/Rock/Rock.PNG");
+                //TextureKey bulletTexKey 	= new TextureKey("Textures/terrain/cliffs.jpg");
 	
 		bulletTexKey.setGenerateMips(true);
 		Texture bulletTex = assetManager.loadTexture(bulletTexKey);

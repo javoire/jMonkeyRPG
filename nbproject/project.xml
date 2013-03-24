@@ -11,8 +11,9 @@
             </extension>
         </buildExtensions>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>TestGame2</name>
+            <name>JDs awesome game</name>
             <source-roots>
+                <root id="src.source.dir"/>
                 <root id="src.dir"/>
             </source-roots>
             <test-roots/>

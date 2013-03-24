@@ -43,8 +43,9 @@ public class Cannon extends Weapon {
 	  	bullet 						= new Sphere(32, 32, 0.1f, true, false);
 	  	bulletCollisionShape 		= new SphereCollisionShape(0.4f);
 	  	TextureKey bulletTexKey 	= new TextureKey("Textures/Terrain/Rock/Rock.PNG");
-	
-		bulletTexKey.setGenerateMips(true);
+                //TextureKey bulletTexKey 	= new TextureKey("Textures/terrain/cliffs.jpg");
+		
+                bulletTexKey.setGenerateMips(true);
 		Texture bulletTex = assetManager.loadTexture(bulletTexKey);
 		bulletMat.setTexture("ColorMap", bulletTex);
 		bullet.setTextureMode(TextureMode.Projected);
