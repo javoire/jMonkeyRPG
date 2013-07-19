@@ -39,8 +39,8 @@ public class PlayerActions extends AbstractAppState {
         playerEquipment = player.getEquipmentControl();
     }
     
-	public void shoot() {
+	public void useMainHand() {
 		if(playerEquipment.getMainHand() != null)
-			playerEquipment.getMainHand().shoot();
+			playerEquipment.getMainHand().use();
     }
 }

@@ -1,7 +1,7 @@
 package testgame.player.controls;
 
-import testgame.items.Weapon;
-import testgame.player.items.Armor;
+import testgame.items.weapons.Weapon;
+//import testgame.player.itemstest.Armor;
 
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -13,11 +13,11 @@ public class PlayerEquipmentControl extends AbstractControl {
 	
 	private Weapon mainHand;
 	private Weapon secondaryHand;
-	private Armor head;
-	private Armor feet;
-	private Armor legs;
-	private Armor chest;
-	private Armor hands;
+//	private Armor head;
+//	private Armor feet;
+//	private Armor legs;
+//	private Armor chest;
+//	private Armor hands;
 
 	@Override
 	public Control cloneForSpatial(Spatial spatial) {
@@ -53,44 +53,43 @@ public class PlayerEquipmentControl extends AbstractControl {
 		this.secondaryHand = secondaryHand;
 	}
 
-	public Armor getHead() {
-		return head;
-	}
-
-	public void setHead(Armor head) {
-		this.head = head;
-	}
-
-	public Armor getFeet() {
-		return feet;
-	}
-
-	public void setFeet(Armor feet) {
-		this.feet = feet;
-	}
-
-	public Armor getLegs() {
-		return legs;
-	}
-
-	public void setLegs(Armor legs) {
-		this.legs = legs;
-	}
-
-	public Armor getChest() {
-		return chest;
-	}
-
-	public void setChest(Armor chest) {
-		this.chest = chest;
-	}
-
-	public Armor getHands() {
-		return hands;
-	}
-
-	public void setHands(Armor hands) {
-		this.hands = hands;
-	}
-
+//	public Armor getHead() {
+//		return head;
+//	}
+//
+//	public void setHead(Armor head) {
+//		this.head = head;
+//	}
+//
+//	public Armor getFeet() {
+//		return feet;
+//	}
+//
+//	public void setFeet(Armor feet) {
+//		this.feet = feet;
+//	}
+//
+//	public Armor getLegs() {
+//		return legs;
+//	}
+//
+//	public void setLegs(Armor legs) {
+//		this.legs = legs;
+//	}
+//
+//	public Armor getChest() {
+//		return chest;
+//	}
+//
+//	public void setChest(Armor chest) {
+//		this.chest = chest;
+//	}
+//
+//	public Armor getHands() {
+//		return hands;
+//	}
+//
+//	public void setHands(Armor hands) {
+//		this.hands = hands;
+//	}
 }

@@ -48,8 +48,7 @@ public class Main extends SimpleApplication {
 		world						= new World(rootNode);
 		game				 		= new Game();
 		basicGui			 		= new SimpleHud(guiNode, guiFont, settings);
-		gui 						= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer,
-											guiViewPort);
+		gui 						= new NiftyJmeDisplay(assetManager, inputManager, audioRenderer,guiViewPort);
 		player 						= new Player(rootNode);
 		bulletAppState 				= new BulletAppState();
 		harvestingAppState 			= new HarvestingAppState();

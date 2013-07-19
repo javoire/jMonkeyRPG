@@ -2,7 +2,7 @@ package testgame.player;
 
 import testgame.appstates.HarvestingAppState;
 import testgame.inventory.Inventory;
-import testgame.items.Weapon;
+import testgame.items.weapons.Weapon;
 import testgame.player.controls.PlayerEquipmentControl;
 
 import com.jme3.app.Application;
@@ -26,7 +26,7 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
 	    UP("Up"),
 	    DOWN("Down"),
 	    JUMP("Jump"),
-	    SHOOT("Shoot"),
+	    USEMAINHAND("UseMainHand"),
 	    HARVEST("Harvest"),
 	    SPRINT("Sprint"),
 	    SLOT_1("Slot1"),
@@ -99,8 +99,8 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
             if (value) { down = true; } else { down = false; }
         } else if (binding.equals(KeyMap.JUMP.toString())) {
             playerControl.jump();
-	    } else if (binding.equals(KeyMap.SHOOT.toString()) && !value) {
-	    	playerActions.shoot();
+	    } else if (binding.equals(KeyMap.USEMAINHAND.toString()) && !value) {
+	    	playerActions.useMainHand();
 	    } else if (binding.equals(KeyMap.HARVEST.toString()) && !value) {
 	    	harvester.tryHarvest();
 	    } else if (binding.equals(KeyMap.SLOT_1.toString()) && !value) {
@@ -120,7 +120,7 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
 		inputManager.addMapping(KeyMap.UP.toString(), new KeyTrigger(KeyInput.KEY_W));
 		inputManager.addMapping(KeyMap.DOWN.toString(), new KeyTrigger(KeyInput.KEY_S));
 		inputManager.addMapping(KeyMap.JUMP.toString(), new KeyTrigger(KeyInput.KEY_SPACE));
-		inputManager.addMapping(KeyMap.SHOOT.toString(), new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+		inputManager.addMapping(KeyMap.USEMAINHAND.toString(), new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		inputManager.addMapping(KeyMap.HARVEST.toString(), new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
 		inputManager.addMapping(KeyMap.SLOT_1.toString(), new KeyTrigger(KeyInput.KEY_1));
 		inputManager.addMapping(KeyMap.SLOT_2.toString(), new KeyTrigger(KeyInput.KEY_2));
@@ -129,7 +129,7 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
 		inputManager.addListener(this, KeyMap.UP.toString());
 		inputManager.addListener(this, KeyMap.DOWN.toString());
 		inputManager.addListener(this, KeyMap.JUMP.toString());
-		inputManager.addListener(this, KeyMap.SHOOT.toString());
+		inputManager.addListener(this, KeyMap.USEMAINHAND.toString());
 		inputManager.addListener(this, KeyMap.HARVEST.toString());
 		inputManager.addListener(this, KeyMap.SLOT_1.toString());
 		inputManager.addListener(this, KeyMap.SLOT_2.toString());
