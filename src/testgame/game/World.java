@@ -11,21 +11,24 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioRenderer;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
+import com.jme3.post.filters.LightScatteringFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.shadow.DirectionalLightShadowRenderer;
 //import com.jme3.shadow.DirectionalLightShadowRenderer;
-import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.water.WaterFilter;
 
 /**
@@ -35,26 +38,24 @@ import com.jme3.water.WaterFilter;
 public class World extends AbstractAppState {
 
     private BulletAppState bulletAppState;
-    private RigidBodyControl landscape;
     private AssetManager assetManager;
     private Node rootNode;
     private WaterFilter water;
-    private TerrainQuad terrain;
     private ViewPort viewPort;
     private AudioRenderer audioRenderer;
     private Camera camera;
     private Material terrainMaterial;
     private DirectionalLight sun;
-//    private DirectionalLightShadowRenderer	shadowRenderer;
+    private DirectionalLightShadowRenderer shadowRenderer;
     private FilterPostProcessor fpp;
-    private Vector3f lightDir = new Vector3f(-0.74319214f, -0.20267837f, 0.84856685f); // same as light source
+    private Vector3f lightDir = new Vector3f(0.9f, -0.3f, -1f); // same as light source
     private float initialWaterHeight = 20; // choose a value for your scene
-    private Application app;
     private Node trees;
     private InputManager inputManager;
     boolean wireframe = false;
     private Node harvestables;
     private Node targetables;
+    Spatial scene;
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -63,7 +64,6 @@ public class World extends AbstractAppState {
         // this is called on the OpenGL thread after the AppState has been
         // attached
 
-        this.app = app;
         assetManager = app.getAssetManager();
         bulletAppState = app.getStateManager().getState(BulletAppState.class);
         viewPort = app.getViewPort();
@@ -125,13 +125,12 @@ public class World extends AbstractAppState {
     }
 
     public void loadShadows() {
-//		rootNode.setShadowMode(ShadowMode.Off); // off allt sen aktivera separat
-//		shadowRenderer = new DirectionalLightShadowRenderer(assetManager, 1024, 1);
-//		shadowRenderer.setLight(sun);
-//	    shadowRenderer.setShadowIntensity(0.4f);
-//	    shadowRenderer.setEdgesThickness(0);
-//	    shadowRenderer.setShadowZExtend(500);
-//	    viewPort.addProcessor(shadowRenderer);	
+        shadowRenderer = new DirectionalLightShadowRenderer(assetManager, 1024, 1);
+        shadowRenderer.setLight(sun);
+        shadowRenderer.setShadowIntensity(0.4f);
+        shadowRenderer.setEdgesThickness(0);
+        shadowRenderer.setShadowZExtend(500);
+        viewPort.addProcessor(shadowRenderer);
     }
 
 //	public void loadTrees() {		
@@ -198,7 +197,7 @@ public class World extends AbstractAppState {
 //
 //    }
     public void createTerrain() {
-        Spatial scene = assetManager.loadModel("Scenes/aScene.j3o");
+        scene = assetManager.loadModel("Scenes/aScene.j3o");
         rootNode.attachChild(scene);
         bulletAppState.getPhysicsSpace().addAll(scene);
 //		/** 2. Create the height map */
@@ -248,13 +247,13 @@ public class World extends AbstractAppState {
     }
 
     public void loadLights() {
-//        sun = new DirectionalLight();
-//        AmbientLight amb = new AmbientLight();
-//        ColorRGBA sunColor = new ColorRGBA(0.9f, 0.77f, 0.52f, 2f);
+        sun = new DirectionalLight();
+        AmbientLight amb = new AmbientLight();
+        ColorRGBA sunColor = new ColorRGBA(0.9f, 0.77f, 0.52f, 2f);
 //
-//        sun.setDirection(lightDir);
-//        sun.setColor(sunColor.mult(2));
-//        amb.setColor(sunColor.mult(2));
+        sun.setDirection(lightDir);
+        sun.setColor(sunColor.mult(1.9f));
+        amb.setColor(sunColor.mult(0.9f));
 //
 //        PointLight lamp_light = new PointLight();
 //        lamp_light.setColor(ColorRGBA.Orange);
@@ -262,17 +261,17 @@ public class World extends AbstractAppState {
 //        lamp_light.setPosition(new Vector3f(0, 3, 0));
 ////		rootNode.addLight(lamp_light);
 //
-//        rootNode.addLight(sun);
-//        rootNode.addLight(amb);
+        rootNode.addLight(sun);
+        rootNode.addLight(amb);
     }
 
     public void initPostEffects() {
-//		BloomFilter bloom = new BloomFilter();
-//		bloom.setBloomIntensity(0.05f);
-//		bloom.setBlurScale(0.4f);
-//		bloom.setExposurePower(2f);
-//		bloom.setDownSamplingFactor(5f);
-//		fpp.addFilter(bloom);
+        BloomFilter bloom = new BloomFilter();
+        bloom.setBloomIntensity(0.1f);
+        bloom.setBlurScale(0.4f);
+        bloom.setExposurePower(2f);
+        bloom.setDownSamplingFactor(5f);
+        fpp.addFilter(bloom);
 
         water = new WaterFilter(rootNode, lightDir);
         water.setWaterHeight(initialWaterHeight);
@@ -285,9 +284,9 @@ public class World extends AbstractAppState {
         /* light scattering */
 //        Vector3f lightPos = lightDir.multLocal(-3000);
 //        LightScatteringFilter lightFilter = new LightScatteringFilter(lightPos);
-//        lightFilter.setLightDensity(0.3f);
+//        lightFilter.setLightDensity(0.9f);
 //        lightFilter.setBlurWidth(2f);
-//        lightFilter.setBlurStart(0.01f);
+//        lightFilter.setBlurStart(-0.2f);
 //        fpp.addFilter(lightFilter);
 
         /* fog */
