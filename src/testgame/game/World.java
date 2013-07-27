@@ -11,6 +11,9 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.AudioNode;
 import com.jme3.audio.AudioRenderer;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -22,14 +25,19 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
-import com.jme3.post.filters.LightScatteringFilter;
+import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
+import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
+import com.jme3.util.SkyFactory;
 //import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.water.WaterFilter;
+import testgame.controls.ResourceControl;
+import testgame.items.resources.Resource;
+import testgame.player.Player;
 
 /**
  *
@@ -45,11 +53,14 @@ public class World extends AbstractAppState {
     private AudioRenderer audioRenderer;
     private Camera camera;
     private Material terrainMaterial;
+    private Player player;
     private DirectionalLight sun;
     private DirectionalLightShadowRenderer shadowRenderer;
     private FilterPostProcessor fpp;
-    private Vector3f lightDir = new Vector3f(0.9f, -0.3f, -1f); // same as light source
-    private float initialWaterHeight = 20; // choose a value for your scene
+//    private Vector3f lightDir = new Vector3f(0.9f, -0.3f, -1f); // same as light source
+    private Vector3f lightDir = new Vector3f(-0.6499433f, -0.49053365f, 0.58047426f); // same as light source
+//    private Vector3f lightDir = new Vector3f(0.5f, -0.6f, 0.3f); // same as light source
+    private float initialWaterHeight = 0; // choose a value for your scene
     private Node trees;
     private InputManager inputManager;
     boolean wireframe = false;
@@ -63,16 +74,18 @@ public class World extends AbstractAppState {
         // TODO: initialize your AppState, e.g. attach spatials to rootNode
         // this is called on the OpenGL thread after the AppState has been
         // attached
-
+        
         assetManager = app.getAssetManager();
         bulletAppState = app.getStateManager().getState(BulletAppState.class);
         viewPort = app.getViewPort();
         audioRenderer = app.getAudioRenderer();
         camera = app.getCamera();
         inputManager = app.getInputManager();
+        player = app.getStateManager().getState(Player.class);
         fpp = new FilterPostProcessor(assetManager);
         targetables = new Node("targetables");
         harvestables = new Node("harvestables");
+        terrainMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
 
         targetables.attachChild(harvestables);
         rootNode.attachChild(targetables);
@@ -196,10 +209,62 @@ public class World extends AbstractAppState {
 ////		bulletAppState.getPhysicsSpace().add(tree5);
 //
 //    }
+
+    
     public void createTerrain() {
-        scene = assetManager.loadModel("Scenes/aScene.j3o");
+        
+        SceneGraphVisitor visitor = new SceneGraphVisitor() {
+            @Override
+            public void visit(Spatial spatial) {
+                // search criterion can be control class:
+//                System.out.println("instance of: " + spatial.getClass().getName() + " name: " +  spatial.getName());
+//                MyControl control = spatial.getControl(MyControl.class);
+                if (spatial instanceof Node) {
+                    System.out.println(
+                        "instance of: " + spatial.getClass().getName() + 
+                        " name: " +  spatial.getName() + 
+                        " parent: " + spatial.getParent());
+                    
+                    if (spatial.getParent() != null && spatial.getParent().getName().equals("trees")) {
+                        spatial.setMaterial(assetManager.loadMaterial("Materials/tree/stam.j3m"));
+                        ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
+                        woodHarvester.setQuantity(200);
+                        spatial.addControl(woodHarvester);
+                    }                    
+                    if (spatial.getParent() != null && spatial.getParent().getName().equals("rocks")) {
+                        spatial.setMaterial(assetManager.loadMaterial("Materials/rock.j3m"));
+                    }
+                    if (spatial.getName().equals("ground")) {
+                        spatial.setMaterial(terrainMaterial);
+                    }
+                    if (spatial.getName().equals("water")) {
+                        initialWaterHeight = spatial.getWorldTranslation().getY();
+                        spatial.removeFromParent();
+                    }
+                    if (spatial.getName().equals("player")) {
+                         player.getPlayerControl().setPhysicsLocation(spatial.getWorldTranslation());
+                    }
+                }
+            }
+        };
+        
+//        scene = assetManager.loadModel("Textures/terrain/terrain_jmcompatible2.blend");
+        scene = assetManager.loadModel("Textures/terrain/terrain_jmcompatible4.j3o");
+        scene.breadthFirstTraversal(visitor);
+        scene.scale(1f);
         rootNode.attachChild(scene);
+
+        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape(scene);
+        RigidBodyControl landscape = new RigidBodyControl(terrainShape, 0);
+        scene.addControl(landscape);
+
         bulletAppState.getPhysicsSpace().addAll(scene);
+        
+        //		/** 5. The LOD (level of detail) depends on were the camera is: */
+//        TerrainLodControl lodControl = new TerrainLodControl(scene, camera);
+//        lodControl.setLodCalculator(new DistanceLodCalculator(32, 3.1f));
+//        scene.addControl(lodControl);
+
 //		/** 2. Create the height map */
 //		AbstractHeightMap heightmap = null;
 ////		Texture heightMapImage = assetManager.loadTexture("Models/terrain/heightmap.png");
@@ -235,25 +300,23 @@ public class World extends AbstractAppState {
 //		
 //		terrain.setShadowMode(ShadowMode.Receive);
 //
-//		/** 5. The LOD (level of detail) depends on were the camera is: */
-//		TerrainLodControl lodControl = new TerrainLodControl(terrain, camera);
-//		lodControl.setLodCalculator(new DistanceLodCalculator(32, 3.1f));
-//		terrain.addControl(lodControl);
+
     }
 
     public void loadSky() {
-        // rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
-//        rootNode.attachChild(SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", false));
+//        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
+        rootNode.attachChild(SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", false));
     }
 
     public void loadLights() {
         sun = new DirectionalLight();
         AmbientLight amb = new AmbientLight();
-        ColorRGBA sunColor = new ColorRGBA(0.9f, 0.77f, 0.52f, 2f);
+        ColorRGBA sunColor = new ColorRGBA(0.9f, 0.77f, 0.52f, 1f);
 //
         sun.setDirection(lightDir);
-        sun.setColor(sunColor.mult(1.9f));
-        amb.setColor(sunColor.mult(0.9f));
+        sun.setColor(sunColor.mult(1.5f));
+        amb.setColor(sunColor.mult(1.5f));
+        
 //
 //        PointLight lamp_light = new PointLight();
 //        lamp_light.setColor(ColorRGBA.Orange);
@@ -267,7 +330,7 @@ public class World extends AbstractAppState {
 
     public void initPostEffects() {
         BloomFilter bloom = new BloomFilter();
-        bloom.setBloomIntensity(0.1f);
+        bloom.setBloomIntensity(0.2f);
         bloom.setBlurScale(0.4f);
         bloom.setExposurePower(2f);
         bloom.setDownSamplingFactor(5f);
@@ -275,12 +338,32 @@ public class World extends AbstractAppState {
 
         water = new WaterFilter(rootNode, lightDir);
         water.setWaterHeight(initialWaterHeight);
-        water.setReflectionMapSize(256);
-        water.setReflectionDisplace(10);
+        water.setReflectionMapSize(1024);
+        water.setReflectionDisplace(2);
         water.setFoamExistence(new Vector3f(0.45f, 4.35f, 1.5f));
         water.setWaterTransparency(0.08f);
         fpp.addFilter(water);
+        
+//        LightScatteringFilter lsf = new LightScatteringFilter(lightDir.mult(-300));
+//        lsf.setLightDensity(1.0f);
+//        fpp.addFilter(lsf);
+        
+//         BloomFilter bloom = new BloomFilter();
+//        //bloom.getE
+//        bloom.setExposurePower(55);
+//        bloom.setBloomIntensity(1.0f);
+//        fpp.addFilter(bloom);
 
+//        HDRRenderer hdrRender = new HDRRenderer(assetManager, renderer);
+//        hdrRender.setSamples(0);
+//        hdrRender.setMaxIterations(20);
+//        hdrRender.setExposure(0.87f);
+//        hdrRender.setThrottle(0.33f);
+//
+//        viewPort.addProcessor(hdrRender);
+//
+//        viewPort.addProcessor(hdrRender);
+        
         /* light scattering */
 //        Vector3f lightPos = lightDir.multLocal(-3000);
 //        LightScatteringFilter lightFilter = new LightScatteringFilter(lightPos);
@@ -295,9 +378,13 @@ public class World extends AbstractAppState {
 //        fog.setFogDistance(900);
 //        fog.setFogDensity(1.0f);
 //        fpp.addFilter(fog);
-
-//		SSAOFilter ssaoFilter = new SSAOFilter(12.94f, 5f, 0.33f, 0.61f);
-//		fpp.addFilter(ssaoFilter);
+//
+//        SSAOFilter ssaoFilter = new SSAOFilter(12.94f, 5f, 0.33f, 0.61f);
+//        fpp.addFilter(ssaoFilter);
+//        
+//                SSAOFilter ssaoFilter = new SSAOFilter(12.940201f, 43.928635f, 0.32999992f, 0.6059958f);
+//        fpp.addFilter(ssaoFilter);
+//        SSAOUI ui = new SSAOUI(inputManager, ssaoFilter);
 
         viewPort.addProcessor(fpp);
     }

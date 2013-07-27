@@ -46,6 +46,8 @@ public class Player extends AbstractAppState {
         equipmentControl	= new PlayerEquipmentControl();
         
         initDefaultWeapons();
+        
+        cam.setFrustumFar(4000);
     }
 
 	public void init() {

@@ -35,7 +35,7 @@ public class Game extends AbstractAppState {
         world           = app.getStateManager().getState(World.class);
         simpleGui       = app.getStateManager().getState(SimpleHud.class);
         player          = app.getStateManager().getState(Player.class);
-        inventory		= app.getStateManager().getState(Inventory.class);
+        inventory	= app.getStateManager().getState(Inventory.class);
 
         inventory.add(new Cannon("Cannon", app));
     }

@@ -72,7 +72,7 @@ public class Main extends SimpleApplication {
         stateManager.attach(harvestingAppState);
 
         viewPort.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
-
+       
 //		flyCam.setMoveSpeed(30);
         // loadStartMenu();
         // this.loadStatsView();
