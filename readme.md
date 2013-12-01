@@ -1,5 +1,7 @@
 # jMonkeyEngine 3 test game
 
+This is a personal hobby project to learn the [jMonkey](http://jmonkeyengine.org/) open source java game engine and 3D modeling in Blender
+
 ## ERROR FIXES:
 
 * when complaining about jar version mismatch native regarding lwjgl => delete liblwjgl.jnilib and restart JMP
