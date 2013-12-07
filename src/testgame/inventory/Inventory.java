@@ -4,10 +4,10 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import testgame.items.AbstractItem.ItemType;
-import testgame.items.Ammunition;
-import testgame.items.Weapon;
+import testgame.items.ammunition.Ammunition;
 import testgame.items.resources.Resource;
 import testgame.items.resources.Resource.ResourceType;
+import testgame.items.weapons.Weapon;
 
 import com.jme3.app.state.AbstractAppState;
 

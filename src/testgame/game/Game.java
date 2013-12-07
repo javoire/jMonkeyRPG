@@ -4,21 +4,14 @@
  */
 package testgame.game;
 
-import testgame.appstates.HarvestingAppState;
-import testgame.appstates.TargetInfo;
 import testgame.gui.SimpleHud;
 import testgame.inventory.Inventory;
-import testgame.items.Weapon;
-import testgame.items.Weapon.WeaponType;
+import testgame.items.weapons.Cannon;
 import testgame.player.Player;
-import testgame.player.PlayerActions;
-import testgame.player.PlayerInput;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
-import com.jme3.bullet.BulletAppState;
-import com.jme3.niftygui.NiftyJmeDisplay;
 
 /**
  *
@@ -42,10 +35,9 @@ public class Game extends AbstractAppState {
         world           = app.getStateManager().getState(World.class);
         simpleGui       = app.getStateManager().getState(SimpleHud.class);
         player          = app.getStateManager().getState(Player.class);
-        inventory		= app.getStateManager().getState(Inventory.class);
+        inventory	= app.getStateManager().getState(Inventory.class);
 
-        inventory.add(new Weapon(WeaponType.BOW, "TestItem"));
-        inventory.add(new Weapon(WeaponType.SWORD, "TestItem"));
+        inventory.add(new Cannon("Cannon", app));
     }
     
     public boolean startGame() {

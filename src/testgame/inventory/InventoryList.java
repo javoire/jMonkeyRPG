@@ -2,9 +2,9 @@ package testgame.inventory;
 
 import java.util.Vector;
 
-import testgame.items.Ammunition;
-import testgame.items.Weapon;
+import testgame.items.ammunition.Ammunition;
 import testgame.items.resources.Resource;
+import testgame.items.weapons.Weapon;
 
 // TODO fixa nå smart så den här kan lagra olika typer av objekt... 
 public class InventoryList {

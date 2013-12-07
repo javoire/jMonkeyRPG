@@ -6,7 +6,6 @@ package testgame.player;
 
 import testgame.inventory.Inventory;
 import testgame.items.weapons.Cannon;
-import testgame.items.weapons.FatCannon;
 import testgame.player.controls.PlayerAttributesControl;
 import testgame.player.controls.PlayerEquipmentControl;
 
@@ -47,23 +46,23 @@ public class Player extends AbstractAppState {
         equipmentControl	= new PlayerEquipmentControl();
         
         initDefaultWeapons();
+        
+        cam.setFrustumFar(4000);
     }
 
-	public void init() {
-		playerControl.setJumpSpeed(30);
+    public void init() {
+	playerControl.setJumpSpeed(30);
     	playerControl.setFallSpeed(30);
     	playerControl.setGravity(90);
     	playerControl.setPhysicsLocation(new Vector3f(5, 100, 0));
-    	playerControl.setCollisionGroup(2);
-        bulletAppState.getPhysicsSpace().add(playerControl);
-	}
+    	playerControl.setCollisionGroup(1);
+        bulletAppState.getPhysicsSpace().add(playerControl);	
+    }
     
     private void initDefaultWeapons() {
     	Cannon cannon1 = new Cannon("Cannon 1", app);
-    	FatCannon fatCannon = new FatCannon("Cannon Fat", app);
     	inventory.setQuickslot(0, cannon1);
-    	inventory.setQuickslot(1, fatCannon);
-    	equipmentControl.setMainHand(fatCannon);
+    	equipmentControl.setMainHand(cannon1);
 	}
 
 	public Player(Node rootNode) {
