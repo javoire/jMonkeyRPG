@@ -93,7 +93,7 @@ public class World extends AbstractAppState {
     }
 
     public void init() {
-        createTerrain();
+        buildTerrain();
 //        loadTrees();
         loadLights();
         loadSky();
@@ -212,7 +212,7 @@ public class World extends AbstractAppState {
 //    }
 
     
-    public void createTerrain() {
+    public void buildTerrain() {
         
     	// Parse the blender scene and assign materials
         SceneGraphVisitor visitor = new SceneGraphVisitor() {
@@ -222,8 +222,8 @@ public class World extends AbstractAppState {
 //                System.out.println("instance of: " + spatial.getClass().getName() + " name: " +  spatial.getName());
 //                MyControl control = spatial.getControl(MyControl.class);
 				if (spatial instanceof Node) {
-					Log.info("instance of: " + spatial.getClass().getName()
-							+ " name: " + spatial.getName() + " parent: "
+					Log.info("\n instance of: " + spatial.getClass().getName()
+							+ "\n name: " + spatial.getName() + "\n parent: "
 							+ spatial.getParent());
 
                     if (spatial.getName().equals("stem")) {
@@ -247,8 +247,10 @@ public class World extends AbstractAppState {
                     if (spatial.getName().equals("ground")) {
                         spatial.setMaterial(terrainMaterial);
                     }
+                    // get water Y position
                     if (spatial.getName().equals("water")) {
                         initialWaterHeight = spatial.getWorldTranslation().getY();
+                        Log.info("scene parsing water height: " + Float.toString(initialWaterHeight));
                         spatial.removeFromParent();
                     }
                     if (spatial.getName().equals("player")) {
@@ -259,11 +261,13 @@ public class World extends AbstractAppState {
         };
         
 //        scene = assetManager.loadModel("Textures/terrain/terrain_jmcompatible2.blend");
-        scene = assetManager.loadModel("Textures/terrain/terrain_jmcompatible4.j3o");
+//        scene = assetManager.loadModel("Textures/terrain/terrain_jmcompatible4.j3o");
+    	scene = assetManager.loadModel("Scenes/terrain/terrain_2013_12.blend");
         scene.breadthFirstTraversal(visitor);
         scene.scale(1f);
         rootNode.attachChild(scene);
 
+        // make everything in the scene collidable
         CollisionShape terrainShape = CollisionShapeFactory.createMeshShape(scene);
         RigidBodyControl landscape = new RigidBodyControl(terrainShape, 0);
         scene.addControl(landscape);
@@ -346,6 +350,7 @@ public class World extends AbstractAppState {
         bloom.setDownSamplingFactor(5f);
         fpp.addFilter(bloom);
 
+        Log.info("post effects water height: " + Float.toString(initialWaterHeight));
         water = new WaterFilter(rootNode, lightDir);
         water.setWaterHeight(initialWaterHeight);
         water.setReflectionMapSize(1024);
