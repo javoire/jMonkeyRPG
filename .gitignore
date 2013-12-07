@@ -1,5 +1,7 @@
-dist/*
-production_files/*
-build/*
-doc/*
-sdk/*
+dist
+production_files
+build
+doc
+sdk
+bin
+*.class
