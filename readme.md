@@ -19,3 +19,10 @@ Notes to self:
 
 - alphatextures:
 * use png with alphachannel to make it work with shadowrenderer
+
+## Libs
+
+Java 
+- JRE 1.7.0_45
+jMonkey
+- jME3_2013-05-26
