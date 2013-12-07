@@ -50,14 +50,14 @@ public class Player extends AbstractAppState {
         cam.setFrustumFar(4000);
     }
 
-	public void init() {
-		playerControl.setJumpSpeed(30);
+    public void init() {
+	playerControl.setJumpSpeed(30);
     	playerControl.setFallSpeed(30);
     	playerControl.setGravity(90);
     	playerControl.setPhysicsLocation(new Vector3f(5, 100, 0));
     	playerControl.setCollisionGroup(1);
-        bulletAppState.getPhysicsSpace().add(playerControl);
-	}
+        bulletAppState.getPhysicsSpace().add(playerControl);	
+    }
     
     private void initDefaultWeapons() {
     	Cannon cannon1 = new Cannon("Cannon 1", app);

@@ -7,6 +7,9 @@ ERROR FIXES:
 * flipping normals in edit mode or
 * checking/unchecking premultiply on every texture
 
+- when blender -> j3o convert gives null or no data stored
+* delete the ground object in blender -> save -> convert blender => j3o -> undo delete ground ojbect -> save -> convert blender j3o again...
+
 OLD
 Notes to self:
 - using heightmaps for terrain

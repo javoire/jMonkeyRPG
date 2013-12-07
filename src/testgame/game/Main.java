@@ -38,6 +38,8 @@ public class Main extends SimpleApplication {
         Main app = new Main();
         AppSettings appSettings = new AppSettings(true);
         appSettings.setTitle("JDs awesome game of fantastic adventures...");
+        appSettings.setResolution(960, 600);
+//        appSettings.setFullscreen(true);
         app.setShowSettings(false); // splash screen
         app.setSettings(appSettings);
         app.start();

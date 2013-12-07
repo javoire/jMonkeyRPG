@@ -186,7 +186,7 @@ public class World extends AbstractAppState {
 ////    	treeParent.attachChild(tree5);
 //
 //    	/* physics */
-//    	/* TODO: fixa s� bara physics p� stammen */
+//    	/* TODO: fixa s��� bara physics p��� stammen */
 //    	CollisionShape treeShape1 = CollisionShapeFactory.createMeshShape(tree);
 ////    	CollisionShape treeShape2 = CollisionShapeFactory.createMeshShape(tree2);
 ////    	CollisionShape treeShape3 = CollisionShapeFactory.createMeshShape(tree3);
@@ -213,6 +213,7 @@ public class World extends AbstractAppState {
     
     public void createTerrain() {
         
+    	// Parse the blender scene and assign materials
         SceneGraphVisitor visitor = new SceneGraphVisitor() {
             @Override
             public void visit(Spatial spatial) {
@@ -225,12 +226,21 @@ public class World extends AbstractAppState {
                         " name: " +  spatial.getName() + 
                         " parent: " + spatial.getParent());
                     
-                    if (spatial.getParent() != null && spatial.getParent().getName().equals("trees")) {
+                    if (spatial.getName().equals("stem")) {
                         spatial.setMaterial(assetManager.loadMaterial("Materials/tree/stam.j3m"));
                         ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
                         woodHarvester.setQuantity(200);
                         spatial.addControl(woodHarvester);
-                    }                    
+                    }
+                    if (spatial.getName().equals("leaves")) {
+                        spatial.setMaterial(assetManager.loadMaterial("Materials/tree/leaf.j3m"));
+//                        ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
+//                        woodHarvester.setQuantity(200);
+//                        spatial.addControl(woodHarvester);
+                    }
+//                    if (spatial.getParent() != null && spatial.getParent().getName().equals("trees")) {
+//                    }        
+
                     if (spatial.getParent() != null && spatial.getParent().getName().equals("rocks")) {
                         spatial.setMaterial(assetManager.loadMaterial("Materials/rock.j3m"));
                     }
@@ -290,7 +300,7 @@ public class World extends AbstractAppState {
 //		terrain.setLocalTranslation(0, -30.5f, 0);
 //		terrain.setLocalScale(2f, 1f, 2f);
 //
-////		rotation buggggggar slopes, man g�r l�ngasmt
+////		rotation buggggggar slopes, man g���r l���ngasmt
 //		//		Vector3f axis = Vector3f.UNIT_Y; // this equals (0, 1, 0) and does not require to create a new object
 ////		float angle = -3.14f/4;
 ////		Quaternion rootRotation = rootNode.getLocalRotation().fromAngleAxis(angle, axis);
