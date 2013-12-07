@@ -4,6 +4,11 @@
  */
 package testgame.game;
 
+import testgame.controls.ResourceControl;
+import testgame.items.resources.Resource;
+import testgame.log.Log;
+import testgame.player.Player;
+
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
@@ -25,7 +30,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
-import com.jme3.post.ssao.SSAOFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
@@ -33,11 +37,8 @@ import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.util.SkyFactory;
-//import com.jme3.shadow.DirectionalLightShadowRenderer;
 import com.jme3.water.WaterFilter;
-import testgame.controls.ResourceControl;
-import testgame.items.resources.Resource;
-import testgame.player.Player;
+//import com.jme3.shadow.DirectionalLightShadowRenderer;
 
 /**
  *
@@ -220,12 +221,11 @@ public class World extends AbstractAppState {
                 // search criterion can be control class:
 //                System.out.println("instance of: " + spatial.getClass().getName() + " name: " +  spatial.getName());
 //                MyControl control = spatial.getControl(MyControl.class);
-                if (spatial instanceof Node) {
-                    System.out.println(
-                        "instance of: " + spatial.getClass().getName() + 
-                        " name: " +  spatial.getName() + 
-                        " parent: " + spatial.getParent());
-                    
+				if (spatial instanceof Node) {
+					Log.info("instance of: " + spatial.getClass().getName()
+							+ " name: " + spatial.getName() + " parent: "
+							+ spatial.getParent());
+
                     if (spatial.getName().equals("stem")) {
                         spatial.setMaterial(assetManager.loadMaterial("Materials/tree/stam.j3m"));
                         ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
