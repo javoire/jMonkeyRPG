@@ -77,4 +77,4 @@ production_files/
 build/
 doc/
 sdk/
-assets/
+*.blend*
