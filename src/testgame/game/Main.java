@@ -1,14 +1,10 @@
 package testgame.game;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import testgame.appstates.HarvestingAppState;
 import testgame.appstates.TargetInfo;
 import testgame.gui.Hud;
 import testgame.gui.SimpleHud;
 import testgame.inventory.Inventory;
-import testgame.log.Log;
 import testgame.player.Player;
 import testgame.player.PlayerActions;
 import testgame.player.PlayerInput;

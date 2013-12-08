@@ -4,9 +4,11 @@
  */
 package testgame.game;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import testgame.controls.ResourceControl;
 import testgame.items.resources.Resource;
-import testgame.log.Log;
 import testgame.player.Player;
 
 import com.jme3.app.Application;
@@ -32,19 +34,23 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
+import com.jme3.shadow.DirectionalLightShadowFilter;
 import com.jme3.shadow.DirectionalLightShadowRenderer;
+import com.jme3.shadow.EdgeFilteringMode;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
-//import com.jme3.shadow.DirectionalLightShadowRenderer;
 
 /**
  *
  * @author jo_da12
  */
 public class World extends AbstractAppState {
+
+	private static final Logger logger = Logger.getLogger(World.class.getName());
 
     private BulletAppState bulletAppState;
     private AssetManager assetManager;
@@ -56,7 +62,6 @@ public class World extends AbstractAppState {
     private Material terrainMaterial;
     private Player player;
     private DirectionalLight sun;
-    private DirectionalLightShadowRenderer shadowRenderer;
     private FilterPostProcessor fpp;
 //    private Vector3f lightDir = new Vector3f(0.9f, -0.3f, -1f); // same as light source
     private Vector3f lightDir = new Vector3f(-0.6499433f, -0.49053365f, 0.58047426f); // same as light source
@@ -87,17 +92,15 @@ public class World extends AbstractAppState {
         targetables = new Node("targetables");
         harvestables = new Node("harvestables");
         terrainMaterial = assetManager.loadMaterial("Materials/terrain.j3m");
-
         targetables.attachChild(harvestables);
         rootNode.attachChild(targetables);
     }
 
     public void init() {
         buildTerrain();
-//        loadTrees();
         loadLights();
         loadSky();
-        loadShadows();
+//        loadShadows();
         initWorldPhysics();
         initPostEffects();
         initSound();
@@ -138,79 +141,17 @@ public class World extends AbstractAppState {
 //		layer.setMaxWidth(2.4f);
     }
 
-    public void loadShadows() {
-        shadowRenderer = new DirectionalLightShadowRenderer(assetManager, 1024, 1);
-        shadowRenderer.setLight(sun);
-        shadowRenderer.setShadowIntensity(0.4f);
-        shadowRenderer.setEdgesThickness(0);
-        shadowRenderer.setShadowZExtend(500);
-        viewPort.addProcessor(shadowRenderer);
-    }
-
-//	public void loadTrees() {		
-//		trees = new Node("trees");
-//		Tree tree = new Tree(app);
-//		trees.setCullHint(CullHint.Dynamic);
-//    	    	
-//    	/* more trees */
-////    	Node tree2 = tree1.clone(true);
-////    	Node tree3 = tree1.clone(true);
-////    	Node tree4 = tree1.clone(true);
-////    	Node tree5 = tree1.clone(true);
-////    	
-//    	tree.setLocalTranslation(-8, 2, 60);
-////    	tree2.setLocalTranslation(6, 2, 82);
-////    	tree3.setLocalTranslation(74, 2, 75);
-////    	tree4.setLocalTranslation(103, 2, 66);
-////    	tree5.setLocalTranslation(81, 2, 44);
-//    	
-//    	tree.setLocalScale(4);
-////    	tree2.setLocalScale(3.5f);
-////    	tree3.setLocalScale(3.7f);
-////    	tree4.setLocalScale(3.0f);
-////    	tree5.setLocalScale(4f);
-//    	
-//    	tree.setLocalRotation(new Quaternion(0, -0.04f, 0, 0));
-////    	tree2.setLocalRotation(new Quaternion(0, 0.37f, 0, 0));
-////    	tree3.setLocalRotation(new Quaternion(0, 0.21f, 0, 0));
-////    	tree4.setLocalRotation(new Quaternion(0, 0.04f, 0, 0));
-////    	tree5.setLocalRotation(new Quaternion(0, 0.08f, 0, 0));
-////    	
-//    	trees.setShadowMode(ShadowMode.Cast);
-//
-//    	/* attach */
-//    	harvestables.attachChild(trees);
-//     	trees.attachChild(tree);
-////    	treeParent.attachChild(tree2);
-////    	treeParent.attachChild(tree3);
-////    	treeParent.attachChild(tree4);
-////    	treeParent.attachChild(tree5);
-//
-//    	/* physics */
-//    	/* TODO: fixa s��� bara physics p��� stammen */
-//    	CollisionShape treeShape1 = CollisionShapeFactory.createMeshShape(tree);
-////    	CollisionShape treeShape2 = CollisionShapeFactory.createMeshShape(tree2);
-////    	CollisionShape treeShape3 = CollisionShapeFactory.createMeshShape(tree3);
-////    	CollisionShape treeShape4 = CollisionShapeFactory.createMeshShape(tree4);
-////    	CollisionShape treeShape5 = CollisionShapeFactory.createMeshShape(tree5);
-//		RigidBodyControl treeBodyControl1 = new RigidBodyControl(treeShape1, 0);
-////		RigidBodyControl treeBodyControl2 = new RigidBodyControl(treeShape2, 0);
-////		RigidBodyControl treeBodyControl3 = new RigidBodyControl(treeShape3, 0);
-////		RigidBodyControl treeBodyControl4 = new RigidBodyControl(treeShape4, 0);
-////		RigidBodyControl treeBodyControl5 = new RigidBodyControl(treeShape5, 0);
-//		tree.addControl(treeBodyControl1);
-////		tree2.addControl(treeBodyControl2);
-////		tree3.addControl(treeBodyControl3);
-////		tree4.addControl(treeBodyControl4);
-////		tree5.addControl(treeBodyControl5);
-//		bulletAppState.getPhysicsSpace().add(tree);
-////		bulletAppState.getPhysicsSpace().add(tree2);
-////		bulletAppState.getPhysicsSpace().add(tree3);
-////		bulletAppState.getPhysicsSpace().add(tree4);
-////		bulletAppState.getPhysicsSpace().add(tree5);
-//
+//    public void loadShadows() {
+//    	DirectionalLightShadowFilter shadowRenderer;
+//        shadowRenderer = new DirectionalLightShadowFilter(assetManager, 1024, 3);
+//        shadowRenderer.setLight(sun);
+//        shadowRenderer.setShadowIntensity(0.4f);
+//        shadowRenderer.setEdgesThickness(0);
+//        shadowRenderer.setShadowZExtend(500);
+//        fpp = new FilterPostProcessor(assetManager);
+//        fpp.addFilter(shadowRenderer);
+//        viewPort.addProcessor(fpp);
 //    }
-
     
     public void buildTerrain() {
         
@@ -222,17 +163,17 @@ public class World extends AbstractAppState {
 //                System.out.println("instance of: " + spatial.getClass().getName() + " name: " +  spatial.getName());
 //                MyControl control = spatial.getControl(MyControl.class);
 				if (spatial instanceof Node) {
-					Log.info("\n instance of: " + spatial.getClass().getName()
-							+ "\n name: " + spatial.getName() + "\n parent: "
-							+ spatial.getParent());
+					logger.log(Level.INFO,"Instance of: " + spatial.getClass().getName()
+							+ " - Name: " + spatial.getName() 
+							+ " - Parent: " + spatial.getParent());
 
-                    if (spatial.getName().equals("stem")) {
+                    if (spatial.getName().matches("stem(.*)")) {
                         spatial.setMaterial(assetManager.loadMaterial("Materials/tree/stam.j3m"));
                         ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
                         woodHarvester.setQuantity(200);
                         spatial.addControl(woodHarvester);
                     }
-                    if (spatial.getName().equals("leaves")) {
+                    if (spatial.getName().matches("leaves(.*)")) {
                         spatial.setMaterial(assetManager.loadMaterial("Materials/tree/leaf.j3m"));
 //                        ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
 //                        woodHarvester.setQuantity(200);
@@ -250,7 +191,7 @@ public class World extends AbstractAppState {
                     // get water Y position
                     if (spatial.getName().equals("water")) {
                         initialWaterHeight = spatial.getWorldTranslation().getY();
-                        Log.info("scene parsing water height: " + Float.toString(initialWaterHeight));
+                        logger.log(Level.INFO,"scene parsing water height: " + Float.toString(initialWaterHeight));
                         spatial.removeFromParent();
                     }
                     if (spatial.getName().equals("player")) {
@@ -260,11 +201,12 @@ public class World extends AbstractAppState {
             }
         };
         
-        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_7.blend";
-        Log.info("Parsing blender terrain file: " + blenderTerrainFilePath);
+        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_8.blend";
+        logger.log(Level.INFO,"Parsing blender terrain file: " + blenderTerrainFilePath);
     	scene = assetManager.loadModel(blenderTerrainFilePath);
         scene.breadthFirstTraversal(visitor);
         scene.scale(1f);
+        scene.setShadowMode(ShadowMode.CastAndReceive);
         rootNode.attachChild(scene);
 
         // make everything in the scene collidable
@@ -273,7 +215,7 @@ public class World extends AbstractAppState {
         scene.addControl(landscape);
 
         bulletAppState.getPhysicsSpace().addAll(scene);
-        
+
         //		/** 5. The LOD (level of detail) depends on were the camera is: */
 //        TerrainLodControl lodControl = new TerrainLodControl(scene, camera);
 //        lodControl.setLodCalculator(new DistanceLodCalculator(32, 3.1f));
@@ -343,6 +285,7 @@ public class World extends AbstractAppState {
     }
 
     public void initPostEffects() {
+    	logger.log(Level.INFO,"Addin bloom effects");
         BloomFilter bloom = new BloomFilter();
         bloom.setBloomIntensity(0.2f);
         bloom.setBlurScale(0.4f);
@@ -350,14 +293,40 @@ public class World extends AbstractAppState {
         bloom.setDownSamplingFactor(5f);
         fpp.addFilter(bloom);
 
-        Log.info("post effects water height: " + Float.toString(initialWaterHeight));
+        logger.log(Level.INFO,"post effects water height: " + Float.toString(initialWaterHeight));
         water = new WaterFilter(rootNode, lightDir);
         water.setWaterHeight(initialWaterHeight);
-        water.setReflectionMapSize(1024);
+        water.setReflectionMapSize(512);
         water.setReflectionDisplace(2);
         water.setFoamExistence(new Vector3f(0.45f, 4.35f, 1.5f));
         water.setWaterTransparency(0.08f);
         fpp.addFilter(water);
+        
+//        logger.log(Level.INFO, "Adding directional shadow filter");
+        DirectionalLightShadowFilter shadowFilter;
+        shadowFilter = new DirectionalLightShadowFilter(assetManager, 512, 3);
+        shadowFilter.setLight(sun);
+        shadowFilter.setLambda(20f);
+        shadowFilter.setShadowIntensity(0.4f);
+        shadowFilter.setEdgesThickness(2);
+//        shadowRenderer.setShadowZExtend(500);
+        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.Bilinear);
+        fpp.addFilter(shadowFilter);
+
+		// shadow renderer, heavy
+//        logger.log(Level.INFO, "Adding directional shadow renderer");
+//        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 1024, 3);
+//		dlsr.setLight(sun);
+//		dlsr.setLambda(3f);
+//		dlsr.setShadowIntensity(0.3f);
+//		dlsr.setEdgesThickness(3);
+//		dlsr.setEdgeFilteringMode(EdgeFilteringMode.PCF4);
+//		viewPort.addProcessor(dlsr);
+        
+//        logger.log(Level.INFO, "Adding SSAO filter");
+//        SSAOFilter ssaoFilter = new SSAOFilter(5f, 10f, 1f, 0.61f);
+//        fpp.addFilter(ssaoFilter);
+//        viewPort.addProcessor(fpp);
         
 //        LightScatteringFilter lsf = new LightScatteringFilter(lightDir.mult(-300));
 //        lsf.setLightDensity(1.0f);
@@ -378,7 +347,7 @@ public class World extends AbstractAppState {
 //        viewPort.addProcessor(hdrRender);
 //
 //        viewPort.addProcessor(hdrRender);
-        
+
         /* light scattering */
 //        Vector3f lightPos = lightDir.multLocal(-3000);
 //        LightScatteringFilter lightFilter = new LightScatteringFilter(lightPos);
