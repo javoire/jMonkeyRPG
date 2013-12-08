@@ -7,5 +7,5 @@ This is a personal hobby project to learn the [jMonkey](http://jmonkeyengine.org
 Java 
 - JRE 1.7.0_45
 
-jMonkey [nighlty build](http://nightly.jmonkeyengine.org/)
+jMonkey [nightly build](http://nightly.jmonkeyengine.org/)
 - jME3_2013-05-26

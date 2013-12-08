@@ -8,9 +8,9 @@ Material terrain : Common/MatDefs/Terrain/TerrainLighting.j3md {
      	DiffuseMap_2: Repeat Textures/terrain/dirt.jpg
      	AlphaMap: Flip Textures/terrain/alphamap.png
  
- 		DiffuseMap_0_scale: 50f
- 		DiffuseMap_1_scale: 50f
- 		DiffuseMap_2_scale: 50f
+ 		DiffuseMap_0_scale: 0.05f
+ 		DiffuseMap_1_scale: 0.05f
+ 		DiffuseMap_2_scale: 0.05f
      	
 		Shininess: 0.1f
 	
