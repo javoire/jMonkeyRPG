@@ -201,7 +201,7 @@ public class World extends AbstractAppState {
             }
         };
         
-        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_9.blend";
+        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_10.blend";
         logger.log(Level.INFO,"Parsing blender terrain file: " + blenderTerrainFilePath);
     	scene = assetManager.loadModel(blenderTerrainFilePath);
         scene.breadthFirstTraversal(visitor);
