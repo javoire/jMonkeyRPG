@@ -72,8 +72,9 @@ local.properties
 # jMonkey
 ######################
 
-dist
-production_files
-build
-doc
-sdk
+dist/
+production_files/
+build/
+doc/
+sdk/
+assets/
