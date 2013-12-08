@@ -4,6 +4,10 @@
  */
 package testgame.player;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import testgame.game.World;
 import testgame.inventory.Inventory;
 import testgame.items.weapons.Cannon;
 import testgame.player.controls.PlayerAttributesControl;
@@ -24,6 +28,8 @@ import com.jme3.scene.Node;
  * @author jo_da12
  */
 public class Player extends AbstractAppState {
+	
+	private static final Logger logger = Logger.getLogger(World.class.getName());
 	
     private CharacterControl    		playerControl;
     private BulletAppState      		bulletAppState;
@@ -48,13 +54,15 @@ public class Player extends AbstractAppState {
         initDefaultWeapons();
         
         cam.setFrustumFar(4000);
+        logger.log(Level.INFO, "Initializing camera - Frustum near: " + cam.getFrustumNear());
+//        cam.setFrustumPerspective(60, (float)cam.getWidth( ) / cam.getHeight( ), 1f, 4000f);
     }
 
     public void init() {
 	playerControl.setJumpSpeed(30);
     	playerControl.setFallSpeed(30);
     	playerControl.setGravity(90);
-    	playerControl.setPhysicsLocation(new Vector3f(5, 100, 0));
+    	playerControl.setPhysicsLocation(new Vector3f(20, 100, 0));
     	playerControl.setCollisionGroup(1);
         bulletAppState.getPhysicsSpace().add(playerControl);	
     }
