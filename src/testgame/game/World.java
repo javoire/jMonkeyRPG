@@ -260,9 +260,9 @@ public class World extends AbstractAppState {
             }
         };
         
-//        scene = assetManager.loadModel("Textures/terrain/terrain_jmcompatible2.blend");
-//        scene = assetManager.loadModel("Textures/terrain/terrain_jmcompatible4.j3o");
-    	scene = assetManager.loadModel("Scenes/terrain/terrain_2013_12.blend");
+        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_7.blend";
+        Log.info("Parsing blender terrain file: " + blenderTerrainFilePath);
+    	scene = assetManager.loadModel(blenderTerrainFilePath);
         scene.breadthFirstTraversal(visitor);
         scene.scale(1f);
         rootNode.attachChild(scene);
