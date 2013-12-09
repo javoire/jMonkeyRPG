@@ -7,8 +7,6 @@ package testgame.game;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import testgame.controls.ResourceControl;
-import testgame.items.resources.Resource;
 import testgame.player.Player;
 
 import com.jme3.app.Application;
@@ -25,22 +23,17 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
-import com.jme3.shadow.DirectionalLightShadowFilter;
-import com.jme3.shadow.DirectionalLightShadowRenderer;
-import com.jme3.shadow.EdgeFilteringMode;
+import com.jme3.terrain.geomipmap.TerrainPatch;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
@@ -159,54 +152,60 @@ public class World extends AbstractAppState {
         SceneGraphVisitor visitor = new SceneGraphVisitor() {
             @Override
             public void visit(Spatial spatial) {
+            	if(!(spatial instanceof TerrainPatch)) {
+            		logger.log(Level.INFO,"Instance of: " + spatial.getClass().getName()
+            				+ " - Name: " + spatial.getName() 
+            				+ " - Parent: " + spatial.getParent());            		
+            	}
                 // search criterion can be control class:
 //                System.out.println("instance of: " + spatial.getClass().getName() + " name: " +  spatial.getName());
 //                MyControl control = spatial.getControl(MyControl.class);
-				if (spatial instanceof Node) {
-					logger.log(Level.INFO,"Instance of: " + spatial.getClass().getName()
-							+ " - Name: " + spatial.getName() 
-							+ " - Parent: " + spatial.getParent());
-
-                    if (spatial.getName().matches("stem(.*)")) {
-                        spatial.setMaterial(assetManager.loadMaterial("Materials/tree/stam.j3m"));
-                        ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
-                        woodHarvester.setQuantity(200);
-                        spatial.addControl(woodHarvester);
-                    }
-                    if (spatial.getName().matches("leaves(.*)")) {
-                        spatial.setMaterial(assetManager.loadMaterial("Materials/tree/leaf.j3m"));
+//				if (spatial instanceof Node) {
+//					logger.log(Level.INFO,"Instance of: " + spatial.getClass().getName()
+//							+ " - Name: " + spatial.getName() 
+//							+ " - Parent: " + spatial.getParent());
+//
+//                    if (spatial.getName().matches("stem(.*)")) {
+//                        spatial.setMaterial(assetManager.loadMaterial("Materials/tree/stam.j3m"));
 //                        ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
 //                        woodHarvester.setQuantity(200);
 //                        spatial.addControl(woodHarvester);
-                    }
-//                    if (spatial.getParent() != null && spatial.getParent().getName().equals("trees")) {
-//                    }        
-
-                    if (spatial.getParent() != null && spatial.getParent().getName().equals("rocks")) {
-                        spatial.setMaterial(assetManager.loadMaterial("Materials/rock.j3m"));
-                    }
-                    if (spatial.getName().equals("ground")) {
-                        spatial.setMaterial(terrainMaterial);
-                    }
-                    // get water Y position
-                    if (spatial.getName().equals("water")) {
-                        initialWaterHeight = spatial.getWorldTranslation().getY();
-                        logger.log(Level.INFO,"scene parsing water height: " + Float.toString(initialWaterHeight));
-                        spatial.removeFromParent();
-                    }
-                    if (spatial.getName().equals("player")) {
-                         player.getPlayerControl().setPhysicsLocation(spatial.getWorldTranslation());
-                    }
-                }
+//                    }
+//                    if (spatial.getName().matches("leaves(.*)")) {
+//                        spatial.setMaterial(assetManager.loadMaterial("Materials/tree/leaf.j3m"));
+////                        ResourceControl woodHarvester = new ResourceControl(Resource.ResourceType.WOOD);
+////                        woodHarvester.setQuantity(200);
+////                        spatial.addControl(woodHarvester);
+//                    }
+////                    if (spatial.getParent() != null && spatial.getParent().getName().equals("trees")) {
+////                    }        
+//
+//                    if (spatial.getParent() != null && spatial.getParent().getName().equals("rocks")) {
+//                        spatial.setMaterial(assetManager.loadMaterial("Materials/rock.j3m"));
+//                    }
+//                    if (spatial.getName().equals("ground")) {
+//                        spatial.setMaterial(terrainMaterial);
+//                    }
+//                    // get water Y position
+//                    if (spatial.getName().equals("water")) {
+//                        initialWaterHeight = spatial.getWorldTranslation().getY();
+//                        logger.log(Level.INFO,"scene parsing water height: " + Float.toString(initialWaterHeight));
+//                        spatial.removeFromParent();
+//                    }
+//                    if (spatial.getName().equals("player")) {
+//                         player.getPlayerControl().setPhysicsLocation(spatial.getWorldTranslation());
+//                    }
+//                }
             }
         };
         
-        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_10.blend";
-        logger.log(Level.INFO,"Parsing blender terrain file: " + blenderTerrainFilePath);
-    	scene = assetManager.loadModel(blenderTerrainFilePath);
-        scene.breadthFirstTraversal(visitor);
+//        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_10.blend";
+//        logger.log(Level.INFO,"Parsing blender terrain file: " + blenderTerrainFilePath);
+//    	scene = assetManager.loadModel(blenderTerrainFilePath);
+    	scene = assetManager.loadModel("Scenes/simpleScene.j3o");
+        scene.depthFirstTraversal(visitor);
         scene.scale(1f);
-        scene.setShadowMode(ShadowMode.CastAndReceive);
+//        scene.setShadowMode(ShadowMode.CastAndReceive);
         rootNode.attachChild(scene);
 
         // make everything in the scene collidable
@@ -265,23 +264,23 @@ public class World extends AbstractAppState {
     }
 
     public void loadLights() {
-        sun = new DirectionalLight();
-        AmbientLight amb = new AmbientLight();
-        ColorRGBA sunColor = new ColorRGBA(0.9f, 0.77f, 0.52f, 1f);
-//
-        sun.setDirection(lightDir);
-        sun.setColor(sunColor.mult(1.5f));
-        amb.setColor(sunColor.mult(1.5f));
-        
-//
-//        PointLight lamp_light = new PointLight();
-//        lamp_light.setColor(ColorRGBA.Orange);
-//        lamp_light.setRadius(100f);
-//        lamp_light.setPosition(new Vector3f(0, 3, 0));
-////		rootNode.addLight(lamp_light);
-//
-        rootNode.addLight(sun);
-        rootNode.addLight(amb);
+//        sun = new DirectionalLight();
+//        AmbientLight amb = new AmbientLight();
+//        ColorRGBA sunColor = new ColorRGBA(0.9f, 0.77f, 0.52f, 1f);
+////
+//        sun.setDirection(lightDir);
+//        sun.setColor(sunColor.mult(1.5f));
+//        amb.setColor(sunColor.mult(1.5f));
+//        
+////
+////        PointLight lamp_light = new PointLight();
+////        lamp_light.setColor(ColorRGBA.Orange);
+////        lamp_light.setRadius(100f);
+////        lamp_light.setPosition(new Vector3f(0, 3, 0));
+//////		rootNode.addLight(lamp_light);
+////
+//        rootNode.addLight(sun);
+//        rootNode.addLight(amb);
     }
 
     public void initPostEffects() {
@@ -293,25 +292,25 @@ public class World extends AbstractAppState {
         bloom.setDownSamplingFactor(5f);
         fpp.addFilter(bloom);
 
-        logger.log(Level.INFO,"post effects water height: " + Float.toString(initialWaterHeight));
-        water = new WaterFilter(rootNode, lightDir);
-        water.setWaterHeight(initialWaterHeight);
-        water.setReflectionMapSize(512);
-        water.setReflectionDisplace(2);
-        water.setFoamExistence(new Vector3f(0.45f, 4.35f, 1.5f));
-        water.setWaterTransparency(0.08f);
-        fpp.addFilter(water);
+//        logger.log(Level.INFO,"post effects water height: " + Float.toString(initialWaterHeight));
+//        water = new WaterFilter(rootNode, lightDir);
+//        water.setWaterHeight(initialWaterHeight);
+//        water.setReflectionMapSize(512);
+//        water.setReflectionDisplace(2);
+//        water.setFoamExistence(new Vector3f(0.45f, 4.35f, 1.5f));
+//        water.setWaterTransparency(0.08f);
+//        fpp.addFilter(water);
         
 //        logger.log(Level.INFO, "Adding directional shadow filter");
-        DirectionalLightShadowFilter shadowFilter;
-        shadowFilter = new DirectionalLightShadowFilter(assetManager, 512, 3);
-        shadowFilter.setLight(sun);
-        shadowFilter.setLambda(20f);
-        shadowFilter.setShadowIntensity(0.4f);
-        shadowFilter.setEdgesThickness(2);
-//        shadowRenderer.setShadowZExtend(500);
-        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.Bilinear);
-        fpp.addFilter(shadowFilter);
+//        DirectionalLightShadowFilter shadowFilter;
+//        shadowFilter = new DirectionalLightShadowFilter(assetManager, 512, 3);
+//        shadowFilter.setLight(sun);
+//        shadowFilter.setLambda(20f);
+//        shadowFilter.setShadowIntensity(0.4f);
+//        shadowFilter.setEdgesThickness(2);
+////        shadowRenderer.setShadowZExtend(500);
+//        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.Bilinear);
+//        fpp.addFilter(shadowFilter);
 
 		// shadow renderer, heavy
 //        logger.log(Level.INFO, "Adding directional shadow renderer");

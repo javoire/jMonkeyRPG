@@ -62,7 +62,7 @@ public class Player extends AbstractAppState {
 	playerControl.setJumpSpeed(30);
     	playerControl.setFallSpeed(30);
     	playerControl.setGravity(90);
-    	playerControl.setPhysicsLocation(new Vector3f(20, 300, 0));
+    	playerControl.setPhysicsLocation(new Vector3f(20, 20, 0));
     	playerControl.setCollisionGroup(1);
         bulletAppState.getPhysicsSpace().add(playerControl);	
     }
