@@ -74,7 +74,7 @@ public class SimpleHud extends AbstractAppState {
     
     @Override
     public void update(float tpf) {
-    	displayTargetInfo();
+//    	displayTargetInfo();
     	displayInventory();
     }
     
@@ -98,19 +98,19 @@ public class SimpleHud extends AbstractAppState {
         hudRoot.attachChild(ch);
     }
     
-    /**
-     * Checks if targets exists, then retrieves info from TargetInfo and displays
-     * on a gui node
-     */
-    public void displayTargetInfo() {
-    	if(targetingAppState.hasTarget()) { 
-    		targetInfoText.setText(targetingAppState.getTargetString());
-	    	targetInfoText.setLocalTranslation( // center under crosshair
-	    			settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2,
-	    			settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
-    	} else 
-    		targetInfoText.setText(" "); // it bugs if it's just ""
-   }
+//    /**
+//     * Checks if targets exists, then retrieves info from TargetInfo and displays
+//     * on a gui node
+//     */
+//    public void displayTargetInfo() {
+//    	if(targetingAppState.hasTarget()) { 
+//    		targetInfoText.setText(targetingAppState.getTargetString());
+//	    	targetInfoText.setLocalTranslation( // center under crosshair
+//	    			settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2,
+//	    			settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
+//    	} else 
+//    		targetInfoText.setText(" "); // it bugs if it's just ""
+//   }
     
    public void setTargetInfoText(BitmapText text) {
 	   targetInfoText = text;

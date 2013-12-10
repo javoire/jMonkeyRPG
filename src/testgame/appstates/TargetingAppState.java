@@ -3,8 +3,10 @@ package testgame.appstates;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import testgame.controls.QualityControl;
 import testgame.controls.ResourceControl;
-import testgame.game.World;
+import testgame.controls.TargetableControl;
+import testgame.target.TargetInformation;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -13,24 +15,23 @@ import com.jme3.collision.CollisionResult;
 import com.jme3.collision.CollisionResults;
 import com.jme3.math.Ray;
 import com.jme3.renderer.Camera;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 
+/**
+ * Checks where the player is looking if there's a valid target
+ * @author Jonatan Dahl
+ */
 public class TargetingAppState extends AbstractAppState {
 	
 	private static final Logger logger = Logger.getLogger(TargetingAppState.class.getName());
 	
-	private CollisionResult 	collisionResult = null;
-	private Geometry 			targetedGeom = null;
-	private Node 				targetedNode = null;
+	private CollisionResult 	closestCollision = null;
 	private Node 				rootNode;
-	private Float 				distance = -1f;
-	private String 				name = null;
-	private ResourceControl 	harvestingControl = null;
-	private World 				world;
-	private Node 				targetables;
 	private Camera				cam;
-	private float 				maxTargetingRange = 60;
+	private TargetInformation	targetInformation;
+	private CollisionResults 	collisionResults;
+	private Ray 				ray; 
+	private Node				targetedNode;
 	
 	public TargetingAppState(Node _rootNode) {
 		this.rootNode = _rootNode;
@@ -39,113 +40,104 @@ public class TargetingAppState extends AbstractAppState {
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
 		super.initialize(stateManager, app);
-		world			= app.getStateManager().getState(World.class);
-		cam				= app.getCamera();
-		targetables		= world.getTargetables(); // TODO temp. kan bara targeta trees nu
+		cam					= app.getCamera();
+		targetInformation 	= new TargetInformation();
+		collisionResults	= new CollisionResults();
+		ray 				= new Ray();
 	}
 	
 	/**
-	 * Constanly look for target. If non, result = null
+	 * Populating collisionResult with the closest target
 	 */
 	@Override
 	public void update(float tpf) {
-		scanForTarget();
-	}
-
-	private void scanForTarget() {
-		CollisionResults results = new CollisionResults();
-		Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-		rootNode.collideWith(ray, results);
-		if(results != null && results.size() > 0) {
-			if(results.getClosestCollision().getDistance() < maxTargetingRange) {
-				if(results.size() > 0) {
-					setCollisionResult(results.getClosestCollision());
-					setTargetedGeometry(results.getClosestCollision().getGeometry());
-					setTargetedNode(results.getClosestCollision().getGeometry().getParent());
+		// align ray to where player is looking
+		ray.setOrigin(cam.getLocation());
+		ray.setDirection(cam.getDirection());
+		// clear old results
+		collisionResults.clear();
+		// get collision results
+		rootNode.collideWith(ray, collisionResults);
+		// 
+		if(collisionResults.size() > 0) {
+			targetedNode = collisionResults.getClosestCollision().getGeometry().getParent();
+			if(targetedNode != null) {
+				if(targetedNode.getControl(TargetableControl.class) != null) {
+					targetInformation.clearControls(); // clear old info
+					targetInformation.setDistance(collisionResults.getClosestCollision().getDistance());
+					// add the controls that this node has to targetInformation
+					if(targetedNode.getControl(ResourceControl.class) != null) {
+						targetInformation.addControl(targetedNode.getControl(ResourceControl.class));						
+					}
+					if(targetedNode.getControl(QualityControl.class) != null) {
+						targetInformation.addControl(targetedNode.getControl(QualityControl.class));						
+					}
+					logger.log(Level.INFO, 
+						"This node is targetable: " + 
+						collisionResults.getClosestCollision().getGeometry().getParent().toString() + " distance" + 
+						targetInformation.getDistance() + " controls: " +
+						targetInformation.getControls().size()
+					);
 				}
 			}
 		}
 	}
-
-	public void setCollisionResult(CollisionResult _collisionResult) {
-		collisionResult = _collisionResult;
+		
+	/**
+	 * Returns info about the target, if the player is looking at a valid target, i.e a natural resource or something that can be interacted with.
+	 * @return
+	 */
+	public TargetInformation getTargetInformation() {
+		return targetInformation;
 	}
 
-	public void setTargetedGeometry(Geometry _geometry) {
-		targetedGeom = _geometry;
-	}
 
-	public void setTargetedNode(Node _node) {
-		targetedNode = _node;
-	}
-	
-	public Geometry getTargetedGeometry() {
-		return targetedGeom;
-	}
-	
-	public Node getTargetedNode() {
-		return targetedNode;
-	}
-	
-	public boolean hasTarget() {
-		if(collisionResult == null) return false;
-		return true;
-	}
+//	public String getName() {
+//		if(!hasTarget())
+//			return null;
+//		name = targetedNode.getName();
+//		return name;
+//	}
 
-	public String getName() {
-		if(!hasTarget())
-			return null;
-		name = targetedNode.getName();
-		return name;
-	}
+//	public float getDistance() {
+//		if(!hasTarget())
+//			return -1;
+//		distance = collisionResult.getDistance();
+//		return distance/10;
+//	}
 
-	public float getDistance() {
-		if(!hasTarget())
-			return -1;
-		distance = collisionResult.getDistance();
-		return distance/10;
-	}
-
-	public int getIntDistance() {
-		if(!hasTarget())
-			return -1;
-		distance = getDistance();
-		int distanceInt = distance.intValue();
-		return distanceInt;
-	}
+//	public int getIntDistance() {
+//		if(!hasTarget())
+//			return -1;
+//		distance = getDistance();
+//		int distanceInt = distance.intValue();
+//		return distanceInt;
+//	}
 
 	/**
 	 * Checks if it has HarvestingControl attached. Also populates the field harvestingControl
 	 * @return True or false
 	 */
-	public boolean isHarvestable() {
-		if(collisionResult == null)
-			return false;
-		harvestingControl = targetedNode.getControl(ResourceControl.class);
-		if(harvestingControl != null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+//	public boolean isHarvestable() {
+//		if(collisionResult == null)
+//			return false;
+//		harvestingControl = targetedNode.getControl(ResourceControl.class);
+//		if(harvestingControl != null) {
+//			return true;
+//		} else {
+//			return false;
+//		}
+//	}
 	
-	public Node getNode() {
-		return targetedNode;
-	}
-
-	public void setNode(Node targetNode) {
-		this.targetedNode = targetNode;
-	}
-	
-	public String getTargetString() {
-		String infoString = getName()
-				+ ": "
-				+ getIntDistance()
-				+ " m";
-		if(isHarvestable()) // add harvest info
-			infoString += "\n" + harvestingControl.getResourceName() + ": " + harvestingControl.getQuantity();
-		if(!infoString.equals(""))
-			return infoString;
-		return null;
-	}
+//	public String getTargetString() {
+//		String infoString = getName()
+//				+ ": "
+//				+ getIntDistance()
+//				+ " m";
+//		if(isHarvestable()) // add harvest info
+//			infoString += "\n" + harvestingControl.getResourceName() + ": " + harvestingControl.getQuantity();
+//		if(!infoString.equals(""))
+//			return infoString;
+//		return null;
+//	}
 }

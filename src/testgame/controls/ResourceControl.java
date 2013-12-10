@@ -26,10 +26,10 @@ public class ResourceControl extends AbstractControl {
 	 * @param camera
 	 * @param _resourceType Which type of resource this Spatial has
 	 */
-//	public ResourceControl(ResourceType _resourceType) {
-	public ResourceControl() {
-//		resourceType 			= _resourceType;
-//		resource 				= new Resource(_resourceType); 	// TODO dummy object just helps to get
+	public ResourceControl(ResourceType _resourceType) {
+//	public ResourceControl() {
+		resourceType 			= _resourceType;
+		resource 				= new Resource(_resourceType); 	// TODO dummy object just helps to get
 													// the name of the resource. fix. freaking ugly
 		quantity 				= 200;
 		minHarvestableDistance 	= 1; // in meters

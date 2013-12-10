@@ -13,3 +13,7 @@ When parenting many trees to one empty object, they bug in the game, only visibl
 Paint RGB on terrainmesh, save the alphamap.png and use as alphamap in jmonkey material
 
 Always unwrap objects to give them a UV map. jMonkey needs them to have a UV map when applying a j3m material.
+
+## SceneComposer 
+
+If an object (for some reason) is distanced from its origin, save and reopen the scene

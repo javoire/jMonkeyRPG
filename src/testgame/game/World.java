@@ -7,6 +7,10 @@ package testgame.game;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import testgame.controls.QualityControl;
+import testgame.controls.ResourceControl;
+import testgame.controls.TargetableControl;
+import testgame.items.resources.Resource.ResourceType;
 import testgame.player.Player;
 
 import com.jme3.app.Application;
@@ -30,11 +34,10 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
-import com.jme3.terrain.geomipmap.TerrainPatch;
-import com.jme3.util.SkyFactory;
 import com.jme3.water.WaterFilter;
 
 /**
@@ -152,11 +155,11 @@ public class World extends AbstractAppState {
         SceneGraphVisitor visitor = new SceneGraphVisitor() {
             @Override
             public void visit(Spatial spatial) {
-            	if(!(spatial instanceof TerrainPatch)) {
-            		logger.log(Level.INFO,"Instance of: " + spatial.getClass().getName()
-            				+ " - Name: " + spatial.getName() 
-            				+ " - Parent: " + spatial.getParent());            		
-            	}
+//            	if(!(spatial instanceof TerrainPatch)) {
+//            		logger.log(Level.INFO,"Instance of: " + spatial.getClass().getName()
+//            				+ " - Name: " + spatial.getName() 
+//            				+ " - Parent: " + spatial.getParent());            		
+//            	}
                 // search criterion can be control class:
 //                System.out.println("instance of: " + spatial.getClass().getName() + " name: " +  spatial.getName());
 //                MyControl control = spatial.getControl(MyControl.class);
@@ -177,8 +180,20 @@ public class World extends AbstractAppState {
 ////                        woodHarvester.setQuantity(200);
 ////                        spatial.addControl(woodHarvester);
 //                    }
-////                    if (spatial.getParent() != null && spatial.getParent().getName().equals("trees")) {
-////                    }        
+            	
+            		if(spatial instanceof Node && spatial.getName().equals("tree")) { // tree node
+                    	logger.log(Level.INFO, "Parsing tree " + spatial.toString());
+                    	spatial.addControl(new TargetableControl());
+                    	spatial.addControl(new ResourceControl(ResourceType.WOOD));
+                    	spatial.addControl(new QualityControl(1));
+//                    	logger.log(Level.INFO, "Added control to tree: " + spatial.getControl(ResourceControl.class));
+            			
+            		}
+//                    if (spatial.getParent() != null && spatial.getParent().getName().equals("Trees")) {
+//                    	logger.log(Level.INFO, "Parsing tree " + spatial.toString());
+//                    	spatial.addControl(new ResourceControl());
+//                    	logger.log(Level.INFO, "Added control to tree: " + spatial.getControl(ResourceControl.class));
+//                    }        
 //
 //                    if (spatial.getParent() != null && spatial.getParent().getName().equals("rocks")) {
 //                        spatial.setMaterial(assetManager.loadMaterial("Materials/rock.j3m"));
@@ -202,10 +217,10 @@ public class World extends AbstractAppState {
 //        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_10.blend";
 //        logger.log(Level.INFO,"Parsing blender terrain file: " + blenderTerrainFilePath);
 //    	scene = assetManager.loadModel(blenderTerrainFilePath);
-    	scene = assetManager.loadModel("Scenes/simpleScene.j3o");
+    	scene = assetManager.loadModel("Scenes/minimalScene.j3o");
         scene.depthFirstTraversal(visitor);
         scene.scale(1f);
-//        scene.setShadowMode(ShadowMode.CastAndReceive);
+        scene.setShadowMode(ShadowMode.CastAndReceive);
         rootNode.attachChild(scene);
 
         // make everything in the scene collidable

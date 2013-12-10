@@ -37,13 +37,13 @@ public class HarvestingAppState extends AbstractAppState implements
      * Checks if we have a target and if it's close enough. 
      * Then checks what type of resource, then take and puts in inventory.
      */
-	public void tryHarvest() {
-		if (targetInfo.isHarvestable()) {
-			ResourceControl harvestControl = targetInfo.getNode().getControl(ResourceControl.class);
-			if (targetInfo.getIntDistance() < harvestControl.getMinHarvestableDistance()) {
-//				harvestControl.toInventory(harvestAmount, inventory,
-//						harvestControl.getResourceType());
-			}
-		}
-	}
+//	public void tryHarvest() {
+//		if (targetInfo.isHarvestable()) {
+//			ResourceControl harvestControl = targetInfo.getNode().getControl(ResourceControl.class);
+//			if (targetInfo.getIntDistance() < harvestControl.getMinHarvestableDistance()) {
+////				harvestControl.toInventory(harvestAmount, inventory,
+////						harvestControl.getResourceType());
+//			}
+//		}
+//	}
 }
