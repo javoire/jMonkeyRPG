@@ -11,16 +11,16 @@ import com.jme3.input.controls.ActionListener;
 public class HarvestingAppState extends AbstractAppState implements
 		ActionListener {
 
-	private TargetInfo 		targetInfo;
+	private TargetingAppState 		targetInfo;
 	private int 			harvestAmount;
 	private Inventory 		inventory;
 
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
 		super.initialize(stateManager, app);
-		targetInfo 		= app.getStateManager().getState(TargetInfo.class);
+		targetInfo 		= app.getStateManager().getState(TargetingAppState.class);
 		inventory 		= app.getStateManager().getState(Inventory.class);
-		harvestAmount 	= 5; // denna ska rŠknas ut baserat pŒ typ/kvalitŽ av resource, kvalite av verktyg etc
+		harvestAmount 	= 5; // denna ska rï¿½knas ut baserat pï¿½ typ/kvalitï¿½ av resource, kvalite av verktyg etc
 	}
 
 	@Override
@@ -39,12 +39,10 @@ public class HarvestingAppState extends AbstractAppState implements
      */
 	public void tryHarvest() {
 		if (targetInfo.isHarvestable()) {
-			ResourceControl harvestControl = targetInfo.getNode().getControl(
-					ResourceControl.class);
-			if (targetInfo.getIntDistance() < harvestControl
-					.getHarvestableDistance()) {
-				harvestControl.toInventory(harvestAmount, inventory,
-						harvestControl.getResourceType());
+			ResourceControl harvestControl = targetInfo.getNode().getControl(ResourceControl.class);
+			if (targetInfo.getIntDistance() < harvestControl.getMinHarvestableDistance()) {
+//				harvestControl.toInventory(harvestAmount, inventory,
+//						harvestControl.getResourceType());
 			}
 		}
 	}

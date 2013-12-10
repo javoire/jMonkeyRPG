@@ -7,7 +7,7 @@ package testgame.gui;
 import java.util.Iterator;
 import java.util.Vector;
 
-import testgame.appstates.TargetInfo;
+import testgame.appstates.TargetingAppState;
 import testgame.inventory.Inventory;
 import testgame.items.AbstractItem;
 
@@ -35,7 +35,7 @@ public class SimpleHud extends AbstractAppState {
 	private BitmapFont 		hudFont;
 	private BitmapText		inventoryText;
 	private BitmapText 		targetInfoText;
-	private TargetInfo 		targetInfo;
+	private TargetingAppState 		targetingAppState;
 	private Inventory 		inventory;
 	private int 			fontSize;
     
@@ -45,7 +45,7 @@ public class SimpleHud extends AbstractAppState {
         assetManager 		= app.getAssetManager();
         guiViewPort 		= app.getGuiViewPort();
         inventory			= app.getStateManager().getState(Inventory.class);
-        targetInfo			= app.getStateManager().getState(TargetInfo.class);
+        targetingAppState	= app.getStateManager().getState(TargetingAppState.class);
      	hudFont 			= assetManager.loadFont("Interface/Fonts/Default.fnt");
     	fontSize 			= hudFont.getCharSet().getRenderedSize();
 
@@ -103,13 +103,17 @@ public class SimpleHud extends AbstractAppState {
      * on a gui node
      */
     public void displayTargetInfo() {
-    	if(targetInfo.hasTarget()) { 
-    		targetInfoText.setText(targetInfo.getString());
+    	if(targetingAppState.hasTarget()) { 
+    		targetInfoText.setText(targetingAppState.getTargetString());
 	    	targetInfoText.setLocalTranslation( // center under crosshair
 	    			settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2,
 	    			settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
     	} else 
     		targetInfoText.setText(" "); // it bugs if it's just ""
+   }
+    
+   public void setTargetInfoText(BitmapText text) {
+	   targetInfoText = text;
    }
     
     @Override

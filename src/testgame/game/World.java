@@ -260,7 +260,7 @@ public class World extends AbstractAppState {
 
     public void loadSky() {
 //        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Sky/Bright/BrightSky.dds", false));
-        rootNode.attachChild(SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", false));
+//        rootNode.attachChild(SkyFactory.createSky(assetManager, "Scenes/Beach/FullskiesSunset0068.dds", false));
     }
 
     public void loadLights() {
@@ -421,7 +421,7 @@ public class World extends AbstractAppState {
     public void setTrees(Node trees) {
         this.trees = trees;
     }
-
+    
     public Node getTargetables() {
         return targetables;
     }

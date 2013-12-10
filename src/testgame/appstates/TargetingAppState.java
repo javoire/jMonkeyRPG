@@ -1,5 +1,8 @@
 package testgame.appstates;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import testgame.controls.ResourceControl;
 import testgame.game.World;
 
@@ -13,11 +16,14 @@ import com.jme3.renderer.Camera;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 
-public class TargetInfo extends AbstractAppState {
+public class TargetingAppState extends AbstractAppState {
 	
-	private CollisionResult 	result = null;
-	private Geometry 			targetGeom = null;
-	private Node 				targetNode = null;
+	private static final Logger logger = Logger.getLogger(TargetingAppState.class.getName());
+	
+	private CollisionResult 	collisionResult = null;
+	private Geometry 			targetedGeom = null;
+	private Node 				targetedNode = null;
+	private Node 				rootNode;
 	private Float 				distance = -1f;
 	private String 				name = null;
 	private ResourceControl 	harvestingControl = null;
@@ -26,8 +32,8 @@ public class TargetInfo extends AbstractAppState {
 	private Camera				cam;
 	private float 				maxTargetingRange = 60;
 	
-	public TargetInfo() {
-		
+	public TargetingAppState(Node _rootNode) {
+		this.rootNode = _rootNode;
 	}
 
 	@Override
@@ -47,42 +53,56 @@ public class TargetInfo extends AbstractAppState {
 	}
 
 	private void scanForTarget() {
-		if(targetables != null) {
-			CollisionResults results = new CollisionResults();
-			Ray ray = new Ray(cam.getLocation(), cam.getDirection());
-			targetables.collideWith(ray, results); // checks all targetable objects
-			if(results != null && results.size() > 0) {
-				if(results.getClosestCollision().getDistance() < maxTargetingRange) {
-					if(results.size() > 0) {
-						setResult(results.getClosestCollision());
-					} else { result = null;	}
-				} else { result = null; }
-			} else { result = null;	}
-		} else { result = null; }
+		CollisionResults results = new CollisionResults();
+		Ray ray = new Ray(cam.getLocation(), cam.getDirection());
+		rootNode.collideWith(ray, results);
+		if(results != null && results.size() > 0) {
+			if(results.getClosestCollision().getDistance() < maxTargetingRange) {
+				if(results.size() > 0) {
+					setCollisionResult(results.getClosestCollision());
+					setTargetedGeometry(results.getClosestCollision().getGeometry());
+					setTargetedNode(results.getClosestCollision().getGeometry().getParent());
+				}
+			}
+		}
 	}
 
-	public void setResult(CollisionResult collisionResult) {
-		result = collisionResult;
-		targetGeom = collisionResult.getGeometry();
-		targetNode = targetGeom.getParent();
+	public void setCollisionResult(CollisionResult _collisionResult) {
+		collisionResult = _collisionResult;
+	}
+
+	public void setTargetedGeometry(Geometry _geometry) {
+		targetedGeom = _geometry;
+	}
+
+	public void setTargetedNode(Node _node) {
+		targetedNode = _node;
+	}
+	
+	public Geometry getTargetedGeometry() {
+		return targetedGeom;
+	}
+	
+	public Node getTargetedNode() {
+		return targetedNode;
 	}
 	
 	public boolean hasTarget() {
-		if(result != null) return true;
-		return false;
+		if(collisionResult == null) return false;
+		return true;
 	}
 
 	public String getName() {
 		if(!hasTarget())
 			return null;
-		name = targetNode.getName();
+		name = targetedNode.getName();
 		return name;
 	}
 
 	public float getDistance() {
 		if(!hasTarget())
 			return -1;
-		distance = result.getDistance();
+		distance = collisionResult.getDistance();
 		return distance/10;
 	}
 
@@ -99,24 +119,25 @@ public class TargetInfo extends AbstractAppState {
 	 * @return True or false
 	 */
 	public boolean isHarvestable() {
-		if(result == null)
+		if(collisionResult == null)
 			return false;
-		harvestingControl = targetNode.getControl(ResourceControl.class);
-		if(harvestingControl != null)
+		harvestingControl = targetedNode.getControl(ResourceControl.class);
+		if(harvestingControl != null) {
 			return true;
-		else
+		} else {
 			return false;
+		}
 	}
 	
 	public Node getNode() {
-		return targetNode;
+		return targetedNode;
 	}
 
 	public void setNode(Node targetNode) {
-		this.targetNode = targetNode;
+		this.targetedNode = targetNode;
 	}
 	
-	public String getString() {
+	public String getTargetString() {
 		String infoString = getName()
 				+ ": "
 				+ getIntDistance()

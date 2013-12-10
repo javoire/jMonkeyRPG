@@ -1,7 +1,7 @@
 package testgame.game;
 
 import testgame.appstates.HarvestingAppState;
-import testgame.appstates.TargetInfo;
+import testgame.appstates.TargetingAppState;
 import testgame.gui.Hud;
 import testgame.gui.SimpleHud;
 import testgame.inventory.Inventory;
@@ -26,7 +26,7 @@ public class Main extends SimpleApplication {
     private BulletAppState bulletAppState;
     private HarvestingAppState harvestingAppState;
     private NiftyJmeDisplay gui;
-    private TargetInfo targetInfo;
+    private TargetingAppState targetInfo;
     private Inventory inventory;
     private PlayerInput playerInput;
     private PlayerActions playerActions;
@@ -51,7 +51,7 @@ public class Main extends SimpleApplication {
         player = new Player(rootNode);
         bulletAppState = new BulletAppState();
         harvestingAppState = new HarvestingAppState();
-        targetInfo = new TargetInfo();
+        targetInfo = new TargetingAppState(rootNode);
         inventory = new Inventory(10);
         playerInput = new PlayerInput();
         playerActions = new PlayerActions(rootNode);
