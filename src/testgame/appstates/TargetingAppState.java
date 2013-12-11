@@ -25,6 +25,8 @@ public class TargetingAppState extends AbstractAppState {
 	
 	private static final Logger logger = Logger.getLogger(TargetingAppState.class.getName());
 	
+	private boolean				hasValidTarget = false;
+
 	private CollisionResult 	closestCollision = null;
 	private Node 				rootNode;
 	private Camera				cam;
@@ -44,6 +46,7 @@ public class TargetingAppState extends AbstractAppState {
 		targetInformation 	= new TargetInformation();
 		collisionResults	= new CollisionResults();
 		ray 				= new Ray();
+		targetedNode		= rootNode; // default
 	}
 	
 	/**
@@ -51,6 +54,7 @@ public class TargetingAppState extends AbstractAppState {
 	 */
 	@Override
 	public void update(float tpf) {
+		hasValidTarget = false;
 		// align ray to where player is looking
 		ray.setOrigin(cam.getLocation());
 		ray.setDirection(cam.getDirection());
@@ -58,37 +62,41 @@ public class TargetingAppState extends AbstractAppState {
 		collisionResults.clear();
 		// get collision results
 		rootNode.collideWith(ray, collisionResults);
-		// 
 		if(collisionResults.size() > 0) {
 			targetedNode = collisionResults.getClosestCollision().getGeometry().getParent();
-			if(targetedNode != null) {
-				if(targetedNode.getControl(TargetableControl.class) != null) {
-					targetInformation.clearControls(); // clear old info
-					targetInformation.setDistance(collisionResults.getClosestCollision().getDistance());
-					// add the controls that this node has to targetInformation
-					if(targetedNode.getControl(ResourceControl.class) != null) {
-						targetInformation.addControl(targetedNode.getControl(ResourceControl.class));						
-					}
-					if(targetedNode.getControl(QualityControl.class) != null) {
-						targetInformation.addControl(targetedNode.getControl(QualityControl.class));						
-					}
-					logger.log(Level.INFO, 
-						"This node is targetable: " + 
-						collisionResults.getClosestCollision().getGeometry().getParent().toString() + " distance" + 
-						targetInformation.getDistance() + " controls: " +
-						targetInformation.getControls().size()
-					);
+			if(targetedNode != null && targetedNode.getControl(TargetableControl.class) != null) { // this is a valid target
+				hasValidTarget = true;
+				targetInformation.clearControls(); // clear old info
+				targetInformation.setDistance(collisionResults.getClosestCollision().getDistance());
+				targetInformation.setName(targetedNode.getControl(TargetableControl.class).getName());
+				// add the controls that this node has to targetInformation
+				if(targetedNode.getControl(ResourceControl.class) != null) {
+					targetInformation.addControl(targetedNode.getControl(ResourceControl.class));						
 				}
-			}
+				if(targetedNode.getControl(QualityControl.class) != null) {
+					targetInformation.addControl(targetedNode.getControl(QualityControl.class));						
+				}
+//					logger.log(Level.INFO, 
+//						"This node is targetable: " + 
+//						collisionResults.getClosestCollision().getGeometry().getParent().toString() + " distance: " + 
+//						targetInformation.getDistance() + " controls: " +
+//						targetInformation.getControls().size()
+//					);
+			} 
 		}
 	}
 		
 	/**
 	 * Returns info about the target, if the player is looking at a valid target, i.e a natural resource or something that can be interacted with.
-	 * @return
+	 * @return {@link TargetInformation}
+	 * @return null
 	 */
 	public TargetInformation getTargetInformation() {
-		return targetInformation;
+		if (hasValidTarget) {
+			return targetInformation;
+		} else {
+			return null;
+		}
 	}
 
 

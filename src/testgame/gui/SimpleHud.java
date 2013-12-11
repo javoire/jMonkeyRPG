@@ -6,10 +6,14 @@ package testgame.gui;
 
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import testgame.appstates.TargetingAppState;
+import testgame.controls.QualityControl;
+import testgame.controls.ResourceControl;
 import testgame.inventory.Inventory;
-import testgame.items.AbstractItem;
+import testgame.target.TargetInformation;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -17,9 +21,9 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
-import com.jme3.input.FlyByCamera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
+import com.jme3.scene.control.Control;
 import com.jme3.system.AppSettings;
 
 /**
@@ -27,6 +31,8 @@ import com.jme3.system.AppSettings;
  * @author jo_da12
  */
 public class SimpleHud extends AbstractAppState {
+	
+	private static final Logger logger = Logger.getLogger(SimpleHud.class.getName());
     
     private Node 			hudRoot;
     private AppSettings 	settings;
@@ -38,6 +44,8 @@ public class SimpleHud extends AbstractAppState {
 	private TargetingAppState 		targetingAppState;
 	private Inventory 		inventory;
 	private int 			fontSize;
+	private TargetInformation		targetInformation;
+	private String			targetString = " ";
     
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -74,8 +82,34 @@ public class SimpleHud extends AbstractAppState {
     
     @Override
     public void update(float tpf) {
-//    	displayTargetInfo();
     	displayInventory();
+    	
+    	// show target info
+     	targetInformation = targetingAppState.getTargetInformation();
+     	if(targetInformation != null) {
+     		logger.log(Level.INFO, "hud shows targetinfo");
+     		
+     		targetString = targetInformation.getName() + " " + (int) Math.round(targetInformation.getDistance()/10) + "m";
+     		
+     		// TEMP: check which controls we have...
+     		for (Control control : targetInformation.getControls()) {
+     		    logger.log(Level.INFO, control.toString());
+     		    if(control instanceof ResourceControl) {
+     		    	targetString += "\nResource: " + ((ResourceControl) control).getResourceName();
+     		    	targetString += "\nQuantity: " + ((ResourceControl) control).getQuantity();
+     		    }
+     		    if(control instanceof QualityControl) {
+     		    	targetString += "\nQuality: " + ((QualityControl) control).getQuality();
+     		    }
+     		}
+     		
+     		targetInfoText.setText(targetString);
+     		targetInfoText.setLocalTranslation( // center under crosshair
+	    			settings.getWidth() / 2 - targetInfoText.getLineWidth() / 2, // align center horiz
+	    			settings.getHeight() / 2 - targetInfoText.getLineHeight()*2, 0);
+     	} else {
+     		targetInfoText.setText(" ");
+     	}
     }
     
     private void displayInventory() {

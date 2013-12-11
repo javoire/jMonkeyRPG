@@ -12,7 +12,7 @@ public class QualityControl  extends AbstractControl {
 		
 	}
 
-	public QualityControl(int _quality) {
+	public QualityControl(float _quality) {
 		quality = _quality;
 	}
 
@@ -28,6 +28,10 @@ public class QualityControl  extends AbstractControl {
 		
 	}
 
+	/**
+	 * 
+	 * @return {@link float} quality
+	 */
 	public float getQuality() {
 		return quality;
 	}

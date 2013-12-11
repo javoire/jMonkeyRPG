@@ -182,12 +182,16 @@ public class World extends AbstractAppState {
 //                    }
             	
             		if(spatial instanceof Node && spatial.getName().equals("tree")) { // tree node
-                    	logger.log(Level.INFO, "Parsing tree " + spatial.toString());
-                    	spatial.addControl(new TargetableControl());
+                    	logger.log(Level.INFO, "Parsing tree and adding controls " + spatial.toString());
+                    	spatial.addControl(new TargetableControl("Lovely tree"));
                     	spatial.addControl(new ResourceControl(ResourceType.WOOD));
                     	spatial.addControl(new QualityControl(1));
-//                    	logger.log(Level.INFO, "Added control to tree: " + spatial.getControl(ResourceControl.class));
-            			
+            		}
+            		if(spatial instanceof Node && spatial.getName().equals("rock")) { // tree node
+            			logger.log(Level.INFO, "Parsing rock and adding controls " + spatial.toString());
+            			spatial.addControl(new TargetableControl("Nice rock"));
+            			spatial.addControl(new ResourceControl(ResourceType.STONE));
+            			spatial.addControl(new QualityControl(0.9f));
             		}
 //                    if (spatial.getParent() != null && spatial.getParent().getName().equals("Trees")) {
 //                    	logger.log(Level.INFO, "Parsing tree " + spatial.toString());
