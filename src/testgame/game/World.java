@@ -4,6 +4,7 @@
  */
 package testgame.game;
 
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,16 +29,22 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
+import com.jme3.light.Light;
+import com.jme3.light.LightList;
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
+import com.jme3.post.filters.LightScatteringFilter;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
+import com.jme3.shadow.DirectionalLightShadowFilter;
+import com.jme3.shadow.EdgeFilteringMode;
+import com.jme3.terrain.geomipmap.TerrainQuad;
 import com.jme3.water.WaterFilter;
 
 /**
@@ -93,14 +100,15 @@ public class World extends AbstractAppState {
     }
 
     public void init() {
-        buildTerrain();
-        loadLights();
-        loadSky();
+        loadScene();
+//        loadLights();
+//        loadSky();
 //        loadShadows();
         initWorldPhysics();
         initPostEffects();
         initSound();
 
+        // debug
         inputManager.addMapping("wireframe", new KeyTrigger(KeyInput.KEY_T));
         inputManager.addListener(actionListener, "wireframe");
     }
@@ -149,12 +157,14 @@ public class World extends AbstractAppState {
 //        viewPort.addProcessor(fpp);
 //    }
     
-    public void buildTerrain() {
+    public void loadScene() {
         
     	// Parse the blender scene and assign materials
         SceneGraphVisitor visitor = new SceneGraphVisitor() {
             @Override
             public void visit(Spatial spatial) {
+            	logger.log(Level.INFO, "Visiting spatial: " + spatial.getName());
+            	
 //            	if(!(spatial instanceof TerrainPatch)) {
 //            		logger.log(Level.INFO,"Instance of: " + spatial.getClass().getName()
 //            				+ " - Name: " + spatial.getName() 
@@ -181,6 +191,14 @@ public class World extends AbstractAppState {
 ////                        spatial.addControl(woodHarvester);
 //                    }
             	
+            		if(spatial instanceof TerrainQuad && spatial.getName().equals("terrain")) {
+            			logger.log(Level.INFO, "Adding RigidBodyControl to: " + spatial.getName());
+            	        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape(spatial);
+            	        RigidBodyControl landscape = new RigidBodyControl(terrainShape, 0);
+            	        spatial.addControl(landscape);
+                    	bulletAppState.getPhysicsSpace().addAll(spatial);
+            		}
+
             		if(spatial instanceof Node && spatial.getName().equals("tree")) { // tree node
                     	logger.log(Level.INFO, "Parsing tree and adding controls " + spatial.toString());
                     	spatial.addControl(new TargetableControl("Lovely tree"));
@@ -221,18 +239,14 @@ public class World extends AbstractAppState {
 //        String blenderTerrainFilePath = "Scenes/terrain/terrain_2013_12_10.blend";
 //        logger.log(Level.INFO,"Parsing blender terrain file: " + blenderTerrainFilePath);
 //    	scene = assetManager.loadModel(blenderTerrainFilePath);
-    	scene = assetManager.loadModel("Scenes/minimalScene.j3o");
+    	
+        scene = assetManager.loadModel("Scenes/minimalScene.j3o");
         scene.depthFirstTraversal(visitor);
         scene.scale(1f);
         scene.setShadowMode(ShadowMode.CastAndReceive);
         rootNode.attachChild(scene);
 
         // make everything in the scene collidable
-        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape(scene);
-        RigidBodyControl landscape = new RigidBodyControl(terrainShape, 0);
-        scene.addControl(landscape);
-
-        bulletAppState.getPhysicsSpace().addAll(scene);
 
         //		/** 5. The LOD (level of detail) depends on were the camera is: */
 //        TerrainLodControl lodControl = new TerrainLodControl(scene, camera);
@@ -303,13 +317,39 @@ public class World extends AbstractAppState {
     }
 
     public void initPostEffects() {
-    	logger.log(Level.INFO,"Addin bloom effects");
+//    	Shadows
+    	LightList ll = scene.getLocalLightList();
+    	Iterator<Light> i = ll.iterator();    	
+    	while (i.hasNext()) {
+    		Light next = i.next();
+    		logger.log(Level.INFO, "light: " + next.getClass());
+
+    		// find the "sun"
+    		if(next instanceof DirectionalLight) {
+    			sun = (DirectionalLight) next ;
+    			logger.log(Level.INFO, "found DirectionalLight" + sun.toString());
+    		}
+    	}
+    
+//    	Bloom
+    	logger.log(Level.INFO,"Adding bloom effects");
         BloomFilter bloom = new BloomFilter();
         bloom.setBloomIntensity(0.2f);
         bloom.setBlurScale(0.4f);
         bloom.setExposurePower(2f);
         bloom.setDownSamplingFactor(5f);
         fpp.addFilter(bloom);
+
+        logger.log(Level.INFO, "Adding directional shadow filter");
+        DirectionalLightShadowFilter shadowFilter;
+        shadowFilter = new DirectionalLightShadowFilter(assetManager, 512, 3);
+        shadowFilter.setLight(sun);
+        shadowFilter.setLambda(1.0f);
+        shadowFilter.setShadowIntensity(1f);
+        shadowFilter.setEdgesThickness(2);
+        shadowFilter.setShadowZExtend(500);
+        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.Bilinear);
+        fpp.addFilter(shadowFilter);
 
 //        logger.log(Level.INFO,"post effects water height: " + Float.toString(initialWaterHeight));
 //        water = new WaterFilter(rootNode, lightDir);
@@ -320,17 +360,6 @@ public class World extends AbstractAppState {
 //        water.setWaterTransparency(0.08f);
 //        fpp.addFilter(water);
         
-//        logger.log(Level.INFO, "Adding directional shadow filter");
-//        DirectionalLightShadowFilter shadowFilter;
-//        shadowFilter = new DirectionalLightShadowFilter(assetManager, 512, 3);
-//        shadowFilter.setLight(sun);
-//        shadowFilter.setLambda(20f);
-//        shadowFilter.setShadowIntensity(0.4f);
-//        shadowFilter.setEdgesThickness(2);
-////        shadowRenderer.setShadowZExtend(500);
-//        shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.Bilinear);
-//        fpp.addFilter(shadowFilter);
-
 		// shadow renderer, heavy
 //        logger.log(Level.INFO, "Adding directional shadow renderer");
 //        DirectionalLightShadowRenderer dlsr = new DirectionalLightShadowRenderer(assetManager, 1024, 3);
@@ -346,9 +375,9 @@ public class World extends AbstractAppState {
 //        fpp.addFilter(ssaoFilter);
 //        viewPort.addProcessor(fpp);
         
-//        LightScatteringFilter lsf = new LightScatteringFilter(lightDir.mult(-300));
-//        lsf.setLightDensity(1.0f);
-//        fpp.addFilter(lsf);
+        LightScatteringFilter lsf = new LightScatteringFilter(sun.getDirection().mult(-100));
+        lsf.setLightDensity(.5f);
+        fpp.addFilter(lsf);
         
 //         BloomFilter bloom = new BloomFilter();
 //        //bloom.getE

@@ -87,13 +87,13 @@ public class SimpleHud extends AbstractAppState {
     	// show target info
      	targetInformation = targetingAppState.getTargetInformation();
      	if(targetInformation != null) {
-     		logger.log(Level.INFO, "hud shows targetinfo");
+//     		logger.log(Level.INFO, "hud shows targetinfo");
      		
      		targetString = targetInformation.getName() + " " + (int) Math.round(targetInformation.getDistance()/10) + "m";
      		
      		// TEMP: check which controls we have...
      		for (Control control : targetInformation.getControls()) {
-     		    logger.log(Level.INFO, control.toString());
+//     		    logger.log(Level.INFO, control.toString());
      		    if(control instanceof ResourceControl) {
      		    	targetString += "\nResource: " + ((ResourceControl) control).getResourceName();
      		    	targetString += "\nQuantity: " + ((ResourceControl) control).getQuantity();

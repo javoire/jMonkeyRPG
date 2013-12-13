@@ -11,9 +11,8 @@ import com.jme3.scene.shape.Sphere.TextureMode;
 import com.jme3.texture.Texture;
 
 /**
- * Cannon weapon. Can not be instantiated before game runs.
+ * Cannon class. Stores properties, bullet geometry and collision shape of the Cannon weapon.
  * @author Jonatan Dahl
- *
  */
 public class Cannon extends WeaponRanged {
 	
@@ -22,26 +21,30 @@ public class Cannon extends WeaponRanged {
 	private Sphere 					bullet;
 	private TextureKey 				bulletTexKey;
 	private SphereCollisionShape 	bulletCollisionShape;
+	private Geometry 				bulletGeometry;
 
-	
 	public Cannon(String name, Application app) {
-		super(name, app);
+		super(name);
 		assetManager 			= app.getAssetManager();
 		bulletMat 				= new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		bullet 					= new Sphere(32, 32, 0.1f, true, false);
 	  	bulletTexKey			= new TextureKey("Textures/Terrain/Rock/Rock.PNG");
-	  	bulletCollisionShape	= new SphereCollisionShape(0.4f);
+	  	bulletCollisionShape 	= new SphereCollisionShape(0.4f);
+	  	bulletGeometry 			= new Geometry("bullet", bullet);
+	  	
+	  	bulletGeometry.setMaterial(bulletMat);
+	  	bulletTexKey.setGenerateMips(true);
+	  	Texture bulletTex = assetManager.loadTexture(bulletTexKey);
+	  	bulletMat.setTexture("ColorMap", bulletTex);
+	  	bullet.setTextureMode(TextureMode.Projected);
+	  	
+	  	super.setBulletGeometry(bulletGeometry);
+	  	super.setBulletCollisionShape(bulletCollisionShape);
 	}
-	
-	public void use() {
-		Geometry bulletGeom 	= new Geometry("bullet", bullet);
-		
-		bulletGeom.setMaterial(bulletMat);
-        bulletTexKey.setGenerateMips(true);
-		Texture bulletTex = assetManager.loadTexture(bulletTexKey);
-		bulletMat.setTexture("ColorMap", bulletTex);
-		bullet.setTextureMode(TextureMode.Projected);
 
-		shoot(bulletGeom, bulletCollisionShape);
-	}
+//	public void use() {
+		
+
+//		shoot(bulletGeom, bulletCollisionShape);
+//	}
 }

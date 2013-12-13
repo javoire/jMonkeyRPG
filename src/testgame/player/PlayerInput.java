@@ -1,6 +1,7 @@
 package testgame.player;
 
 import testgame.appstates.HarvestingAppState;
+import testgame.appstates.WeaponAppState;
 import testgame.inventory.Inventory;
 import testgame.items.weapons.Weapon;
 import testgame.player.controls.PlayerEquipmentControl;
@@ -54,6 +55,7 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
 	private Inventory 				inventory;
 	private PlayerEquipmentControl 	playerEquipment;
 	private float 					sprintMultiplier = 3f;
+	private WeaponAppState			weaponAppState;
 	private boolean left = false, right = false, up = false, down = false, sprint = false;
 
 	@Override
@@ -65,6 +67,7 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
         cam				= app.getCamera();
         playerActions	= app.getStateManager().getState(PlayerActions.class);
         inventory		= app.getStateManager().getState(Inventory.class);
+        weaponAppState 	= app.getStateManager().getState(WeaponAppState.class); 
         playerControl 	= player.getPlayerControl();
         playerEquipment = player.getEquipmentControl();
         initKeyBindings();
@@ -101,6 +104,7 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
             playerControl.jump();
 	    } else if (binding.equals(KeyMap.USEMAINHAND.toString()) && !value) {
 	    	playerActions.useMainHand();
+	    	weaponAppState.fireWeapon();
 //	    } else if (binding.equals(KeyMap.HARVEST.toString()) && !value) {
 //	    	harvester.tryHarvest();
 	    } else if (binding.equals(KeyMap.SLOT_1.toString()) && !value) {

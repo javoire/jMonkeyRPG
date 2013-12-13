@@ -14,32 +14,48 @@ import com.jme3.scene.Geometry;
 
 public class WeaponRanged extends Weapon {
 	
-	private Player                          player;
-	private AssetManager 			assetManager;
-	private BulletAppState 			bulletAppState;
-	private Application 			app;
+//	private Player                  player;
+//	private AssetManager 			assetManager;
+//	private BulletAppState 			bulletAppState;
+//	private Application 			app;
+	private SphereCollisionShape 	bulletCollisionShape;
+	private Geometry 				bulletGeometry;
 
-
-	public WeaponRanged(String name, Application app) {
+	public WeaponRanged(String name) {
 		super(WeaponType.RANGED, name);
-		this.app 	= app;
-		this.player = app.getStateManager().getState(Player.class);
+//		this.app 	= app;
+//		this.player = app.getStateManager().getState(Player.class);
+//		this.assetManager 	= app.getAssetManager();
+//		this.bulletAppState = app.getStateManager().getState(BulletAppState.class);
+	}
+
+	public Geometry getBulletGeometry() {
+		return bulletGeometry;
+	}
+
+	public void setBulletGeometry(Geometry bulletGeometry) {
+		this.bulletGeometry = bulletGeometry;
+	}
+
+	public SphereCollisionShape getBulletCollisionShape() {
+		return bulletCollisionShape;
+	}
+
+	public void setBulletCollisionShape(SphereCollisionShape bulletCollisionShape) {
+		this.bulletCollisionShape = bulletCollisionShape;
 	}
 	
-	public void shoot(Geometry bulletGeom, SphereCollisionShape bulletCollisionShape) {
-		this.assetManager 	= app.getAssetManager();
-		this.bulletAppState = app.getStateManager().getState(BulletAppState.class);
-		
-		RigidBodyControl bulletNode = new BombControl(assetManager, bulletCollisionShape, 1);
-		bulletGeom.setShadowMode(ShadowMode.CastAndReceive);
-		
-		Vector3f spawnlocation = player.getLocation().add(player.getLookDirection().mult(5));
-		bulletGeom.setLocalTranslation(spawnlocation);
-		bulletNode.setLinearVelocity(player.getLookDirection().mult(150));
-		bulletNode.removeCollideWithGroup(2);
-		bulletGeom.addControl(bulletNode);
-		
-		player.rootNode.attachChild(bulletGeom);
-		bulletAppState.getPhysicsSpace().add(bulletNode);
-	}
+//	public void shoot(Geometry bulletGeom, SphereCollisionShape bulletCollisionShape) {		
+//		RigidBodyControl bulletNode = new BombControl(assetManager, bulletCollisionShape, 1);
+//		bulletGeom.setShadowMode(ShadowMode.CastAndReceive);
+//		
+//		Vector3f spawnlocation = player.getLocation().add(player.getLookDirection().mult(5));
+//		bulletGeom.setLocalTranslation(spawnlocation);
+//		bulletNode.setLinearVelocity(player.getLookDirection().mult(150));
+////		bulletNode.removeCollideWithGroup(2);
+//		bulletGeom.addControl(bulletNode);
+//		
+//		player.rootNode.attachChild(bulletGeom);
+//		bulletAppState.getPhysicsSpace().add(bulletNode);
+//	}
 }
