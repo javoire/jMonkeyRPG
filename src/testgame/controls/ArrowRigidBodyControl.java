@@ -43,8 +43,7 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
     private float forceFactor = 1;
     private ParticleEmitter effect;
     private float fxTime = 0.5f;
-    private float maxFlyingTime = 2f;
-    private float maxTimeDebris = 5f;
+    private float maxFlyingTime = 10f; // 10 sec
     private float curTime = -1.0f;
     private float timer;
     private Quaternion flyingRotation = new Quaternion();
@@ -125,8 +124,9 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
                 effect.emitAllParticles();
             }
             
-//            // insert new static geom where we landed
+//           // insert new non-physical spatial where we landed
             Spatial staticSpatial = spatial.clone();
+            // REVIEW: calculate the position based on distance to what it collided with (so the arrwo always sticks into things eg 1/10 of it's length)
             staticSpatial.setLocalTranslation(spatial.getLocalTranslation());
             staticSpatial.addControl(new StaticBulletControl());
             spatial.getParent().attachChild(staticSpatial); // parent should be rootnode

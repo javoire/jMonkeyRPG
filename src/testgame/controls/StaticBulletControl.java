@@ -13,7 +13,7 @@ import com.jme3.scene.control.AbstractControl;
  */
 public class StaticBulletControl extends AbstractControl {
 
-	private float lifeTime = 5.0f; // live 5 seconds
+	private float lifeTime = 30.0f; // live 30 seconds
 	private float timer = 0f;
 	
 	@Override
