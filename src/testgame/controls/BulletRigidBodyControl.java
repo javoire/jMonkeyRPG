@@ -32,9 +32,9 @@ import com.jme3.scene.Spatial;
  * This is supposed to control the behaviour of an arrow that is fired... 
  * @author Jonatan Dahl (based on BombControl by normenhansen)
  */
-public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCollisionListener, PhysicsTickListener {
+public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsCollisionListener, PhysicsTickListener {
 
-	private static final Logger logger = Logger.getLogger(ArrowRigidBodyControl.class.getName());
+	private static final Logger logger = Logger.getLogger(BulletRigidBodyControl.class.getName());
 	
     private float explosionRadius = 10;
     private PhysicsGhostObject ghostObject;
@@ -43,18 +43,20 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
     private float forceFactor = 1;
     private ParticleEmitter effect;
     private float fxTime = 0.5f;
-    private float maxFlyingTime = 10f; // 10 sec
+    private float maxFlyingTime = 30f; // sec
     private float curTime = -1.0f;
     private float timer;
     private Quaternion flyingRotation = new Quaternion();
     private PhysicsCollisionObject other;
 
-    public ArrowRigidBodyControl(CollisionShape shape, float mass) {
+	private Vector3f collisionLocation;
+
+    public BulletRigidBodyControl(CollisionShape shape, float mass) {
         super(shape, mass);
         createGhostObject();
     }
 
-    public ArrowRigidBodyControl(AssetManager manager, CollisionShape shape, float mass) {
+    public BulletRigidBodyControl(AssetManager manager, CollisionShape shape, float mass) {
         super(shape, mass);
 //        createGhostObject(); // this is for making an explosion when we hit something
         prepareEffect(manager);
@@ -107,25 +109,32 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
         	
         	if (event.getObjectA() == this) { // get what we collided with, this can be done prettier.... 
         		other = event.getObjectB();
+        		collisionLocation = event.getPositionWorldOnB();
         	} else {
         		other = event.getObjectA();
+        		collisionLocation = event.getPositionWorldOnA();
         	}
         	logger.log(Level.INFO, "Collided with: " + other.toString());
 
             // smoke effect
             if (effect != null && spatial.getParent() != null) {
                 curTime = 0;
-                effect.setLocalTranslation(spatial.getLocalTranslation());
+                effect.setLocalTranslation(collisionLocation);
                 spatial.getParent().attachChild(effect);
                 effect.emitAllParticles();
             }
             
             // insert static non-physical spatial where we landed
+            // [todo] - check hardness of the object we collided with before attaching a non-physical spatial to the world. If it's e.g. a rock, we don't want the arrow to stick
+            // if soft => attach spatial
+            // else set velocity to 0 and apply a rotation and some inverse velocity. also subract som quality from the arrow.. ! (lesser damage)
+            // (based on the angle of hit) to it (to simulate an arrow bouncing of a rock). and don't remove this from physics space
             Spatial staticSpatial = spatial.clone();
-            // REVIEW: calculate the position based on distance to what it collided with (so the arrwo always sticks into things eg 1/10 of it's length)
+            // [review]: calculate the position based on distance to what it collided with (so the arrow always sticks into things eg 1/10 of it's length)
             staticSpatial.setLocalTranslation(spatial.getLocalTranslation());
             staticSpatial.addControl(new StaticBulletControl());
             staticSpatial.addControl(new TargetableControl("Arrow"));
+            staticSpatial.addControl(new QualityControl(0.9f));
             spatial.getParent().attachChild(staticSpatial); // parent should be rootnode
 
             // remove this one
@@ -166,7 +175,10 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
         if(enabled){
         	// point arrow towards where it is going
         	flyingRotation.lookAt(this.getLinearVelocity(), new Vector3f(0,1,0));
-        	spatial.setLocalRotation(flyingRotation);
+        	this.setPhysicsRotation(flyingRotation);
+        	// always align the spatial with the pysics shapes translation!
+        	spatial.setLocalRotation(this.getPhysicsRotation());
+        	
         	// this is to cleanup old bullets that hasnt collided yet (lived more than maxTime (=4 sec))
             if(timer>maxFlyingTime){
                 if(spatial.getParent()!=null){

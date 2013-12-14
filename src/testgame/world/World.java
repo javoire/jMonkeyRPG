@@ -160,6 +160,8 @@ public class World extends AbstractAppState {
         // debug
         inputManager.addMapping("wireframe", new KeyTrigger(KeyInput.KEY_T));
         inputManager.addListener(actionListener, "wireframe");
+        inputManager.addMapping("physics", new KeyTrigger(KeyInput.KEY_P));
+        inputManager.addListener(actionListener, "physics");
     }
 
     public World(Node rootNode) {
@@ -551,21 +553,26 @@ public class World extends AbstractAppState {
 //    }
     
 	private ActionListener actionListener = new ActionListener() {
-		boolean wireframe = false;
+		boolean wireframeDebug = false;
+		boolean physicsDebug = false;
 
 		@Override
 		public void onAction(String name, boolean pressed, float tpf) {
 			// toggle wireframe
 			if (name.equals("wireframe") && !pressed) {
-				wireframe = !wireframe; // toggle boolean
+				wireframeDebug = !wireframeDebug; // toggle boolean
 				rootNode.depthFirstTraversal(new SceneGraphVisitor() {
 					public void visit(Spatial spatial) {
 						if (spatial instanceof Geometry)
 							((Geometry) spatial).getMaterial()
 									.getAdditionalRenderState()
-									.setWireframe(wireframe);
+									.setWireframe(wireframeDebug);
 					}
 				});
+			}
+			if (name.equals("physics") && !pressed) {
+				physicsDebug = !physicsDebug; // toggle boolean
+				bulletAppState.setDebugEnabled(physicsDebug);
 			}
 			// else ... other input tests.
 		}

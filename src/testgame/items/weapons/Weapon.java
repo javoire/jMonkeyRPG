@@ -13,11 +13,11 @@ public class Weapon extends EquippableItem {
 	/**
 	 * The minimum force this ranged weapon has, will modify final damage or velocity etc
 	 */
-	protected Float		minForce = 0.1f;
+	protected Float		minForce = 10f;
 	/**
 	 * The maximum force this weapon can have
 	 */
-	protected Float		maxForce = 10f;
+	protected Float		maxForce = 100f;
 
 	
 	public enum WeaponType {

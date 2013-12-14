@@ -1,3 +1,8 @@
+/**
+ * Todos (run watson -s dirty)
+ * [todo] - Make bigger invisible meshes around targetable objects (e.g. arrows are thin and hard to target). Eg a Physics GhostObject 
+ */
+
 package testgame;
 
 import testgame.appstates.HarvestingAppState;

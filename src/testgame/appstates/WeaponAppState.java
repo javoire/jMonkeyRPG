@@ -3,8 +3,9 @@ package testgame.appstates;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import testgame.controls.ArrowRigidBodyControl;
+import testgame.controls.BulletRigidBodyControl;
 import testgame.items.weapons.RangedWeapon;
+import testgame.items.weapons.RangedWeaponBullet;
 import testgame.items.weapons.Weapon;
 import testgame.player.Player;
 
@@ -13,7 +14,6 @@ import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -45,11 +45,13 @@ public class WeaponAppState extends AbstractAppState {
 		assetManager	= app.getAssetManager();
 
 		// build a ranged weapon (bow)
-		RangedWeapon bow = new RangedWeapon("Sweet Bow", assetManager.loadModel("Models/arrow2.j3o")); // temp
-		bow.setVelocityMultiplier(100f); // set "force" of bow
+		RangedWeaponBullet bullet = new RangedWeaponBullet("Arrow", assetManager.loadModel("Models/arrow2.j3o")); 
+		bullet.setMass(0.3f);
+		RangedWeapon bow = new RangedWeapon("Sweet Bow"); // temp
+		bow.setBullet(bullet);
 		bow.setMaxChargeTime(2f); // set how long it can be charged before reaching max force 
-		bow.setMinForce(0.8f); // so we don't get a 0 velocity arrow...
-		bow.setMaxForce(2.5f);
+		bow.setMinForce(200f); // so we don't get a 0 velocity arrow...
+		bow.setMaxForce(700f);
 		
 		activeWeapon = bow;
 	}
@@ -76,6 +78,7 @@ public class WeaponAppState extends AbstractAppState {
 	public void fireWeapon() {
 		if(activeWeapon == null) {
 			logger.log(Level.INFO, "No active weapon, not firing");
+			return;
 		}
 		
 		// we are not chargin the weapon anymore
@@ -84,35 +87,40 @@ public class WeaponAppState extends AbstractAppState {
 		if(activeWeapon instanceof RangedWeapon) {
 			logger.log(Level.INFO, "Weapon is ranged");
 			
-			// Create and fire the bullet //
+			if(((RangedWeapon) activeWeapon).getBullet() == null) {
+				logger.log(Level.INFO, "No bullet set, can't fire");
+				return;
+			}
 			
 			// clone the bullet spatial
-			Spatial bullet = ((RangedWeapon) activeWeapon).getBulletSpatial().clone();
-			bullet.setLocalScale(0.4f);
+			Spatial bulletSpatial = ((RangedWeapon) activeWeapon).getBullet().getSpatial().clone();
+			bulletSpatial.setLocalScale(0.3f);
 			
-			logger.log(Level.INFO, "Weapon has bullet spatial: " + bullet.toString());
+			logger.log(Level.INFO, "Weapon has bullet spatial: " + bulletSpatial.toString());
 			
-			// set initial direction of bullet
-			Vector3f spawnlocation = player.getLocation().add(player.getLookDirection().mult(5));
-			bullet.setLocalTranslation(spawnlocation);
+			// set initial position of bullet
+			Vector3f spawnlocation = player.getLocation().add(player.getLookDirection().mult(3.5f));
+			bulletSpatial.setLocalTranslation(spawnlocation);
 			
+			// add rbc
+			// [review] - neccessary to create a new collision shape here every time?
+			BulletRigidBodyControl arbc	= new BulletRigidBodyControl(assetManager, CollisionShapeFactory.createDynamicMeshShape(bulletSpatial), ((RangedWeapon) activeWeapon).getBullet().getMass());
+
 			// set initial rotation to point to where player looks
 			Quaternion lookRotation = new Quaternion();
 			lookRotation.lookAt(player.getLookDirection(), new Vector3f(0,1,0));
-			bullet.setLocalRotation(lookRotation);
-	
-			// add rbc
-			ArrowRigidBodyControl arbc	= new ArrowRigidBodyControl(assetManager, CollisionShapeFactory.createDynamicMeshShape(bullet), 0.1f); // TEMP: hardcoded arrow control..
+			arbc.setPhysicsRotation(lookRotation);
+			bulletSpatial.setLocalRotation(lookRotation);
 			
 			// set velocity based on how long we charged and the weapons max and min force
-			arbc.setLinearVelocity(player.getLookDirection().mult(((RangedWeapon) activeWeapon).getVelocity(chargeTime))); // this is specifc for a RANGED weapon
-			bullet.addControl(arbc);
+			arbc.setLinearVelocity(player.getLookDirection().mult(((RangedWeapon) activeWeapon).getBulletVelocity(chargeTime))); // this is specifc for a RANGED weapon
+			bulletSpatial.addControl(arbc);
 			
 			// add this to ze world
 			bulletAppState.getPhysicsSpace().add(arbc);
-			rootNode.attachChild(bullet);
+			rootNode.attachChild(bulletSpatial);
 			
-			logger.log(Level.INFO, "Fired bullet [chargeTime: {0}, force: {1}, velocity: {2}]", new Object[]{chargeTime, ((RangedWeapon) activeWeapon).getChargedForce(chargeTime), ((RangedWeapon) activeWeapon).getVelocity(chargeTime)});
+			logger.log(Level.INFO, "Fired bullet [chargeTime: {0}s, force: {1}, velocity: {2}]", new Object[]{chargeTime, ((RangedWeapon) activeWeapon).getChargedForce(chargeTime), ((RangedWeapon) activeWeapon).getBulletVelocity(chargeTime)});
 		}
 	}
 	

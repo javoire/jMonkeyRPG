@@ -5,86 +5,39 @@ import com.jme3.scene.Spatial;
 
 public class RangedWeapon extends Weapon {
 	
-//	private Player                  player;
-//	private AssetManager 			assetManager;
-//	private BulletAppState 			bulletAppState;
-//	private Application 			app;
-//	private SphereCollisionShape 	bulletCollisionShape;
 	/**
-	 * The spatial of the bullet, can be an arrow, bolt, bullet etc
+	 * The bullet used, could be an arrow or bolt etc
 	 */
-	private Spatial					bulletSpatial;
-	/**
-	 * The collision shape of the bullet
-	 */
-	private MeshCollisionShape 		bulletMeshCollisionShape;
-	/**
-	 * Determine the velocity of the bullet (arrow, bolt), is combined with chargeTime and a force value
-	 */
-	private Float 					velocityMultiplier = 100f; // default 10
+	private RangedWeaponBullet bullet;
 	
+	/**
+	 * RangedWeapon
+	 * @param name The name of the weapon, shown in GUIs etc
+	 */
 	public RangedWeapon(String name) {
 		super(WeaponType.RANGED, name);
-//		this.app 	= app;
-//		this.player = app.getStateManager().getState(Player.class);
-//		this.assetManager 	= app.getAssetManager();
-//		this.bulletAppState = app.getStateManager().getState(BulletAppState.class);
 	}
-	
+		
 	/**
-	 * RangedWeapon takes a name and the spatial that it will use as a bullet (that it'll shoot when fired)
-	 * @param name The name of the weapon, shown in GUIs etc
-	 * @param spatial The spatial it'll shoot when fired
-	 */
-	public RangedWeapon(String name, Spatial spatial) {
-		super(WeaponType.RANGED, name);
-		bulletSpatial = spatial;
-	}
-	
-//	public SphereCollisionShape getBulletCollisionShape() {
-//		return bulletCollisionShape;
-//	}
-//
-//	public void setBulletCollisionShape(SphereCollisionShape bulletCollisionShape) {
-//		this.bulletCollisionShape = bulletCollisionShape;
-//	}
-
-	public Spatial getBulletSpatial() {
-		return bulletSpatial;
-	}
-
-	public void setBulletSpatial(Spatial spatial) {
-		this.bulletSpatial = spatial;
-	}
-	
-	/**
-	 * Returns a velocity value of the bullet based on how much force we got from charging the weapon, and a velocity multiplier
+	 * Returns a velocity value for the bullet based on how much force we got from charging the weapon and the mass of the bullet
+	 * Use this value when firing a bullet with this weapon
 	 * @param chargeTime
 	 * @return <code>Float</code> velocity
 	 */
-	public Float getVelocity(Float chargeTime) {
-		return getChargedForce(chargeTime) * velocityMultiplier;
-	}
-
-	public Float getVelocityMultiplier() {
-		return velocityMultiplier;
+	public Float getBulletVelocity(Float chargeTime) {
+		return getChargedForce(chargeTime) * bullet.getMass();
 	}
 
 	/**
-	 * This should be set by a child class (eg. a Bow() etc) to define the force of the weapon
-	 * @param velocityMultiplier
+	 * @return {@link RangedWeaponBullet} The bullet this weapon fires
 	 */
-	public void setVelocityMultiplier(Float velocityMultiplier) {
-		this.velocityMultiplier = velocityMultiplier;
+	public RangedWeaponBullet getBullet() {
+		return bullet;
 	}
-	
-//	public MeshCollisionShape getBulletMeshCollisionShape() {
-//		return bulletMeshCollisionShape;
-//	}
-//
-//	public void setBulletMeshCollisionShape(MeshCollisionShape bulletMeshCollisionShape) {
-//		this.bulletMeshCollisionShape = bulletMeshCollisionShape;
-//	}
+
+	public void setBullet(RangedWeaponBullet bullet) {
+		this.bullet = bullet;
+	}
 	
 //	public void shoot(Geometry bulletGeom, SphereCollisionShape bulletCollisionShape) {		
 //		RigidBodyControl bulletNode = new BombControl(assetManager, bulletCollisionShape, 1);
