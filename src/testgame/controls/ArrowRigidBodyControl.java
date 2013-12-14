@@ -24,6 +24,7 @@ import com.jme3.export.JmeExporter;
 import com.jme3.export.JmeImporter;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
@@ -46,6 +47,7 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
     private float maxTimeDebris = 5f;
     private float curTime = -1.0f;
     private float timer;
+    private Quaternion flyingRotation = new Quaternion();
     private PhysicsCollisionObject other;
 
     public ArrowRigidBodyControl(CollisionShape shape, float mass) {
@@ -165,8 +167,10 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
         super.update(tpf);
         timer+=tpf;
         if(enabled){
-        	// control angle of arrow when flying
-        	logger.log(Level.INFO, "Looking at :" + this.getAngularVelocity());
+        	// point arrow towards where it is going
+        	logger.log(Level.INFO, "Looking at :" + this.getLinearVelocity());
+        	flyingRotation.lookAt(this.getLinearVelocity(), new Vector3f(0,1,0));
+        	spatial.setLocalRotation(flyingRotation);
         	// this is to cleanup old bullets that hasnt collided yet (lived more than maxTime (=4 sec))
             if(timer>maxFlyingTime){
                 if(spatial.getParent()!=null){
