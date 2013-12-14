@@ -6,12 +6,19 @@ package testgame.game;
 
 import testgame.gui.SimpleHud;
 import testgame.inventory.Inventory;
-import testgame.items.weapons.Cannon;
 import testgame.player.Player;
+import testgame.world.World;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
+import com.jme3.asset.AssetManager;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
+import com.jme3.scene.debug.Arrow;
 
 /**
  *
@@ -37,7 +44,7 @@ public class Game extends AbstractAppState {
         player          = app.getStateManager().getState(Player.class);
         inventory	= app.getStateManager().getState(Inventory.class);
 
-        inventory.add(new Cannon("Cannon", app));
+//        inventory.add(new Cannon("Cannon", app));
     }
     
     public boolean startGame() {
@@ -53,8 +60,8 @@ public class Game extends AbstractAppState {
         
         return running;
     }
-    
-    @Override
+
+	@Override
     public void update(float tpf) {
         //TODO: implement behavior during runtime
     }

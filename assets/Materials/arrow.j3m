@@ -1,0 +1,9 @@
+Material My Material : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        DiffuseMap : Flip Textures/items/arrow.png
+        VTangent : true
+        VertexLighting : true
+     }
+    AdditionalRenderState {
+    }
+}

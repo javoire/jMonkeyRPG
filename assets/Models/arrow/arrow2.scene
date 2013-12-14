@@ -1,0 +1,56 @@
+<scene previous_export_time="1386899651.312235" formatVersion="1.0.1" exported_by="jonatandahl" export_time="1386902264.435403" >
+  <nodes >
+    <node name="Sun.001" >
+      <position z="-4.582663" y="10.358604" x="3.081690" />
+      <rotation qw="0.856820" qy="0.206047" qx="0.068848" qz="-0.467616" />
+      <scale z="1.000000" y="1.000000" x="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light type="directional" name="Sun.001" powerScale="1.0" >
+        <position z="-4.582663" y="10.358604" x="3.081690" />
+        <lightAttenuation range="5000" quadratic="0.0" constant="1.0" linear="0.04" />
+        <direction z="0.311" y="-0.553" x="0.773" />
+        <colourDiffuse g="1.0" r="1.0" b="1.0" />
+        <colourSpecular g="1.0" r="1.0" b="1.0" />
+      </light>
+    </node>
+    <node name="Sun" >
+      <position z="-4.582663" y="-3.641395" x="2.081690" />
+      <rotation qw="-0.000000" qy="0.120098" qx="0.989491" qz="-0.080527" />
+      <scale z="1.000000" y="1.000000" x="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <light type="directional" name="Sun" powerScale="1.0" >
+        <position z="-4.582663" y="-3.641395" x="2.081690" />
+        <lightAttenuation range="5000" quadratic="0.0" constant="1.0" linear="0.04" />
+        <direction z="0.019" y="0.971" x="-0.238" />
+        <colourDiffuse g="1.0" r="1.0" b="1.0" />
+        <colourSpecular g="1.0" r="1.0" b="1.0" />
+      </light>
+    </node>
+    <node name="Cylinder" >
+      <position z="-0.000000" y="0.000000" x="0.000000" />
+      <rotation qw="1.000000" qy="0.000000" qx="0.000000" qz="-0.000000" />
+      <scale z="1.000000" y="1.000000" x="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity velocity_min="0.0" inertia_tensor="0.4000000059604645" friction_y="1.0" friction_x="1.0" friction_z="1.0" lock_trans_z="False" lock_trans_y="False" lock_trans_x="False" anisotropic_friction="False" actor="False" physics_type="STATIC" velocity_max="0.0" mass="1.0" meshFile="Cylinder.mesh" ghost="False" mass_radius="1.0" damping_trans="0.03999999910593033" damping_rot="0.10000000149011612" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" name="Cylinder" />
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/Users/jonatandahl/Dropbox/Personligt/Games/MyRpgGame/assets/Models/arrow/arrow.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourDiffuse g="0.05087608844041824" r="0.05087608844041824" b="0.05087608844041824" />
+    <colourBackground g="0.05087608844041824" r="0.05087608844041824" b="0.05087608844041824" />
+    <colourAmbient g="0.0" r="0.0" b="0.0" />
+  </environment>
+</scene>

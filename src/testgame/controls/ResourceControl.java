@@ -1,12 +1,8 @@
 package testgame.controls;
 
-import testgame.inventory.Inventory;
-import testgame.items.resources.Resource.ResourceType;
 import testgame.items.resources.Resource;
-import testgame.objects.Tree;
-import testgame.player.Player;
+import testgame.items.resources.Resource.ResourceType;
 
-import com.jme3.renderer.Camera;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
@@ -21,23 +17,22 @@ import com.jme3.scene.control.Control;
  */
 public class ResourceControl extends AbstractControl {
 	
-	Player player;
-	Tree tree;
 	private int quantity;
-	private int minDistance;
+	private int minHarvestableDistance;
 	private ResourceType resourceType;
 	private Resource resource;
 	
 	/**
 	 * @param camera
-	 * @param resType Which type of resource this Spatial has
+	 * @param _resourceType Which type of resource this Spatial has
 	 */
-	public ResourceControl(ResourceType resType) {
-		resourceType 	= resType;
-		resource 		= new Resource(resType); 	// TODO dummy object just helps to get
+	public ResourceControl(ResourceType _resourceType) {
+//	public ResourceControl() {
+		resourceType 			= _resourceType;
+		resource 				= new Resource(_resourceType); 	// TODO dummy object just helps to get
 													// the name of the resource. fix. freaking ugly
-		quantity 		= 200;
-		minDistance 	= 1; // in meters
+		quantity 				= 200;
+		minHarvestableDistance 	= 1; // in meters
 	}
 	
 	@Override
@@ -66,29 +61,25 @@ public class ResourceControl extends AbstractControl {
 		this.quantity = amount;
 	}
 
-	public int getHarvestableDistance() {
-		return getMinDistance();
-	}
-
 	/**
 	 * Takes a specified amount and send it to inventory
 	 * @param harvestAmount
 	 * @param inventory
 	 * @param type
 	 */
-	public void toInventory(int harvestAmount, Inventory inventory, ResourceType type) {
-		if(quantity > 0) {
-			Resource res = inventory.getResource(type);
-			if(res != null)
-				res.addQuantity(harvestAmount);
-			else {
-				res = new Resource(type);
-				res.setQuantity(harvestAmount);
-				inventory.add(res);
-			}
-			quantity -= harvestAmount;
-		}		
-	}
+//	public void toInventory(int harvestAmount, Inventory inventory, ResourceType type) {
+//		if(quantity > 0) {
+//			Resource res = inventory.getResource(type);
+//			if(res != null)
+//				res.addQuantity(harvestAmount);
+//			else {
+//				res = new Resource(type);
+//				res.setQuantity(harvestAmount);
+//				inventory.add(res);
+//			}
+//			quantity -= harvestAmount;
+//		}		
+//	}
 
 	public ResourceType getResourceType() {
 		return resourceType;
@@ -102,15 +93,15 @@ public class ResourceControl extends AbstractControl {
 		this.resourceType = resourceType;
 	}
 
-	public int getMinDistance() {
-		return minDistance;
+	public int getMinHarvestableDistance() {
+		return minHarvestableDistance;
 	}
 
 	/**
 	 * Sets minimum distant you can harvet from
-	 * @param minDistance In meters
+	 * @param distance In meters
 	 */
-	public void setMinDistance(int minDistance) {
-		this.minDistance = minDistance;
+	public void setMinHarvestableDistance(int distance) {
+		this.minHarvestableDistance = distance;
 	}
 }

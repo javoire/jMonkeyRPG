@@ -27,6 +27,7 @@ public class Inventory extends AbstractAppState {
 	private Vector<Ammunition> ammunition = new Vector<Ammunition>();
 	private Vector<Weapon> quickslot = new Vector<Weapon>(10);
 	
+	// TODO: change theses methods into one: and check instanceof instead
 	public boolean add(Resource resource) {
 		resources.add(resource);
 		return true;
