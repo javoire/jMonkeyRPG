@@ -56,7 +56,7 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
 
     public ArrowRigidBodyControl(AssetManager manager, CollisionShape shape, float mass) {
         super(shape, mass);
-//        createGhostObject();
+//        createGhostObject(); // this is for making an explosion when we hit something
         prepareEffect(manager);
     }
 
@@ -111,10 +111,6 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
         		other = event.getObjectA();
         	}
         	logger.log(Level.INFO, "Collided with: " + other.toString());
-            
-//        	space.add(ghostObject);
-//            ghostObject.setPhysicsLocation(getPhysicsLocation(vector));
-//            space.addTickListener(this);
 
             // smoke effect
             if (effect != null && spatial.getParent() != null) {
@@ -124,11 +120,12 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
                 effect.emitAllParticles();
             }
             
-//           // insert new non-physical spatial where we landed
+            // insert static non-physical spatial where we landed
             Spatial staticSpatial = spatial.clone();
             // REVIEW: calculate the position based on distance to what it collided with (so the arrwo always sticks into things eg 1/10 of it's length)
             staticSpatial.setLocalTranslation(spatial.getLocalTranslation());
             staticSpatial.addControl(new StaticBulletControl());
+            staticSpatial.addControl(new TargetableControl("Arrow"));
             spatial.getParent().attachChild(staticSpatial); // parent should be rootnode
 
             // remove this one

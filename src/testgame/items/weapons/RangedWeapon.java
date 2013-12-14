@@ -3,7 +3,7 @@ package testgame.items.weapons;
 import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.scene.Spatial;
 
-public class WeaponRanged extends Weapon {
+public class RangedWeapon extends Weapon {
 	
 //	private Player                  player;
 //	private AssetManager 			assetManager;
@@ -23,7 +23,7 @@ public class WeaponRanged extends Weapon {
 	 */
 	private Float 					velocityMultiplier = 100f; // default 10
 	
-	public WeaponRanged(String name) {
+	public RangedWeapon(String name) {
 		super(WeaponType.RANGED, name);
 //		this.app 	= app;
 //		this.player = app.getStateManager().getState(Player.class);
@@ -31,7 +31,12 @@ public class WeaponRanged extends Weapon {
 //		this.bulletAppState = app.getStateManager().getState(BulletAppState.class);
 	}
 	
-	public WeaponRanged(String name, Spatial spatial) {
+	/**
+	 * RangedWeapon takes a name and the spatial that it will use as a bullet (that it'll shoot when fired)
+	 * @param name The name of the weapon, shown in GUIs etc
+	 * @param spatial The spatial it'll shoot when fired
+	 */
+	public RangedWeapon(String name, Spatial spatial) {
 		super(WeaponType.RANGED, name);
 		bulletSpatial = spatial;
 	}
