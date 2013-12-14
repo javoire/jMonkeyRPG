@@ -1,9 +1,6 @@
 package testgame.items.weapons;
 
 import com.jme3.bullet.collision.shapes.MeshCollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
 
 public class WeaponRanged extends Weapon {
@@ -13,9 +10,19 @@ public class WeaponRanged extends Weapon {
 //	private BulletAppState 			bulletAppState;
 //	private Application 			app;
 //	private SphereCollisionShape 	bulletCollisionShape;
-	private MeshCollisionShape 		bulletMeshCollisionShape;
+	/**
+	 * The spatial of the bullet, can be an arrow, bolt, bullet etc
+	 */
 	private Spatial					bulletSpatial;
-
+	/**
+	 * The collision shape of the bullet
+	 */
+	private MeshCollisionShape 		bulletMeshCollisionShape;
+	/**
+	 * Determine the velocity of the bullet (arrow, bolt), is combined with chargeTime and a force value
+	 */
+	private Float 					velocityMultiplier = 100f; // default 10
+	
 	public WeaponRanged(String name) {
 		super(WeaponType.RANGED, name);
 //		this.app 	= app;
@@ -44,7 +51,28 @@ public class WeaponRanged extends Weapon {
 	public void setBulletSpatial(Spatial spatial) {
 		this.bulletSpatial = spatial;
 	}
+	
+	/**
+	 * Returns a velocity value of the bullet based on how much force we got from charging the weapon, and a velocity multiplier
+	 * @param chargeTime
+	 * @return <code>Float</code> velocity
+	 */
+	public Float getVelocity(Float chargeTime) {
+		return getChargedForce(chargeTime) * velocityMultiplier;
+	}
 
+	public Float getVelocityMultiplier() {
+		return velocityMultiplier;
+	}
+
+	/**
+	 * This should be set by a child class (eg. a Bow() etc) to define the force of the weapon
+	 * @param velocityMultiplier
+	 */
+	public void setVelocityMultiplier(Float velocityMultiplier) {
+		this.velocityMultiplier = velocityMultiplier;
+	}
+	
 //	public MeshCollisionShape getBulletMeshCollisionShape() {
 //		return bulletMeshCollisionShape;
 //	}
@@ -65,5 +93,5 @@ public class WeaponRanged extends Weapon {
 //		
 //		player.rootNode.attachChild(bulletGeom);
 //		bulletAppState.getPhysicsSpace().add(bulletNode);
-//	}
+	// }
 }

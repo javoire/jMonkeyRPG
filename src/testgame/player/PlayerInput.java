@@ -1,5 +1,8 @@
 package testgame.player;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import testgame.appstates.HarvestingAppState;
 import testgame.appstates.WeaponAppState;
 import testgame.inventory.Inventory;
@@ -14,12 +17,15 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 
-public class PlayerInput extends AbstractAppState implements ActionListener {
+public class PlayerInput extends AbstractAppState implements ActionListener, AnalogListener {
+	
+	private static final Logger logger = Logger.getLogger(PlayerInput.class.getName());
 	
 	public enum KeyMap{
 	    LEFT("Left"),
@@ -91,31 +97,49 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
     }
 
 	@Override
-	public void onAction(String binding, boolean value, float tpf) {
+	public void onAction(String binding, boolean isPressed, float tpf) {
 		if (binding.equals(KeyMap.LEFT.toString())) {
-            if (value) { left = true; } else { left = false; }
-        } else if (binding.equals(KeyMap.RIGHT.toString())) {
-            if (value) { right = true; } else { right = false; }
-        } else if (binding.equals(KeyMap.UP.toString())) {
-            if (value) { up = true; } else { up = false; }
-        } else if (binding.equals(KeyMap.DOWN.toString())) {
-            if (value) { down = true; } else { down = false; }
-        } else if (binding.equals(KeyMap.JUMP.toString())) {
+            if (isPressed) { left = true; } else { left = false; }
+        } 
+
+		if (binding.equals(KeyMap.RIGHT.toString())) {
+            if (isPressed) { right = true; } else { right = false; }
+        } 
+
+		if (binding.equals(KeyMap.UP.toString())) {
+            if (isPressed) { up = true; } else { up = false; }
+        } 
+
+		if (binding.equals(KeyMap.DOWN.toString())) {
+            if (isPressed) { down = true; } else { down = false; }
+        } 
+
+		if (binding.equals(KeyMap.JUMP.toString())) {
             playerControl.jump();
-	    } else if (binding.equals(KeyMap.USEMAINHAND.toString()) && !value) {
+	    } 
+
+		if (binding.equals(KeyMap.USEMAINHAND.toString()) && isPressed) { // starting to fire weapon
+//	    	playerActions.useMainHand();
+	    	weaponAppState.chargeWeapon(); // rather "use main hand" ...
+	    } else if (binding.equals(KeyMap.USEMAINHAND.toString()) && !isPressed) { // firing the weapon
 //	    	playerActions.useMainHand();
 	    	weaponAppState.fireWeapon(); // rather "use main hand" ...
 //	    } else if (binding.equals(KeyMap.HARVEST.toString()) && !value) {
 //	    	harvester.tryHarvest();
-	    } else if (binding.equals(KeyMap.SLOT_1.toString()) && !value) {
+	    } else if (binding.equals(KeyMap.SLOT_1.toString()) && !isPressed) {
 	    	Weapon mainHand = inventory.getQuickslot(0);
 	    	if(mainHand != null)
 	    		playerEquipment.setMainHand(mainHand);
-		} else if (binding.equals(KeyMap.SLOT_2.toString()) && !value) {
+		} else if (binding.equals(KeyMap.SLOT_2.toString()) && !isPressed) {
 	    	Weapon mainHand = inventory.getQuickslot(1);
 	    	if(mainHand != null)
 	    		playerEquipment.setMainHand(mainHand);
 		}
+	}
+
+	@Override
+	public void onAnalog(String binding, float isPressed, float tpf) {
+//		if(binding.equals(KeyMap.USEMAINHAND_START))x
 	}
     
 	private void initKeyBindings() {

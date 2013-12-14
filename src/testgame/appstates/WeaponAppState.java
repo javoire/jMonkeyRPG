@@ -4,7 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import testgame.controls.ArrowRigidBodyControl;
-import testgame.items.weapons.Cannon;
+import testgame.items.weapons.Bow;
 import testgame.items.weapons.Weapon;
 import testgame.items.weapons.WeaponRanged;
 import testgame.player.Player;
@@ -30,6 +30,9 @@ public class WeaponAppState extends AbstractAppState {
 	private Node rootNode;
 	private AssetManager assetManager;
 	private BulletAppState bulletAppState;
+	private Float velocity;
+	private Float chargeTime = 0f;
+	private boolean weaponCharging = false;
 
 	public WeaponAppState(Node rootNode) {
 		this.rootNode = rootNode;
@@ -42,14 +45,26 @@ public class WeaponAppState extends AbstractAppState {
 		bulletAppState	= app.getStateManager().getState(BulletAppState.class);
 		assetManager	= app.getAssetManager();
 
-//		activeWeapon 	= new Cannon("Sweet Cannon", app, assetManager.loadModel("Models/arrow2.j3o")); // temp
-		activeWeapon 	= new Cannon("Sweet Cannon", app, assetManager.loadModel("Models/arrow_box.j3o")); // temp
-//		activeWeapon 	= new Cannon("Sweet Cannon", app, assetManager.loadModel("Models/arrow/arrow.j3o")); // temp, exported with ogre
-	}
+		activeWeapon 	= new Bow("Sweet Cannon", app, assetManager.loadModel("Models/arrow2.j3o")); // temp
+		}
 	
 	@Override
 	public void update(float tpf) {
 		// manipulate the rotation of a flying arrow?
+		
+		if(activeWeapon != null) {
+			// set velocity depending on the time until releasing arrow (how long we charge)
+			if(weaponCharging && chargeTime < activeWeapon.getMaxChargeTime()) {
+				chargeTime += tpf;
+			}			
+		}
+	}
+	
+	public void chargeWeapon() {
+		// we are charging the weapong
+		weaponCharging = true;
+		// reset chargeTime
+		chargeTime = 0f;
 	}
 	
 	public void fireWeapon() {
@@ -59,36 +74,44 @@ public class WeaponAppState extends AbstractAppState {
 		logger.log(Level.INFO, "Firing weapon" + player.getLookDirection());
 		if(activeWeapon instanceof WeaponRanged) {
 			logger.log(Level.INFO, "Weapon is ranged");
-
-			// load object
-			Spatial arrow 				= assetManager.loadModel("Models/arrow2.j3o"); // we CANNOT deep clone, the mesh will get fucked up and break the collision shape generator
-			arrow.setLocalScale(0.4f);
 			
-			logger.log(Level.INFO, "Weapon has bullet spatial: " + arrow.toString());
+			// we are not chargin the weapon anymore
+			weaponCharging = false;
 			
-			// set direction and velocity
+			// Create and fire the bullet
+			// clone the bullet spatial
+			Spatial bullet = ((WeaponRanged) activeWeapon).getBulletSpatial().clone();
+			bullet.setLocalScale(0.4f);
+			
+			logger.log(Level.INFO, "Weapon has bullet spatial: " + bullet.toString());
+			
+			// set initial direction
 			Vector3f spawnlocation = player.getLocation().add(player.getLookDirection().mult(5));
-			arrow.setLocalTranslation(spawnlocation);
+			bullet.setLocalTranslation(spawnlocation);
 			
 			// set initial rotation to point to where player looks
 			Quaternion lookRotation = new Quaternion();
 			lookRotation.lookAt(player.getLookDirection(), new Vector3f(0,1,0));
-			arrow.setLocalRotation(lookRotation);
+			bullet.setLocalRotation(lookRotation);
 			
 			logger.log(Level.INFO, "Firing: Arrow looking towards: " + lookRotation);
-
+	
 			// add rbc
-			CollisionShape cs			= CollisionShapeFactory.createDynamicMeshShape(arrow);
+			CollisionShape cs			= CollisionShapeFactory.createDynamicMeshShape(bullet);
 			ArrowRigidBodyControl arbc	= new ArrowRigidBodyControl(assetManager, cs, 0.1f); // TEMP: hardcoded arrow control..
-			arbc.setLinearVelocity(player.getLookDirection().mult(100));
-			arrow.addControl(arbc);
+			
+			// set velocity based on how long we charged
+			arbc.setLinearVelocity(player.getLookDirection().mult(((WeaponRanged) activeWeapon).getVelocity(chargeTime))); // this is specifc for a RANGED weapon
+			bullet.addControl(arbc);
 			
 			// add this to ze world
 			bulletAppState.getPhysicsSpace().add(arbc);
-			rootNode.attachChild(arrow);
+			rootNode.attachChild(bullet);
+			
+			logger.log(Level.INFO, "Fired weapon [chargeTime: {0}, force: {1}, velocity: {2}]", new Object[]{chargeTime, ((WeaponRanged) activeWeapon).getChargedForce(chargeTime), ((WeaponRanged) activeWeapon).getVelocity(chargeTime)});
 		}
 	}
-
+	
 	public Weapon getActiveWeapon() {
 		return activeWeapon;
 	}

@@ -168,7 +168,6 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
         timer+=tpf;
         if(enabled){
         	// point arrow towards where it is going
-        	logger.log(Level.INFO, "Looking at :" + this.getLinearVelocity());
         	flyingRotation.lookAt(this.getLinearVelocity(), new Vector3f(0,1,0));
         	spatial.setLocalRotation(flyingRotation);
         	// this is to cleanup old bullets that hasnt collided yet (lived more than maxTime (=4 sec))

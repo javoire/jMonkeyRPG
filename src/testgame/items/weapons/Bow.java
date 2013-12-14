@@ -13,7 +13,7 @@ import com.jme3.scene.shape.Sphere;
  * Cannon class. Stores properties, bullet geometry and collision shape of the Cannon weapon.
  * @author Jonatan Dahl
  */
-public class Cannon extends WeaponRanged {
+public class Bow extends WeaponRanged {
 	
 	private AssetManager 			assetManager;
 	private Material 				bulletMat;
@@ -22,8 +22,13 @@ public class Cannon extends WeaponRanged {
 	private SphereCollisionShape 	bulletCollisionShape;
 	private Geometry 				bulletGeometry;
 
-	public Cannon(String name, Application app, Spatial spatial) {
+	public Bow(String name, Application app, Spatial spatial) {
 		super(name, spatial);
+		super.setVelocityMultiplier(100f); // set "force" of bow
+		super.setMaxChargeTime(2f); // set how long it can be charged before reaching max force 
+		super.setMinForce(0.8f); // so we don't get a 0 velocity arrow...
+		super.setMaxForce(2.5f);
+		
 //		assetManager 			= app.getAssetManager();
 //		bulletMat 				= new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 //		bullet 					= new Sphere(32, 32, 0.1f, true, false);
@@ -44,6 +49,7 @@ public class Cannon extends WeaponRanged {
 //	  	super.setBulletGeometry(bulletGeometry);
 //	  	super.setBulletCollisionShape(bulletCollisionShape);
 	}
+
 
 //	public void use() {
 		

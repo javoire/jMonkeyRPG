@@ -8,7 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import testgame.inventory.Inventory;
-import testgame.items.weapons.Cannon;
+import testgame.items.weapons.Bow;
 import testgame.player.controls.PlayerAttributesControl;
 import testgame.player.controls.PlayerEquipmentControl;
 import testgame.world.World;
