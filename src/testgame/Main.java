@@ -4,13 +4,13 @@ import testgame.appstates.HarvestingAppState;
 import testgame.appstates.TargetingAppState;
 import testgame.appstates.WeaponAppState;
 import testgame.game.Game;
-import testgame.game.World;
 import testgame.gui.Hud;
 import testgame.gui.SimpleHud;
 import testgame.inventory.Inventory;
 import testgame.player.Player;
 import testgame.player.PlayerActions;
 import testgame.player.PlayerInput;
+import testgame.world.World;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;

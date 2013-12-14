@@ -1,16 +1,10 @@
 package testgame.items.weapons;
 
-import jme3test.bullet.BombControl;
-import testgame.player.Player;
-
-import com.jme3.app.Application;
-import com.jme3.asset.AssetManager;
-import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.SceneGraphVisitor;
+import com.jme3.scene.Spatial;
 
 public class WeaponRanged extends Weapon {
 	
@@ -18,8 +12,9 @@ public class WeaponRanged extends Weapon {
 //	private AssetManager 			assetManager;
 //	private BulletAppState 			bulletAppState;
 //	private Application 			app;
-	private SphereCollisionShape 	bulletCollisionShape;
-	private Geometry 				bulletGeometry;
+//	private SphereCollisionShape 	bulletCollisionShape;
+	private MeshCollisionShape 		bulletMeshCollisionShape;
+	private Spatial					bulletSpatial;
 
 	public WeaponRanged(String name) {
 		super(WeaponType.RANGED, name);
@@ -28,22 +23,35 @@ public class WeaponRanged extends Weapon {
 //		this.assetManager 	= app.getAssetManager();
 //		this.bulletAppState = app.getStateManager().getState(BulletAppState.class);
 	}
+	
+	public WeaponRanged(String name, Spatial spatial) {
+		super(WeaponType.RANGED, name);
+		bulletSpatial = spatial;
+	}
+	
+//	public SphereCollisionShape getBulletCollisionShape() {
+//		return bulletCollisionShape;
+//	}
+//
+//	public void setBulletCollisionShape(SphereCollisionShape bulletCollisionShape) {
+//		this.bulletCollisionShape = bulletCollisionShape;
+//	}
 
-	public Geometry getBulletGeometry() {
-		return bulletGeometry;
+	public Spatial getBulletSpatial() {
+		return bulletSpatial;
 	}
 
-	public void setBulletGeometry(Geometry bulletGeometry) {
-		this.bulletGeometry = bulletGeometry;
+	public void setBulletSpatial(Spatial spatial) {
+		this.bulletSpatial = spatial;
 	}
 
-	public SphereCollisionShape getBulletCollisionShape() {
-		return bulletCollisionShape;
-	}
-
-	public void setBulletCollisionShape(SphereCollisionShape bulletCollisionShape) {
-		this.bulletCollisionShape = bulletCollisionShape;
-	}
+//	public MeshCollisionShape getBulletMeshCollisionShape() {
+//		return bulletMeshCollisionShape;
+//	}
+//
+//	public void setBulletMeshCollisionShape(MeshCollisionShape bulletMeshCollisionShape) {
+//		this.bulletMeshCollisionShape = bulletMeshCollisionShape;
+//	}
 	
 //	public void shoot(Geometry bulletGeom, SphereCollisionShape bulletCollisionShape) {		
 //		RigidBodyControl bulletNode = new BombControl(assetManager, bulletCollisionShape, 1);

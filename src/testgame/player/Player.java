@@ -7,11 +7,11 @@ package testgame.player;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import testgame.game.World;
 import testgame.inventory.Inventory;
 import testgame.items.weapons.Cannon;
 import testgame.player.controls.PlayerAttributesControl;
 import testgame.player.controls.PlayerEquipmentControl;
+import testgame.world.World;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -68,9 +68,9 @@ public class Player extends AbstractAppState {
     }
     
     private void initDefaultWeapons() {
-    	Cannon cannon1 = new Cannon("Cannon 1", app);
-    	inventory.setQuickslot(0, cannon1);
-    	equipmentControl.setMainHand(cannon1);
+//    	Cannon cannon1 = new Cannon("Cannon 1", app);
+//    	inventory.setQuickslot(0, cannon1);
+//    	equipmentControl.setMainHand(cannon1);
 	}
 
 	public Player(Node rootNode) {

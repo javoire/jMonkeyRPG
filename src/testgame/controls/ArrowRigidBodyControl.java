@@ -55,7 +55,7 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
 
     public ArrowRigidBodyControl(AssetManager manager, CollisionShape shape, float mass) {
         super(shape, mass);
-        createGhostObject();
+//        createGhostObject();
         prepareEffect(manager);
     }
 
@@ -111,9 +111,9 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
         	}
         	logger.log(Level.INFO, "Collided with: " + other.toString());
             
-        	space.add(ghostObject);
-            ghostObject.setPhysicsLocation(getPhysicsLocation(vector));
-            space.addTickListener(this);
+//        	space.add(ghostObject);
+//            ghostObject.setPhysicsLocation(getPhysicsLocation(vector));
+//            space.addTickListener(this);
 
             // smoke effect
             if (effect != null && spatial.getParent() != null) {
@@ -127,7 +127,7 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
             Spatial staticSpatial = spatial.clone();
             staticSpatial.setLocalTranslation(spatial.getLocalTranslation());
             staticSpatial.addControl(new StaticBulletControl());
-            spatial.getParent().attachChild(staticSpatial);
+            spatial.getParent().attachChild(staticSpatial); // parent should be rootnode
 
             // remove this one
             space.remove(this); // it sets space to null, and "kills" the "update" method. If this is not called now, it will register multiple collisions, which will break this class!

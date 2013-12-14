@@ -103,8 +103,8 @@ public class PlayerInput extends AbstractAppState implements ActionListener {
         } else if (binding.equals(KeyMap.JUMP.toString())) {
             playerControl.jump();
 	    } else if (binding.equals(KeyMap.USEMAINHAND.toString()) && !value) {
-	    	playerActions.useMainHand();
-	    	weaponAppState.fireWeapon();
+//	    	playerActions.useMainHand();
+	    	weaponAppState.fireWeapon(); // rather "use main hand" ...
 //	    } else if (binding.equals(KeyMap.HARVEST.toString()) && !value) {
 //	    	harvester.tryHarvest();
 	    } else if (binding.equals(KeyMap.SLOT_1.toString()) && !value) {
