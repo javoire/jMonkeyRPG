@@ -165,7 +165,10 @@ public class ArrowRigidBodyControl extends RigidBodyControl implements PhysicsCo
         super.update(tpf);
         timer+=tpf;
         if(enabled){
-            if(timer>maxFlyingTime){ // this is to cleanup old bullets that hasnt collided yet (lived more than maxTime (=4 sec))
+        	// control angle of arrow when flying
+        	logger.log(Level.INFO, "Looking at :" + this.getAngularVelocity());
+        	// this is to cleanup old bullets that hasnt collided yet (lived more than maxTime (=4 sec))
+            if(timer>maxFlyingTime){
                 if(spatial.getParent()!=null){
                 	spatial.removeFromParent();
                 	if (space != null) {

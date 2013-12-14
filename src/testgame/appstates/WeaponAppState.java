@@ -13,19 +13,13 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.TextureKey;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.material.Material;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Sphere;
-import com.jme3.scene.shape.Sphere.TextureMode;
-import com.jme3.texture.Texture;
 
 public class WeaponAppState extends AbstractAppState {
 	
@@ -65,26 +59,8 @@ public class WeaponAppState extends AbstractAppState {
 		logger.log(Level.INFO, "Firing weapon" + player.getLookDirection());
 		if(activeWeapon instanceof WeaponRanged) {
 			logger.log(Level.INFO, "Weapon is ranged");
-			WeaponRanged wr = (WeaponRanged) activeWeapon;
 
-			// create a geometry, collision shape and control of the right type and let it flyy
-			// IMPORTANT! clone a unique copy of the geometry for each weapon fire. otherwise there will be nullpointer errors in PhysicsSpace... !
-//			Geometry arrow 				= (Geometry) wr.getBulletGeometry().deepClone();
-//			SphereCollisionShape cs 	= wr.getBulletCollisionShape(); // FIX: make general
-			
-			// 1) test with bullet model
-//			Material bulletMat 					= new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-//			Sphere sphere 						= new Sphere(32, 32, 0.1f, true, false);
-//		  	TextureKey bulletTexKey				= new TextureKey("Textures/Terrain/Rock/Rock.PNG");
-//		  	Spatial arrow 						= new Geometry("bullet", sphere);
-//		  	arrow.setMaterial(bulletMat);
-//		  	bulletTexKey.setGenerateMips(true);
-//		  	Texture bulletTex = assetManager.loadTexture(bulletTexKey);
-//		  	bulletMat.setTexture("ColorMap", bulletTex);
-//		  	sphere.setTextureMode(TextureMode.Projected);
-
-			// 2) test with arrow model
-			// get the spatial and setup collision shapes and physics
+			// load object
 			Spatial arrow 				= assetManager.loadModel("Models/arrow2.j3o"); // we CANNOT deep clone, the mesh will get fucked up and break the collision shape generator
 			arrow.setLocalScale(0.4f);
 			
@@ -93,6 +69,13 @@ public class WeaponAppState extends AbstractAppState {
 			// set direction and velocity
 			Vector3f spawnlocation = player.getLocation().add(player.getLookDirection().mult(5));
 			arrow.setLocalTranslation(spawnlocation);
+			
+			// set initial rotation to point to where player looks
+			Quaternion lookRotation = new Quaternion();
+			lookRotation.lookAt(player.getLookDirection(), new Vector3f(0,1,0));
+			arrow.setLocalRotation(lookRotation);
+			
+			logger.log(Level.INFO, "Firing: Arrow looking towards: " + lookRotation);
 
 			// add rbc
 			CollisionShape cs			= CollisionShapeFactory.createDynamicMeshShape(arrow);
