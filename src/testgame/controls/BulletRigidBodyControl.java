@@ -176,10 +176,8 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
         	// point arrow towards where it is going
         	flyingRotation.lookAt(this.getLinearVelocity(), new Vector3f(0,1,0));
         	this.setPhysicsRotation(flyingRotation);
-        	// always align the spatial with the pysics shapes translation!
-        	spatial.setLocalRotation(this.getPhysicsRotation());
         	
-        	// this is to cleanup old bullets that hasnt collided yet (lived more than maxTime (=4 sec))
+        	// this is to cleanup old bullets that hasnt collided yet (lived more than maxTime)
             if(timer>maxFlyingTime){
                 if(spatial.getParent()!=null){
                 	spatial.removeFromParent();
