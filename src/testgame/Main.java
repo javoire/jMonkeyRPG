@@ -101,6 +101,7 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleUpdate(float tpf) {
         game.startGame(); // cannot be called in init
+        bulletAppState.getPhysicsSpace().setAccuracy(1f/120f); // increase physics "fps" for less glitchy collision detection
         // bulletAppState.getPhysicsSpace().enableDebug(assetManager);
     }
 }

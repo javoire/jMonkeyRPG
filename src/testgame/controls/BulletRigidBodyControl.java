@@ -105,9 +105,7 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
             return;
         }
         if (event.getObjectA() == this || event.getObjectB() == this) {
-        	this.setEnabled(false); // stop it from calculating physics. important!
-
-        	space.remove(this); // "freeze" object by removing the physics space. it sets space to null, and "kills" the "update" method. 
+        	this.setEnabled(false); // removes it from physics space: "freezes" the bullet where it lands. this will also disable the "update" method
 
         	if (event.getObjectA() == this) { // get what we collided with, this can be done prettier.... 
         		other = event.getObjectB();
@@ -120,18 +118,17 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
         	logger.log(Level.INFO, "Collided with: " + other.toString());
 
         	// [review]: calculate the position based on distance to what it collided with (so the arrow always sticks into things eg 1/10 of it's length)
-        	spatial.setLocalTranslation(spatial.getLocalTranslation());
         	spatial.addControl(new StaticBulletControl());
         	spatial.addControl(new TargetableControl("Arrow"));
         	spatial.addControl(new QualityControl(0.9f));
 
             // smoke effect
-//            if (effect != null && spatial.getParent() != null) {
-//            	curTime = 0;
-//            	effect.setLocalTranslation(new Vector3f(0,0,1)); // get the translation of the arrow spatial
-//            	((Node) spatial).attachChild(effect); // spatial is actually arrowNode
-//            	effect.emitAllParticles();
-//            }
+            if (effect != null && spatial.getParent() != null) {
+            	curTime = 0;
+            	effect.setLocalTranslation(new Vector3f(0,0,spatial.getLocalTranslation().distance(collisionPoint)));
+            	((Node) spatial).attachChild(effect); // spatial is actually arrowNode
+            	effect.emitAllParticles();
+            }
         }
     }
     

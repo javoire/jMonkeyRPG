@@ -247,7 +247,7 @@ public class World extends AbstractAppState {
             	        CollisionShape cs = CollisionShapeFactory.createMeshShape(spatial);
             	        RigidBodyControl rbc = new RigidBodyControl(cs, 0);
             	        spatial.addControl(rbc);
-                    	bulletAppState.getPhysicsSpace().addAll(spatial);
+                    	bulletAppState.getPhysicsSpace().add(spatial);
             		}
             		if(spatial instanceof Node && spatial.getName().equals("tree")) { // tree node
                     	logger.log(Level.INFO, "Parsing tree and adding controls " + spatial.toString());
