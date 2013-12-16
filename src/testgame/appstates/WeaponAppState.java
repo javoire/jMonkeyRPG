@@ -17,6 +17,7 @@ import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -95,7 +96,7 @@ public class WeaponAppState extends AbstractAppState {
 			}
 			
 			// clone the bullet spatial
-			Node arrowNode = new Node();
+			Node arrowNode = new Node("Arrow");
 			Spatial bulletSpatial = ((RangedWeapon) activeWeapon).getBullet().getSpatial().clone();
 			bulletSpatial.setLocalScale(0.3f);
 			arrowNode.attachChild(bulletSpatial);
@@ -108,8 +109,9 @@ public class WeaponAppState extends AbstractAppState {
 			
 			// add rbc
 			// [review] - necessary to create a new collision shape here every time?
-			BoxCollisionShape cs = new BoxCollisionShape(((BoundingBox) bulletSpatial.getWorldBound()).getExtent(new Vector3f()));
-			BulletRigidBodyControl arbc	= new BulletRigidBodyControl(assetManager, cs, ((RangedWeapon) activeWeapon).getBullet().getMass());
+			CylinderCollisionShape cs = new CylinderCollisionShape(((BoundingBox) bulletSpatial.getWorldBound()).getExtent(new Vector3f()));
+			// [review] - There must be a way to NOT have to supply the xExtent of the bullet here. Instead do it in the BulletRigidBodyControl (which doesn't work right atm) 
+			BulletRigidBodyControl arbc	= new BulletRigidBodyControl(assetManager, cs, ((RangedWeapon) activeWeapon).getBullet().getMass(), ((BoundingBox) bulletSpatial.getWorldBound()).getExtent(null).getZ());
 
 			// set initial rotation to point to where player looks
 			Quaternion lookRotation = new Quaternion();

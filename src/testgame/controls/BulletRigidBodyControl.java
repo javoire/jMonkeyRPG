@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
@@ -52,14 +53,18 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
 
 	private Vector3f collisionPoint;
 
+	private float zExtent;
+
     public BulletRigidBodyControl(CollisionShape shape, float mass) {
         super(shape, mass);
         createGhostObject();
     }
 
-    public BulletRigidBodyControl(AssetManager manager, CollisionShape shape, float mass) {
+    public BulletRigidBodyControl(AssetManager manager, CollisionShape shape, float mass, Float zExtent) {
         super(shape, mass);
 //        createGhostObject(); // this is for making an explosion when we hit something
+    	this.zExtent = zExtent; // zExtent of the bounding box of the bullet spatial. we must get this from OUTSIDE the control for some reason. Otherwise it won't stay consistent
+
         prepareEffect(manager);
     }
 
@@ -87,8 +92,7 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
         effect.setParticlesPerSec(0);
         effect.setGravity(0, 0, 0);
         effect.setLowLife(.1f);
-//        effect.setHighLife(.2f);
-        effect.setHighLife(20f);
+        effect.setHighLife(.2f);
         effect.setImagesX(2);
         effect.setImagesY(2);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
@@ -105,9 +109,9 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
             return;
         }
         if (event.getObjectA() == this || event.getObjectB() == this) {
-        	this.setEnabled(false); // removes it from physics space: "freezes" the bullet where it lands. this will also disable the "update" method
+        	this.setEnabled(false); // removes it from physics space: "freezes" the bullet where it lands. this will also disable the "update" method of this class
 
-        	if (event.getObjectA() == this) { // get what we collided with, this can be done prettier.... 
+        	if (event.getObjectA() == this) { // get what we collided with 
         		other = event.getObjectB();
         		collisionPoint = event.getPositionWorldOnB();
         	} else {
@@ -117,7 +121,11 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
 
         	logger.log(Level.INFO, "Collided with: " + other.toString());
 
-        	// [review]: calculate the position based on distance to what it collided with (so the arrow always sticks into things eg 1/10 of it's length)
+        	Float cpDistance = ((Node) spatial).getChild(0).getWorldTranslation().distance(collisionPoint);
+        	// [todo] - This should also be calculated from an objects hardness, eg grass/dirt is softer, thus an arrow will stick deeper
+        	Float stickDepthModifier = (this.getLinearVelocity().length() / 800 * 3f); // how deep it will stick into the object it hits
+        	if(stickDepthModifier < 0.3f) { stickDepthModifier = 0.3f; }; // min
+        	((Node) spatial).getChild(0).setLocalTranslation(new Vector3f(0,0,cpDistance-zExtent*(1-stickDepthModifier))); // negative offset the arrow on Z related to collisionPoint by slightly lesser than it's z extent (so it sticks "into" a tree for example)  
         	spatial.addControl(new StaticBulletControl());
         	spatial.addControl(new TargetableControl("Arrow"));
         	spatial.addControl(new QualityControl(0.9f));
