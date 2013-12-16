@@ -1,6 +1,7 @@
 /**
  * Todos (run watson -s dirty)
- * [todo] - Make bigger invisible meshes around targetable objects (e.g. arrows are thin and hard to target). Eg a Physics GhostObject 
+ * [todo] - Make bigger invisible meshes around targetable objects (e.g. arrows are thin and hard to target). Eg a Physics GhostObject
+ * [todo] - Make arrows bounce of hard surfaces and stay in physics space, without glitching (dimensions are too small) 
  */
 
 package testgame;

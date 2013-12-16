@@ -15,6 +15,7 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetManager;
 import com.jme3.bounding.BoundingBox;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -94,14 +95,16 @@ public class WeaponAppState extends AbstractAppState {
 			}
 			
 			// clone the bullet spatial
+			Node arrowNode = new Node();
 			Spatial bulletSpatial = ((RangedWeapon) activeWeapon).getBullet().getSpatial().clone();
 			bulletSpatial.setLocalScale(0.3f);
+			arrowNode.attachChild(bulletSpatial);
 			
 			logger.log(Level.INFO, "Weapon has bullet spatial: " + bulletSpatial.toString());
 			
 			// set initial position of bullet
-			Vector3f spawnlocation = player.getLocation().add(player.getLookDirection().mult(3.5f));
-			bulletSpatial.setLocalTranslation(spawnlocation);
+			Vector3f spawnlocation = player.getLocation().add(player.getLookDirection());
+			arrowNode.setLocalTranslation(spawnlocation);
 			
 			// add rbc
 			// [review] - necessary to create a new collision shape here every time?
@@ -112,15 +115,19 @@ public class WeaponAppState extends AbstractAppState {
 			Quaternion lookRotation = new Quaternion();
 			lookRotation.lookAt(player.getLookDirection(), new Vector3f(0,1,0));
 			arbc.setPhysicsRotation(lookRotation);
-			bulletSpatial.setLocalRotation(lookRotation);
+			arrowNode.setLocalRotation(lookRotation);
+			
+			// collion groups
+			arbc.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_03); // separate from the player
+			arbc.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01); // collide with world
 			
 			// set velocity based on how long we charged and the weapons max and min force
 			arbc.setLinearVelocity(player.getLookDirection().mult(((RangedWeapon) activeWeapon).getBulletVelocity(chargeTime))); // this is specifc for a RANGED weapon
-			bulletSpatial.addControl(arbc);
+			arrowNode.addControl(arbc);
 			
 			// add this to ze world
 			bulletAppState.getPhysicsSpace().add(arbc);
-			rootNode.attachChild(bulletSpatial);
+			rootNode.attachChild(arrowNode);
 			
 			logger.log(Level.INFO, "Fired bullet [chargeTime: {0}s, force: {1}, velocity: {2}]", new Object[]{chargeTime, ((RangedWeapon) activeWeapon).getChargedForce(chargeTime), ((RangedWeapon) activeWeapon).getBulletVelocity(chargeTime)});
 		}

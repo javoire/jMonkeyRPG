@@ -16,6 +16,7 @@ import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
 import com.jme3.app.state.AppStateManager;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.math.Vector3f;
@@ -62,7 +63,8 @@ public class Player extends AbstractAppState {
     	playerControl.setFallSpeed(30);
     	playerControl.setGravity(90);
     	playerControl.setPhysicsLocation(new Vector3f(20, 20, 0));
-    	playerControl.setCollisionGroup(1);
+    	playerControl.setCollisionGroup(PhysicsCollisionObject.COLLISION_GROUP_02);
+    	playerControl.setCollideWithGroups(PhysicsCollisionObject.COLLISION_GROUP_01); // collide with world
         bulletAppState.getPhysicsSpace().add(playerControl);	
     }
     

@@ -26,6 +26,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
@@ -49,7 +50,7 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
     private Quaternion flyingRotation = new Quaternion();
     private PhysicsCollisionObject other;
 
-	private Vector3f collisionLocation;
+	private Vector3f collisionPoint;
 
     public BulletRigidBodyControl(CollisionShape shape, float mass) {
         super(shape, mass);
@@ -86,7 +87,8 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
         effect.setParticlesPerSec(0);
         effect.setGravity(0, 0, 0);
         effect.setLowLife(.1f);
-        effect.setHighLife(.2f);
+//        effect.setHighLife(.2f);
+        effect.setHighLife(20f);
         effect.setImagesX(2);
         effect.setImagesY(2);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Particle.j3md");
@@ -103,69 +105,59 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
             return;
         }
         if (event.getObjectA() == this || event.getObjectB() == this) {
-        	if(event.getObjectA() instanceof CharacterControl || event.getObjectB() instanceof CharacterControl) {
-        		return; // don't collide with the player!
-        	}
-        	
+        	this.setEnabled(false); // stop it from calculating physics. important!
+
+        	space.remove(this); // "freeze" object by removing the physics space. it sets space to null, and "kills" the "update" method. 
+
         	if (event.getObjectA() == this) { // get what we collided with, this can be done prettier.... 
         		other = event.getObjectB();
-        		collisionLocation = event.getPositionWorldOnB();
+        		collisionPoint = event.getPositionWorldOnB();
         	} else {
         		other = event.getObjectA();
-        		collisionLocation = event.getPositionWorldOnA();
+        		collisionPoint = event.getPositionWorldOnA();
         	}
+
         	logger.log(Level.INFO, "Collided with: " + other.toString());
 
-            // smoke effect
-            if (effect != null && spatial.getParent() != null) {
-                curTime = 0;
-                effect.setLocalTranslation(collisionLocation);
-                spatial.getParent().attachChild(effect);
-                effect.emitAllParticles();
-            }
-            
-            // insert static non-physical spatial where we landed
-            // [todo] - check hardness of the object we collided with before attaching a non-physical spatial to the world. If it's e.g. a rock, we don't want the arrow to stick
-            // if soft => attach spatial
-            // else set velocity to 0 and apply a rotation and some inverse velocity. also subract som quality from the arrow.. ! (lesser damage)
-            // (based on the angle of hit) to it (to simulate an arrow bouncing of a rock). and don't remove this from physics space
-            Spatial staticSpatial = spatial.clone();
-            // [review]: calculate the position based on distance to what it collided with (so the arrow always sticks into things eg 1/10 of it's length)
-            staticSpatial.setLocalTranslation(spatial.getLocalTranslation());
-            staticSpatial.addControl(new StaticBulletControl());
-            staticSpatial.addControl(new TargetableControl("Arrow"));
-            staticSpatial.addControl(new QualityControl(0.9f));
-            spatial.getParent().attachChild(staticSpatial); // parent should be rootnode
+        	// [review]: calculate the position based on distance to what it collided with (so the arrow always sticks into things eg 1/10 of it's length)
+        	spatial.setLocalTranslation(spatial.getLocalTranslation());
+        	spatial.addControl(new StaticBulletControl());
+        	spatial.addControl(new TargetableControl("Arrow"));
+        	spatial.addControl(new QualityControl(0.9f));
 
-            // remove this one
-            space.remove(this); // it sets space to null, and "kills" the "update" method. If this is not called now, it will register multiple collisions, which will break this class!
-            spatial.removeFromParent(); // remove from world
+            // smoke effect
+//            if (effect != null && spatial.getParent() != null) {
+//            	curTime = 0;
+//            	effect.setLocalTranslation(new Vector3f(0,0,1)); // get the translation of the arrow spatial
+//            	((Node) spatial).attachChild(effect); // spatial is actually arrowNode
+//            	effect.emitAllParticles();
+//            }
         }
     }
     
     public void prePhysicsTick(PhysicsSpace space, float f) {
-        space.removeCollisionListener(this);
+//        space.removeCollisionListener(this);
     }
 
     // this is to eg. make a brick wall fall down, send a force impulse outwards
     public void physicsTick(PhysicsSpace space, float f) {
         //get all overlapping objects and apply impulse to them
-        for (Iterator<PhysicsCollisionObject> it = ghostObject.getOverlappingObjects().iterator(); it.hasNext();) {            
-            PhysicsCollisionObject physicsCollisionObject = it.next();
-            if (physicsCollisionObject instanceof PhysicsRigidBody) {
-                PhysicsRigidBody rBody = (PhysicsRigidBody) physicsCollisionObject;
-                rBody.getPhysicsLocation(vector2);
-                vector2.subtractLocal(vector);
-                float force = explosionRadius - vector2.length();
-                force *= forceFactor;
-                force = force > 0 ? force : 0;
-                vector2.normalizeLocal();
-                vector2.multLocal(force);
-                ((PhysicsRigidBody) physicsCollisionObject).applyImpulse(vector2, Vector3f.ZERO);
-            }
-        }
-        space.removeTickListener(this);
-        space.remove(ghostObject);
+//        for (Iterator<PhysicsCollisionObject> it = ghostObject.getOverlappingObjects().iterator(); it.hasNext();) {            
+//            PhysicsCollisionObject physicsCollisionObject = it.next();
+//            if (physicsCollisionObject instanceof PhysicsRigidBody) {
+//                PhysicsRigidBody rBody = (PhysicsRigidBody) physicsCollisionObject;
+//                rBody.getPhysicsLocation(vector2);
+//                vector2.subtractLocal(vector);
+//                float force = explosionRadius - vector2.length();
+//                force *= forceFactor;
+//                force = force > 0 ? force : 0;
+//                vector2.normalizeLocal();
+//                vector2.multLocal(force);
+//                ((PhysicsRigidBody) physicsCollisionObject).applyImpulse(vector2, Vector3f.ZERO);
+//            }
+//        }
+//        space.removeTickListener(this);
+//        space.remove(ghostObject);
     }
     
     @Override
@@ -177,7 +169,7 @@ public class BulletRigidBodyControl extends RigidBodyControl implements PhysicsC
         	flyingRotation.lookAt(this.getLinearVelocity(), new Vector3f(0,1,0));
         	this.setPhysicsRotation(flyingRotation);
         	
-        	// this is to cleanup old bullets that hasnt collided yet (lived more than maxTime)
+        	// this is to cleanup old bullets that hasn't collided yet (lived more than maxTime)
             if(timer>maxFlyingTime){
                 if(spatial.getParent()!=null){
                 	spatial.removeFromParent();

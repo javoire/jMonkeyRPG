@@ -244,9 +244,9 @@ public class World extends AbstractAppState {
 
             		if(spatial instanceof TerrainQuad && spatial.getName().equals("terrain")) {
             			logger.log(Level.INFO, "Adding RigidBodyControl to: " + spatial.getName());
-            	        CollisionShape terrainShape = CollisionShapeFactory.createMeshShape(spatial);
-            	        RigidBodyControl landscape = new RigidBodyControl(terrainShape, 0);
-            	        spatial.addControl(landscape);
+            	        CollisionShape cs = CollisionShapeFactory.createMeshShape(spatial);
+            	        RigidBodyControl rbc = new RigidBodyControl(cs, 0);
+            	        spatial.addControl(rbc);
                     	bulletAppState.getPhysicsSpace().addAll(spatial);
             		}
             		if(spatial instanceof Node && spatial.getName().equals("tree")) { // tree node

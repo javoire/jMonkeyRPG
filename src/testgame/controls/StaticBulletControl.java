@@ -18,7 +18,6 @@ public class StaticBulletControl extends AbstractControl {
 	
 	@Override
 	protected void controlUpdate(float tpf) {
-		// TODO Auto-generated method stub
 		timer+=tpf;
 		if(timer>lifeTime) {
 			spatial.removeFromParent(); // remove it from world..
@@ -27,7 +26,5 @@ public class StaticBulletControl extends AbstractControl {
 
 	@Override
 	protected void controlRender(RenderManager rm, ViewPort vp) {
-		// TODO Auto-generated method stub
-		
 	}
 }
