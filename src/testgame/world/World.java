@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jme3utilities.sky.SkyControl;
 import testgame.controls.QualityControl;
 import testgame.controls.ResourceControl;
 import testgame.controls.TargetableControl;
@@ -28,11 +29,14 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.light.Light;
 import com.jme3.light.LightList;
+import com.jme3.light.SpotLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
@@ -81,6 +85,12 @@ public class World extends AbstractAppState {
     private Node harvestables;
     private Node targetables;
     Spatial scene;
+
+	private SkyControl skyCtrl;
+
+	private AmbientLight ambientLight;
+
+	private SpotLight flashLight;
 
     @Override
     public void initialize(AppStateManager stateManager, Application app) {
@@ -150,17 +160,27 @@ public class World extends AbstractAppState {
 
 	public void init() {
         loadScene();
-//        loadLights();
+        loadLights();
 //        loadSky();
 //        loadShadows();
         initWorldPhysics();
         initPostEffects();
         initSound();
+        
+        // player flashlight
+        flashLight = new SpotLight();
+        flashLight.setSpotRange(200f);                           // distance
+        flashLight.setSpotInnerAngle(10f * FastMath.DEG_TO_RAD); // inner light cone (central beam)
+        flashLight.setSpotOuterAngle(13f * FastMath.DEG_TO_RAD); // outer light cone (edge of the light)
+        flashLight.setColor(ColorRGBA.White.mult(1.8f)); 
+        rootNode.addLight(flashLight);
 
         // debug
+        inputManager.addMapping("flashlight", new KeyTrigger(KeyInput.KEY_F));
         inputManager.addMapping("wireframe", new KeyTrigger(KeyInput.KEY_T));
-        inputManager.addListener(actionListener, "wireframe");
         inputManager.addMapping("physics", new KeyTrigger(KeyInput.KEY_P));
+        inputManager.addListener(actionListener, "flashlight");
+        inputManager.addListener(actionListener, "wireframe");
         inputManager.addListener(actionListener, "physics");
     }
 
@@ -273,6 +293,10 @@ public class World extends AbstractAppState {
             			spatial.addControl(new RigidBodyControl(cs, 0));
             			bulletAppState.getPhysicsSpace().addAll(spatial);
             		}
+            		
+            		if(spatial.getName().equals("Sky")) {
+            			spatial.removeFromParent();
+            		}
 //                    if (spatial.getParent() != null && spatial.getParent().getName().equals("Trees")) {
 //                    	logger.log(Level.INFO, "Parsing tree " + spatial.toString());
 //                    	spatial.addControl(new ResourceControl());
@@ -307,6 +331,12 @@ public class World extends AbstractAppState {
         scene.scale(1f);
         scene.setShadowMode(ShadowMode.CastAndReceive);
         rootNode.attachChild(scene);
+        
+        Node skyNode = new Node("Sky");
+        skyCtrl = new SkyControl(assetManager, camera, 0, true, true);
+        skyNode.addControl(skyCtrl);
+        skyCtrl.setEnabled(true);
+        rootNode.attachChild(skyNode);
         
 //        Spatial arrow = assetManager.loadModel("Models/arrow_scene.j3o");
 //        Spatial arrow = assetManager.loadModel("Models/arrow2.j3o");
@@ -374,45 +404,36 @@ public class World extends AbstractAppState {
     }
 
     public void loadLights() {
-//        sun = new DirectionalLight();
-//        AmbientLight amb = new AmbientLight();
-//        ColorRGBA sunColor = new ColorRGBA(0.9f, 0.77f, 0.52f, 1f);
-////
-//        sun.setDirection(lightDir);
-//        sun.setColor(sunColor.mult(1.5f));
-//        amb.setColor(sunColor.mult(1.5f));
-//        
-////
-////        PointLight lamp_light = new PointLight();
-////        lamp_light.setColor(ColorRGBA.Orange);
-////        lamp_light.setRadius(100f);
-////        lamp_light.setPosition(new Vector3f(0, 3, 0));
-//////		rootNode.addLight(lamp_light);
-////
-//        rootNode.addLight(sun);
-//        rootNode.addLight(amb);
+		// get the lights from the scene model
+		LightList ll = scene.getLocalLightList();
+		Iterator<Light> i = ll.iterator();    	
+		while (i.hasNext()) {
+			Light next = i.next();
+			logger.log(Level.INFO, "light: " + next.getClass());
+			
+			// find the "sun", we want to reach it globally in the code
+			if(next instanceof DirectionalLight) {
+				sun = (DirectionalLight) next;
+				logger.log(Level.INFO, "found DirectionalLight" + sun.toString());
+			} 
+			if(next instanceof AmbientLight) {
+				ambientLight = (AmbientLight) next;
+				logger.log(Level.INFO, "found AmbientLight" + ambientLight.toString());
+			} 
+	
+			// IMPORTANT! remove the lights from the scene object and attach them to rootNode !!! 
+			// (otherwise all objects on rootNode will be invisible)
+			rootNode.addLight(next);    			
+		}
+		ll.clear(); // remove the lights from scene object since we've added them to rootNode instead!!!
+		
+		// add to skyCtrl
+		skyCtrl.setMainLight(sun);
+		skyCtrl.setAmbientLight(ambientLight);
+	
     }
 
     public void initPostEffects() {
-    	// get the lights from the scene model
-    	LightList ll = scene.getLocalLightList();
-    	Iterator<Light> i = ll.iterator();    	
-    	while (i.hasNext()) {
-    		Light next = i.next();
-    		logger.log(Level.INFO, "light: " + next.getClass());
-    		
-    		// find the "sun", we want to reach it globally in the code
-    		if(next instanceof DirectionalLight) {
-    			sun = (DirectionalLight) next;
-    			logger.log(Level.INFO, "found DirectionalLight" + sun.toString());
-    		} 
-
-    		// IMPORTANT! remove the lights from the scene object and attach them to rootNode !!! 
-    		// (otherwise all objects on rootNode will be invisible)
-    		rootNode.addLight(next);    			
-    	}
-    	ll.clear(); // remove the lights from scene object since we've added them to rootNode instead!!!
-    	
 //    	Bloom
     	logger.log(Level.INFO,"Adding bloom effects");
         BloomFilter bloom = new BloomFilter();
@@ -426,12 +447,13 @@ public class World extends AbstractAppState {
         DirectionalLightShadowFilter shadowFilter;
         shadowFilter = new DirectionalLightShadowFilter(assetManager, 512, 3);
         shadowFilter.setLight(sun);
-        shadowFilter.setLambda(1.0f);
-        shadowFilter.setShadowIntensity(1f);
+        shadowFilter.setLambda(.65f);
+        shadowFilter.setShadowIntensity(0.1f);
         shadowFilter.setEdgesThickness(2);
         shadowFilter.setShadowZExtend(500);
         shadowFilter.setEdgeFilteringMode(EdgeFilteringMode.Bilinear);
         fpp.addFilter(shadowFilter);
+        skyCtrl.setShadowFilter(shadowFilter); // let skyCtrl control this
 
 //        logger.log(Level.INFO,"post effects water height: " + Float.toString(initialWaterHeight));
 //        water = new WaterFilter(rootNode, lightDir);
@@ -532,7 +554,10 @@ public class World extends AbstractAppState {
 
     @Override
     public void update(float tpf) {
-        // TODO: implement behavior during runtime
+    	if (flashLight != null && player != null) {
+    		flashLight.setPosition(player.getLocation());
+    		flashLight.setDirection(player.getLookDirection());
+    	}
     }
 
     @Override
@@ -555,6 +580,7 @@ public class World extends AbstractAppState {
 	private ActionListener actionListener = new ActionListener() {
 		boolean wireframeDebug = false;
 		boolean physicsDebug = false;
+		boolean flashLightOn = true;
 
 		@Override
 		public void onAction(String name, boolean pressed, float tpf) {
@@ -573,6 +599,14 @@ public class World extends AbstractAppState {
 			if (name.equals("physics") && !pressed) {
 				physicsDebug = !physicsDebug; // toggle boolean
 				bulletAppState.setDebugEnabled(physicsDebug);
+			}
+			if (name.equals("flashlight") && !pressed) {
+				if (flashLightOn) {
+					rootNode.removeLight(flashLight);					
+				} else {
+					rootNode.addLight(flashLight);					
+				}
+				flashLightOn = !flashLightOn; // toggle boolean
 			}
 			// else ... other input tests.
 		}

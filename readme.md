@@ -9,3 +9,6 @@ Java
 
 jMonkey [nightly build](http://nightly.jmonkeyengine.org/)
 - jME3_2013-05-26
+
+jMonkey community contributions
+- [SkyControl](https://code.google.com/p/jme3-utilities/) by @sgold 

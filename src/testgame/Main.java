@@ -28,17 +28,9 @@ import de.lessvoid.nifty.Nifty;
 
 public class Main extends SimpleApplication {
 
-    private World world;
     private Game game;
-    private SimpleHud basicGui;
-    private Player player;
     private BulletAppState bulletAppState;
-    private HarvestingAppState harvestingAppState;
     private NiftyJmeDisplay gui;
-    private TargetingAppState targetInfo;
-    private Inventory inventory;
-    private PlayerInput playerInput;
-    private PlayerActions playerActions;
 
     public static void main(String[] args) {
         Main app = new Main();
